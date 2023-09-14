@@ -34,7 +34,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
   dispatch,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [ordenId, setOrdenId] = useState<string | null>(null); 
+  const [ordenId, setOrdenId] = useState<string | null>(null);
   const [datosUsuario, setDatosUsuario] = useState<any | null>(null);
   const [datosEnvio, setDatosEnvio] = useState<any | null>(null);
 
@@ -86,7 +86,9 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
                   <img src={producto.imagen_url} alt={producto.nombre} />
                   <span>{producto.nombre}</span>
                 </ProductName>
-                <ProductPrice>${producto.precio.toFixed(2)}</ProductPrice>
+                <ProductPrice>
+                  ${(producto.precio * producto.cantidad).toFixed(2)}
+                </ProductPrice>
                 <ProductQuantity>
                   <IconButton
                     color="primary"
@@ -113,6 +115,30 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
             <Total>
               <span>Total:</span> <span>${total.toFixed(2)}</span>
             </Total>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "20px",
+              }}
+            >
+              {currentStep > 1 && (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                >
+                  Volver
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setCurrentStep(currentStep + 1)}
+              >
+                Continuar
+              </Button>
+            </div>
           </>
         );
       case 2:
@@ -124,8 +150,11 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
                 email: data.email,
                 telefono: data.telefono,
               });
-              setOrdenId(data.orderId); 
+              setOrdenId(data.orderId);
               setCurrentStep(currentStep + 1);
+            }}
+            onBack={() => {
+              setCurrentStep(currentStep - 1);
             }}
           />
         );
@@ -148,7 +177,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
             datosUsuario={datosUsuario}
             datosEnvio={datosEnvio}
             productos={productos}
-            ordenId={ordenId} 
+            ordenId={ordenId}
           />
         );
       default:
@@ -161,9 +190,11 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
       <ModalContent>
         <Stepper currentStep={currentStep} />
         {renderStepContent()}
-        <Button variant="contained" color="primary" onClick={handleContinuar}>
-          {currentStep < 4 ? "Siguiente" : "Finalizar"}
-        </Button>
+        {currentStep === 4 && (
+          <Button variant="contained" color="primary" onClick={handleContinuar}>
+            Finalizar
+          </Button>
+        )}
       </ModalContent>
     </Modal>
   );

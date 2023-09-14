@@ -19,6 +19,7 @@ export const ModalContent = styled.div`
   color: black;
   max-height: 80vh;  
   overflow-y: auto; 
+
 `;
 
 export const Total = styled.div`

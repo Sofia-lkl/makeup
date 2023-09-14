@@ -89,4 +89,21 @@ export const StyledPasarelaPago = styled.div`
   .error-message {
     color: #e74c3c;
   }
+  .main-title {
+    font-size: 2em;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .section-card h6 {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    color: #34495e;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+  }
 `;

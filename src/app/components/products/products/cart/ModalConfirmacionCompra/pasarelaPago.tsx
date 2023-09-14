@@ -110,8 +110,10 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 
   return (
     <StyledPasarelaPago>
-      <div className="section-card">
-        <h6>Procesar pago</h6>
+      <h5 className="main-title">Pasarela de Pago</h5>
+
+      <div className="section-card user-section">
+        <h6>Datos del Usuario</h6>
         <div className="user-details">
           <p>
             <strong>Nombre:</strong> {datosUsuario.nombre}
@@ -123,7 +125,9 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
             <strong>Teléfono:</strong> {datosUsuario.telefono}
           </p>
         </div>
+      </div>
 
+      <div className="section-card products-section">
         <h6>Productos a comprar:</h6>
         <ul className="products-list">
           {productos.map((producto) => (
@@ -133,14 +137,16 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
                 alt={producto.nombre}
                 className="product-image"
               />
-              <strong>{producto.nombre}</strong> - ${producto.precio.toFixed(2)}{" "}
-              x {producto.cantidad}
+              <span>
+                <strong>{producto.nombre}</strong> - $
+                {producto.precio.toFixed(2)} x {producto.cantidad}
+              </span>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="section-card">
+      <div className="section-card shipping-section">
         <h6>Datos de envío:</h6>
         <div className="shipping-details">
           <p>
@@ -164,45 +170,50 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
         </div>
       </div>
 
-      <div className="payment-details">
-        <p>
+      <div className="section-card payment-section">
+        <h6>Detalles del pago</h6>
+        <p className="total">
           <strong>Total a pagar:</strong> ${total.toFixed(2)}
         </p>
 
-        {/* Contenedor para controlar la visibilidad */}
-        <div style={{ display: showUploadOption ? "block" : "none" }}>
-          <div className="payment-actions">
+        <div className="payment-actions">
+          {/* Muestra el botón "Pagar con Depósito" solo si showUploadOption es false */}
+          {!showUploadOption && (
             <Button
               variant="contained"
               color="secondary"
-              onClick={closePaymentMethod}
+              onClick={showPaymentMethod}
             >
-              Cerrar Método de Pago
+              Pagar con Deposito
             </Button>
-            <CargarComprobante
-              orderId={ordenId}
-              total={total}
-              loadedComprobante={loadedComprobante}
-              onUploadSuccess={handleUploadSuccess}
-              onUploadError={handleUploadError}
-            />
-          </div>
-        </div>
+          )}
 
-        {/* Muestra el botón "Pagar con Depósito" solo si showUploadOption es false */}
-        {!showUploadOption && (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={showPaymentMethod}
-          >
-            Pagar con Deposito
+          {showUploadOption && (
+            <React.Fragment>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={closePaymentMethod}
+              >
+                Cerrar Método de Pago
+              </Button>
+              <CargarComprobante
+                orderId={ordenId}
+                total={total}
+                loadedComprobante={loadedComprobante}
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+              />
+            </React.Fragment>
+          )}
+
+          <Button variant="contained" color="primary" onClick={handlePayment}>
+            Pagar con MercadoPago
           </Button>
-        )}
+        </div>
+      </div>
 
-        <Button variant="contained" color="primary" onClick={handlePayment}>
-          Pagar con MercadoPago
-        </Button>
+      <div className="notifications">
         {preferenceId && <Wallet initialization={{ preferenceId }} />}
         {uploadSuccessMessage && (
           <p className="success-message">{uploadSuccessMessage}</p>

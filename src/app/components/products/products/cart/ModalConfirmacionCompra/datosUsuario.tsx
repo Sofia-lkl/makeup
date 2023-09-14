@@ -12,12 +12,17 @@ const FormContainer = styled.div`
   max-width: 400px;
   margin: 20px auto;
 `;
-
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+`;
 interface DatosProps {
   onContinue: (datos: any) => void;
+  onBack: () => void;
 }
 
-const DatosUsuario: React.FC<DatosProps> = ({ onContinue }) => {
+const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
   const [nombre, setNombre] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
@@ -91,9 +96,14 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue }) => {
         value={telefono}
         onChange={(e) => setTelefono(e.target.value)}
       />
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Continuar
-      </Button>
+      <ButtonContainer>
+        <Button variant="contained" color="secondary" onClick={onBack}>
+          Volver
+        </Button>
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          Continuar
+        </Button>
+      </ButtonContainer>
     </FormContainer>
   );
 };
