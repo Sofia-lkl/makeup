@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useContext } from "react";
 import { UnifiedContext, useUnified } from "../admin/context/contexto";
 import { useCart } from "../products/products/cart/contextCart/contextCart";
@@ -7,6 +8,8 @@ import { styles, basicStyles } from "./navbarStyles";
 import DropdownMenu from "./dropDownMenu";
 import Cart from "../products/products/cart/cart";
 import ModalConfirmacionCompra from "../products/products/cart/ModalConfirmacionCompra/modalConfirmacionCompra";
+import Historial from "../products/products/cart/ModalConfirmacionCompra/historial"; // Cambia esto a la ruta correcta a tu componente Historial
+import Modal from "../products/products/cart/ModalConfirmacionCompra/modalOrders"; // Cambia la ruta a la ubicación correcta de tu componente Modal.
 
 interface NavLinkProps {
   href: string;
@@ -33,6 +36,7 @@ const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [cart] = useCart();
   const [showCartModal, setShowCartModal] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
   const totalItemsInCart = cart.reduce((acc, item) => acc + item.cantidad, 0);
   const { handleLogout, isAuthenticated, userRole } =
@@ -121,7 +125,12 @@ const Navbar: React.FC = () => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               👤
-              {isDropdownOpen && <DropdownMenu onLogout={handleLogout} />}
+              {isDropdownOpen && (
+                <DropdownMenu
+                  onLogout={handleLogout}
+                  onViewHistory={() => setIsHistoryModalOpen(true)} // Pasamos una nueva prop para abrir el modal de historial
+                />
+              )}
             </div>
           ) : (
             <button
@@ -141,13 +150,20 @@ const Navbar: React.FC = () => {
           />
         )}
       </div>
-
       {showCartModal && (
         <Cart
           onClose={() => setShowCartModal(false)}
           onCheckout={handleCheckout}
         />
       )}
+      <Modal
+        isOpen={isHistoryModalOpen}
+        title="Historial de Órdenes"
+        onClose={() => setIsHistoryModalOpen(false)}
+      >
+        <Historial />
+      </Modal>
+
       <ModalConfirmacionCompra
         isOpen={isConfirmationOpen}
         onClose={closeConfirmationModal}

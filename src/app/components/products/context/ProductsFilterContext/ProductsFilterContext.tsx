@@ -6,10 +6,12 @@ export interface ProductType {
   imagen_url: string;
   nombre: string;
   precio: number;
-  color: string;
+  stock: number;
   marca: string;
-  stock: number;  
+  color: string;
+  descripcion: string;
 }
+
 
 type FilterContextType = {
   searchTerm: string;

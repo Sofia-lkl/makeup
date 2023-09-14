@@ -6,7 +6,7 @@ import {
   StyledButton,
   StyledInput,
   StyledH2,
-} from "./productStyled"; 
+} from "./productStyled";
 
 const ProductTable = () => {
   const { allProducts, editProduct, deleteProduct } = useProducts();
@@ -42,6 +42,9 @@ const ProductTable = () => {
             <th>Nombre</th>
             <th>Precio</th>
             <th>Stock</th>
+            <th>Descripción</th>
+            <th>Color</th>
+            <th>Marca</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -87,6 +90,45 @@ const ProductTable = () => {
                     />
                   ) : (
                     product.stock
+                  )}
+                </div>
+              </td>
+              <td>
+                <div style={{ width: "200px" }}>
+                  {editingId === product.id ? (
+                    <StyledInput
+                      name="descripcion"
+                      value={updatedProduct.descripcion}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    product.descripcion
+                  )}
+                </div>
+              </td>
+              <td>
+                <div style={{ width: "100px" }}>
+                  {editingId === product.id ? (
+                    <StyledInput
+                      name="color"
+                      value={updatedProduct.color}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    product.color
+                  )}
+                </div>
+              </td>
+              <td>
+                <div style={{ width: "100px" }}>
+                  {editingId === product.id ? (
+                    <StyledInput
+                      name="marca"
+                      value={updatedProduct.marca}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    product.marca
                   )}
                 </div>
               </td>

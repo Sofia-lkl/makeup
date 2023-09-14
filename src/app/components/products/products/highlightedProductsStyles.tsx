@@ -5,7 +5,7 @@ export const HighlightedContainer = styled.div`
   background-color: #EFEFEF;
   padding: 20px;
   border-radius: 10px;
-  margin: 20px 0;
+
 `;
 
 export const SectionTitle = styled.h2`

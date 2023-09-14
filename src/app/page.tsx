@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "./components/navbar/navbar";
 import HeaderPresentation from "./components/header/header";
 import AcercaDe from "./components/presentation/presentation";
+import Historial from "./components/products/products/cart/ModalConfirmacionCompra/historial"; // Asegúrate de poner la ruta correcta
 import CoursesSection from "./components/courses/coursesSection";
 import ServicesSection from "./components/servicesSection/servicesSection";
 import ParentComponent from "./components/products/listProducts/listProducts";
@@ -11,23 +12,27 @@ import { ModalProvider } from "./components/products/context/ModalContext/ModalC
 import { ProductsProvider } from "./components/admin/productContext/ProductContext";
 import { UnifiedProvider } from "./components/admin/context/contexto";
 import { CartProvider } from "./components/products/products/cart/contextCart/contextCart";
+import { OrderProvider } from "./components/products/products/cart/ModalConfirmacionCompra/orderConext"; // Asegúrate de poner la ruta correcta
 
 export default function Home() {
   return (
     <UnifiedProvider>
       <CartProvider>
-        <HeaderPresentation />
-        <AcercaDe />
-        <CoursesSection />
-        <ServicesSection />
-        <ProductsProvider>
-          <ProductsFilterProvider>
-            <ModalProvider>
-              <Navbar />
-              <ParentComponent />
-            </ModalProvider>
-          </ProductsFilterProvider>
-        </ProductsProvider>
+        <OrderProvider>
+          <HeaderPresentation />
+          <AcercaDe />
+          <Historial /> 
+          <CoursesSection />
+          <ServicesSection />
+          <ProductsProvider>
+            <ProductsFilterProvider>
+              <ModalProvider>
+                <Navbar />
+                <ParentComponent />
+              </ModalProvider>
+            </ProductsFilterProvider>
+          </ProductsProvider>
+        </OrderProvider>
       </CartProvider>
     </UnifiedProvider>
   );

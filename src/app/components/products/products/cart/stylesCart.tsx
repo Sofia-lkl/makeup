@@ -100,8 +100,8 @@ export const CartHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem; /* Aumentado el padding */
-  background-color: #f4f4f4; /* Color de fondo añadido */
+  padding: 1rem 2rem; 
+  background-color: #f4f4f4; 
   border-bottom: 1px solid #ccc;
 `;
 
@@ -113,7 +113,7 @@ export const CartEmptyMessage = styled.div`
 `;
 
 export const CartFooter = styled.div`
-  padding: 1rem 2rem; /* Aumentado el padding */
+  padding: 1rem 2rem; 
   border-top: 1px solid #ccc;
 `;
 export const CheckoutButton = styled.button`

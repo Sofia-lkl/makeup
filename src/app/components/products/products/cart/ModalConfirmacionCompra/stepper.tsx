@@ -8,8 +8,8 @@ const StepperContainer = styled.div`
 `;
 
 const Circle = styled.div<{ $completed: boolean }>`
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background-color: ${({ $completed }) => ($completed ? "#4ECDC4" : "#e0e0e0")};
   display: flex;
@@ -17,7 +17,7 @@ const Circle = styled.div<{ $completed: boolean }>`
   justify-content: center;
   font-size: 0.8em;
   color: white;
-  transition: background-color 1.0s ease;  // Transición agregada aquí
+  transition: background-color 1s ease;
 `;
 
 const Bar = styled.div<{ $completed: boolean }>`
@@ -25,17 +25,22 @@ const Bar = styled.div<{ $completed: boolean }>`
   flex-grow: 1;
   background-color: ${({ $completed }) => ($completed ? "#4ECDC4" : "#e0e0e0")};
   margin: 0 10px;
-  transition: background-color 1.0s ease;  // Transición agregada aquí
+  transition: background-color 1s ease;
 `;
+
+const STEPS = ["Confirmación", "Datos", "Método de Envío", "Terminar Compra"];
 
 export const Stepper: React.FC<{ currentStep: number }> = ({ currentStep }) => {
   return (
     <StepperContainer>
-      <Circle $completed={currentStep > 0}>Confirmación</Circle>
-      <Bar $completed={currentStep > 1} />
-      <Circle $completed={currentStep > 1}>Datos</Circle>
-      <Bar $completed={currentStep > 2} />
-      <Circle $completed={currentStep > 2}>Terminar Compra</Circle>
+      {STEPS.map((step, index) => (
+        <React.Fragment key={index}>
+          <Circle $completed={currentStep > index}>{step}</Circle>
+          {index < STEPS.length - 1 && (
+            <Bar $completed={currentStep > index + 1} />
+          )}
+        </React.Fragment>
+      ))}
     </StepperContainer>
   );
 };

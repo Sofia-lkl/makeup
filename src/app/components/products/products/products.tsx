@@ -15,6 +15,9 @@ import {
   ProductListContainer,
   AddToCartButton,
   ProductContainer,
+  ProductDescription,
+  ProductColor,
+  ProductBrand,
 } from "./allProductsStyles";
 import {
   HighlightedContainer,
@@ -32,7 +35,8 @@ const ProductCard: React.FC<ProductType> = ({
   precio,
   color,
   marca,
-  stock
+  stock,
+  descripcion,
 }) => {
   const [cartItems, dispatch] = useCart();
 
@@ -81,12 +85,13 @@ const ProductCard: React.FC<ProductType> = ({
             src={imagen_url || "path_to_default_image.jpg"}
             alt={nombre}
           />
-          <ProductName>{nombre}</ProductName>
-          <ProductPrice>${precio.toFixed(2)}</ProductPrice>
-          <div>Color: {color}</div>
-          <div>Marca: {marca}</div>
         </div>
       </Link>
+      <ProductName>{nombre}</ProductName>
+      <ProductPrice>${precio.toFixed(2)}</ProductPrice>
+      <ProductBrand>{marca}</ProductBrand>
+      <ProductDescription>{descripcion}</ProductDescription>
+      <ProductColor>{color}</ProductColor>
       <ProductOptions className="productOptions">
         <AddToCartButton onClick={handleAddToCart}>
           Agregar al Carrito
@@ -139,4 +144,3 @@ const Products: React.FC<{
 };
 
 export default Products;
-

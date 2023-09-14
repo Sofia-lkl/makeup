@@ -13,7 +13,10 @@ import {
   ProductQuantity,
 } from "./styleModalConfirmacion/modalConfirmacionCompraStyles";
 import { CartState } from "../contextCart/contextCart";
-import { Stepper } from "../ModalConfirmacionCompra/stepper"; // Importamos Stepper en vez de Step
+import { Stepper } from "./stepper";
+import DatosUsuario from "./datosUsuario";
+import SeleccionEnvio from "./seleccionEnvio";
+import PasarelaPago from "./pasarelaPago";
 
 interface ModalConfirmacionCompraProps {
   isOpen: boolean;
@@ -31,6 +34,9 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
   dispatch,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [ordenId, setOrdenId] = useState<string | null>(null); 
+  const [datosUsuario, setDatosUsuario] = useState<any | null>(null);
+  const [datosEnvio, setDatosEnvio] = useState<any | null>(null);
 
   const total = productos.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
@@ -40,6 +46,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(1);
+      setDatosUsuario(null);
     }
   }, [isOpen]);
 
@@ -62,53 +69,100 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
   };
 
   const handleContinuar = () => {
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
       onContinuar();
+    }
+  };
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <>
+            {productos.map((producto) => (
+              <ProductRow key={producto.id}>
+                <ProductName>
+                  <img src={producto.imagen_url} alt={producto.nombre} />
+                  <span>{producto.nombre}</span>
+                </ProductName>
+                <ProductPrice>${producto.precio.toFixed(2)}</ProductPrice>
+                <ProductQuantity>
+                  <IconButton
+                    color="primary"
+                    onClick={() => decrementar(producto.id)}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                  {producto.cantidad}
+                  <IconButton
+                    color="primary"
+                    onClick={() => incrementar(producto.id)}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => eliminar(producto.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ProductQuantity>
+              </ProductRow>
+            ))}
+            <Total>
+              <span>Total:</span> <span>${total.toFixed(2)}</span>
+            </Total>
+          </>
+        );
+      case 2:
+        return (
+          <DatosUsuario
+            onContinue={(data) => {
+              setDatosUsuario({
+                nombre: data.nombre,
+                email: data.email,
+                telefono: data.telefono,
+              });
+              setOrdenId(data.orderId); 
+              setCurrentStep(currentStep + 1);
+            }}
+          />
+        );
+      case 3:
+        return (
+          <SeleccionEnvio
+            orden_id={ordenId || ""}
+            onContinue={(datos) => {
+              setDatosEnvio(datos);
+              setCurrentStep(currentStep + 1);
+            }}
+          />
+        );
+      case 4:
+        return (
+          <PasarelaPago
+            onPaymentSuccess={() => onContinuar()}
+            onPaymentFailure={() => {}}
+            total={total}
+            datosUsuario={datosUsuario}
+            datosEnvio={datosEnvio}
+            productos={productos}
+            ordenId={ordenId} 
+          />
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <Modal open={isOpen} onClose={onClose}>
       <ModalContent>
-        <Stepper currentStep={currentStep} />{" "}
-        {/* Usamos Stepper en vez de las llamadas individuales a Step */}
-        {productos.map((producto) => (
-          <ProductRow key={producto.id}>
-            <ProductName>
-              <img src={producto.imagen_url} alt={producto.nombre} />
-              <span>{producto.nombre}</span>
-            </ProductName>
-            <ProductPrice>${producto.precio.toFixed(2)}</ProductPrice>
-            <ProductQuantity>
-              <IconButton
-                color="primary"
-                onClick={() => decrementar(producto.id)}
-              >
-                <RemoveIcon />
-              </IconButton>
-              {producto.cantidad}
-              <IconButton
-                color="primary"
-                onClick={() => incrementar(producto.id)}
-              >
-                <AddIcon />
-              </IconButton>
-              <IconButton
-                color="secondary"
-                onClick={() => eliminar(producto.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </ProductQuantity>
-          </ProductRow>
-        ))}
-        <Total>
-          <span>Total:</span> <span>${total.toFixed(2)}</span>
-        </Total>
+        <Stepper currentStep={currentStep} />
+        {renderStepContent()}
         <Button variant="contained" color="primary" onClick={handleContinuar}>
-          {currentStep < 3 ? "Siguiente" : "Finalizar"}
+          {currentStep < 4 ? "Siguiente" : "Finalizar"}
         </Button>
       </ModalContent>
     </Modal>

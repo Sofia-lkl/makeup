@@ -31,7 +31,10 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          {/* Inserta aquí el script de MercadoPago */}
+          <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+        </Head>
         <body>
           <Main />
           <NextScript />
