@@ -39,12 +39,31 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showUploadOption, setShowUploadOption] = useState(false);
-  const [replaceComprobante, setReplaceComprobante] = useState(false);
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState<
+    string | null
+  >(null);
+  const [loadedComprobante, setLoadedComprobante] = useState<File | null>(null);
 
   initMercadoPago("TEST-75e8ff76-27ca-4d24-8d0e-9ea271a2ef88");
 
+  const closePaymentMethod = () => {
+    setShowUploadOption(false);
+  };
+
+  const showPaymentMethod = () => {
+    setShowUploadOption(true);
+  };
+
   const handleUploadSuccess = (data: any) => {
     console.log("Comprobante cargado con éxito:", data);
+    setUploadSuccessMessage("Comprobante cargado con éxito");
+
+    setLoadedComprobante(data.comprobante);
+
+    setTimeout(() => {
+      setUploadSuccessMessage(null);
+      closePaymentMethod();
+    }, 3000);
   };
 
   const handleUploadError = (error: any) => {
@@ -91,90 +110,105 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 
   return (
     <StyledPasarelaPago>
-      <h6>Procesar pago con MercadoPago</h6>
-      <p>
-        <strong>Nombre:</strong> {datosUsuario.nombre}
-      </p>
-      <p>
-        <strong>Email:</strong> {datosUsuario.email}
-      </p>
-      <p>
-        <strong>Teléfono:</strong> {datosUsuario.telefono}
-      </p>
-      <h6>Productos a comprar:</h6>
-      <ul>
-        {productos.map((producto) => (
-          <li key={producto.id}>
-            <img
-              src={producto.imagen_url}
-              alt={producto.nombre}
-              style={{ width: "40px", height: "40px", marginRight: "10px" }}
+      <div className="section-card">
+        <h6>Procesar pago</h6>
+        <div className="user-details">
+          <p>
+            <strong>Nombre:</strong> {datosUsuario.nombre}
+          </p>
+          <p>
+            <strong>Email:</strong> {datosUsuario.email}
+          </p>
+          <p>
+            <strong>Teléfono:</strong> {datosUsuario.telefono}
+          </p>
+        </div>
+
+        <h6>Productos a comprar:</h6>
+        <ul className="products-list">
+          {productos.map((producto) => (
+            <li key={producto.id}>
+              <img
+                src={producto.imagen_url}
+                alt={producto.nombre}
+                className="product-image"
+              />
+              <strong>{producto.nombre}</strong> - ${producto.precio.toFixed(2)}{" "}
+              x {producto.cantidad}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="section-card">
+        <h6>Datos de envío:</h6>
+        <div className="shipping-details">
+          <p>
+            <strong>Método de Envío:</strong> {datosEnvio.metodo_envio}
+          </p>
+          <p>
+            <strong>Dirección:</strong> {datosEnvio.direccion}
+          </p>
+          <p>
+            <strong>Ciudad:</strong> {datosEnvio.ciudad}
+          </p>
+          <p>
+            <strong>Estado:</strong> {datosEnvio.estado}
+          </p>
+          <p>
+            <strong>Código Postal:</strong> {datosEnvio.codigo_postal}
+          </p>
+          <p>
+            <strong>País:</strong> {datosEnvio.pais}
+          </p>
+        </div>
+      </div>
+
+      <div className="payment-details">
+        <p>
+          <strong>Total a pagar:</strong> ${total.toFixed(2)}
+        </p>
+
+        {/* Contenedor para controlar la visibilidad */}
+        <div style={{ display: showUploadOption ? "block" : "none" }}>
+          <div className="payment-actions">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={closePaymentMethod}
+            >
+              Cerrar Método de Pago
+            </Button>
+            <CargarComprobante
+              orderId={ordenId}
+              total={total}
+              loadedComprobante={loadedComprobante}
+              onUploadSuccess={handleUploadSuccess}
+              onUploadError={handleUploadError}
             />
-            <strong>{producto.nombre}</strong> - ${producto.precio.toFixed(2)} x{" "}
-            {producto.cantidad}
-          </li>
-        ))}
-      </ul>
-      <h6>Datos de envío:</h6>
-      <p>
-        <strong>Método de Envío:</strong> {datosEnvio.metodo_envio}
-      </p>
-      <p>
-        <strong>Dirección:</strong> {datosEnvio.direccion}
-      </p>
-      <p>
-        <strong>Ciudad:</strong> {datosEnvio.ciudad}
-      </p>
-      <p>
-        <strong>Estado:</strong> {datosEnvio.estado}
-      </p>
-      <p>
-        <strong>Código Postal:</strong> {datosEnvio.codigo_postal}
-      </p>
-      <p>
-        <strong>País:</strong> {datosEnvio.pais}
-      </p>
-      <p>Total a pagar: ${total.toFixed(2)}</p>
-      {showUploadOption || replaceComprobante ? (
-        <>
+          </div>
+        </div>
+
+        {/* Muestra el botón "Pagar con Depósito" solo si showUploadOption es false */}
+        {!showUploadOption && (
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => {
-              setShowUploadOption(false);
-              setReplaceComprobante(false);
-            }}
+            onClick={showPaymentMethod}
           >
-            Cerrar Método de Pago
+            Pagar con Deposito
           </Button>
-          <CargarComprobante
-            orderId={ordenId}
-            total={total}
-            onUploadSuccess={handleUploadSuccess}
-            onUploadError={handleUploadError}
-          />
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => setReplaceComprobante(true)}
-          >
-            Reemplazar Comprobante
-          </Button>
-        </>
-      ) : (
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => setShowUploadOption(true)}
-        >
-          Cargar Comprobante de Transferencia
+        )}
+
+        <Button variant="contained" color="primary" onClick={handlePayment}>
+          Pagar con MercadoPago
         </Button>
-      )}
-      <Button variant="contained" color="primary" onClick={handlePayment}>
-        Pagar con MercadoPago
-      </Button>
-      {preferenceId && <Wallet initialization={{ preferenceId }} />}
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+        {preferenceId && <Wallet initialization={{ preferenceId }} />}
+        {uploadSuccessMessage && (
+          <p className="success-message">{uploadSuccessMessage}</p>
+        )}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+      </div>
     </StyledPasarelaPago>
   );
 };

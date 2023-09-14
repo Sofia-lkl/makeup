@@ -36,7 +36,9 @@ const Historial: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetail[][]>([]);
   const [shippingInfos, setShippingInfos] = useState<ShippingInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  const [uploadMessage, setUploadMessage] = useState<{
+    [orderId: number]: string;
+  }>({});
 
   const isClient = typeof window !== "undefined";
   const userToken = isClient ? localStorage.getItem("jwt") : null;
@@ -197,9 +199,11 @@ const Historial: React.FC = () => {
                       <CargarComprobante
                         orderId={order.id.toString()}
                         onUploadSuccess={(data) => {
-                          setUploadMessage("Comprobante cargado con éxito!");
+                          setUploadMessage((prevMessages) => ({
+                            ...prevMessages,
+                            [order.id]: "Comprobante cargado con éxito!",
+                          }));
 
-                          // Actualiza la URL del comprobante en el estado de las órdenes
                           const updatedOrders = [...orders];
                           const orderToUpdate = updatedOrders.find(
                             (o) => o.id === order.id
@@ -208,26 +212,29 @@ const Historial: React.FC = () => {
                             orderToUpdate.comprobante_pago = data.filePath;
                             setOrders(updatedOrders);
                           }
-
                           handleReplaceComprobante(order.id);
                         }}
                         onUploadError={(error) => {
-                          setUploadMessage(
-                            "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo."
-                          );
+                          setUploadMessage((prevMessages) => ({
+                            ...prevMessages,
+                            [order.id]:
+                              "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
+                          }));
                           handleReplaceComprobante(order.id);
                         }}
                       />
                     )}
                   </OrderSection>
                 )}
-                {uploadMessage && (
+                {uploadMessage[order.id] && (
                   <div
                     style={{
-                      color: uploadMessage.includes("error") ? "red" : "green",
+                      color: uploadMessage[order.id].includes("error")
+                        ? "red"
+                        : "green",
                     }}
                   >
-                    {uploadMessage}
+                    {uploadMessage[order.id]}
                   </div>
                 )}
               </OrderDetailsContainer>

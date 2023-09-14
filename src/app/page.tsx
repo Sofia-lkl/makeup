@@ -21,7 +21,6 @@ export default function Home() {
         <OrderProvider>
           <HeaderPresentation />
           <AcercaDe />
-          <Historial /> 
           <CoursesSection />
           <ServicesSection />
           <ProductsProvider>
