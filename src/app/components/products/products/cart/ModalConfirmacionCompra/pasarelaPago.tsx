@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Button } from "@mui/material";
 import axios from "axios";
 import { StyledPasarelaPago } from "./styledPasarelaPago";
-import { CartState } from "../contextCart/contextCart";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import CargarComprobante from "./uploadComprobant";
+import { useAppSelector } from "../../cart/contextCart/store/appHooks"; 
 
 interface PasarelaPagoProps {
   onPaymentSuccess: () => void;
@@ -15,7 +15,6 @@ interface PasarelaPagoProps {
     email: string;
     telefono: string;
   };
-  productos: CartState;
   datosEnvio: {
     metodo_envio: string;
     direccion: string;
@@ -33,9 +32,10 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   total,
   datosUsuario,
   datosEnvio,
-  productos,
   ordenId,
 }) => {
+  const cartItems = useAppSelector((state) => state.cart); // Aquí tomamos los productos desde Redux
+
   const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showUploadOption, setShowUploadOption] = useState(false);
@@ -57,9 +57,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   const handleUploadSuccess = (data: any) => {
     console.log("Comprobante cargado con éxito:", data);
     setUploadSuccessMessage("Comprobante cargado con éxito");
-
     setLoadedComprobante(data.comprobante);
-
     setTimeout(() => {
       setUploadSuccessMessage(null);
       closePaymentMethod();
@@ -71,17 +69,17 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   };
 
   const handlePayment = async () => {
+    const paymentData = {
+      total,
+      datosUsuario,
+      datosEnvio,
+      productos: cartItems, // Usamos cartItems en lugar de productos
+    };
+
+    const userToken = localStorage.getItem("jwt");
+    console.log("Datos enviados al backend:", paymentData);
+
     try {
-      const paymentData = {
-        total,
-        datosUsuario,
-        datosEnvio,
-        productos,
-      };
-
-      const userToken = localStorage.getItem("jwt");
-      console.log("Datos enviados al backend:", paymentData);
-
       const response = await axios.post(
         "http://localhost:3002/api/mercadopago/create_preference",
         paymentData,
@@ -130,19 +128,23 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       <div className="section-card products-section">
         <h6>Productos a comprar:</h6>
         <ul className="products-list">
-          {productos.map((producto) => (
-            <li key={producto.id}>
-              <img
-                src={producto.imagen_url}
-                alt={producto.nombre}
-                className="product-image"
-              />
-              <span>
-                <strong>{producto.nombre}</strong> - $
-                {producto.precio.toFixed(2)} x {producto.cantidad}
-              </span>
-            </li>
-          ))}
+          {cartItems.map(
+            (
+              producto 
+            ) => (
+              <li key={producto.id}>
+                <img
+                  src={producto.imagen_url}
+                  alt={producto.nombre}
+                  className="product-image"
+                />
+                <span>
+                  <strong>{producto.nombre}</strong> - $
+                  {producto.precio.toFixed(2)} x {producto.cantidad}
+                </span>
+              </li>
+            )
+          )}
         </ul>
       </div>
 

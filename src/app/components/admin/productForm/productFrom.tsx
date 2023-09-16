@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useProducts } from "../productContext/ProductContext";
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useSelector } from "react-redux";
 import {
   StyledForm,
   StyledDiv,
@@ -8,65 +7,63 @@ import {
   StyledInput,
   StyledButton,
   StyledFormContainer,
-} from "./productFormStyled"; 
+} from "./productFormStyled";
+import {
+  setMessage,
+  setError,
+  setLoading,
+  apiAddProduct,
+  ProductManagementState, 
+} from "../../products/products/cart/contextCart/productManagement/productManagementSlice"; 
+import { useAppDispatch } from "../../products/products/cart/contextCart/store/appHooks";
 
-const ProductForm = () => {
-  const [formData, setFormData] = useState({
+interface FormData {
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  stock: number;
+  imagen_url: string;
+  marca: string;
+  color: string;
+}
+
+const ProductForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
     nombre: "",
     descripcion: "",
-    precio: "",
-    stock: "",
+    precio: 0,
+    stock: 0,
     imagen_url: "",
     marca: "",
     color: "",
   });
 
-  const {
-    isLoading,
-    validateForm,
-    setIsLoading,
-    setMessage,
-    setError,
-    addProduct,
-  } = useProducts();
+  const dispatch = useAppDispatch();
+  const isLoading = useSelector(
+    (state: ProductManagementState) => state.isLoading
+  );
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = (e.target.name === "precio" || e.target.name === "stock") ? parseFloat(e.target.value) : e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!validateForm(formData)) {
-      return;
-    }
-
-    setIsLoading(true);
-    setMessage(null);
-    setError(null);
-
-    try {
-      const { data } = await axios.post(
-        "http://localhost:3002/api/products",
-        formData
-      );
-      addProduct({ id: data.id, ...formData });
-      setMessage(`Producto creado con éxito. ID del producto: ${data.id}`);
-    } catch (error) {
-      console.error("Error al crear el producto:", error);
-      setError("Error al crear el producto. Por favor, inténtalo de nuevo.");
-    } finally {
-      setIsLoading(false);
-    }
+    dispatch(setLoading(true));
+    dispatch(setMessage(null));
+    dispatch(setError(null));
+    dispatch(apiAddProduct(formData));
   };
+  
 
   return (
     <StyledFormContainer>
       {" "}
-      {/* Usar el contenedor estilizado */}
+      {/* contenedor estilizado */}
       <StyledForm onSubmit={handleSubmit}>
         <StyledDiv>
           <StyledLabel>Nombre:</StyledLabel>

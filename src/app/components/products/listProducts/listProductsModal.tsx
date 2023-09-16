@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import Products from "../products/products";
 import { SidebarStyled } from "../bar/sideBarStyle";
@@ -11,38 +10,35 @@ import {
   ProductListStyled,
 } from "./listProductStyle";
 import CombinedFilterComponent from "../bar/combinedFilterComponent";
-import { useFilter, ProductType } from "../context/ProductsFilterContext/ProductsFilterContext";
+import { ProductType } from "../context/ProductsFilterContext/filterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { closeModal } from "../context/ModalContext/modalSlice";
+import { RootState } from "../products/cart/contextCart/store/rootReducer";
 
 type ModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
   productList: ProductType[];
   highlightedList: ProductType[];
-  searchTerm: string;
-  onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: React.Dispatch<React.SetStateAction<[number, number]>>;
-  
 };
 
 const ListProductModal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
   productList,
   highlightedList,
-  searchTerm,
-  onSearchChange,
-  priceRange,
-  onPriceRangeChange,
 }) => {
-  const { filterProducts, activeFilter } = useFilter();
-  const filteredProducts = filterProducts(productList);
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state: RootState) => state.modal.isOpen);
+  const activeFilter = useSelector(
+    (state: RootState) => state.filter.activeFilter
+  );
 
   return (
     <StyledModal open={isOpen}>
       <ModalContent>
-        <CloseButton onClick={onClose}>X</CloseButton>
-        <ViewAllButton variant="contained" size="large" onClick={onClose}>
+        <CloseButton onClick={() => dispatch(closeModal())}>X</CloseButton>
+        <ViewAllButton
+          variant="contained"
+          size="large"
+          onClick={() => dispatch(closeModal())}
+        >
           No ver más productos
         </ViewAllButton>
         <ModalBody>
@@ -53,7 +49,7 @@ const ListProductModal: React.FC<ModalProps> = ({
             <Products type="highlighted" productList={highlightedList} />
             <Products
               type="fullList"
-              productList={filteredProducts}
+              productList={productList}
               activeFilter={activeFilter}
             />
           </ProductListStyled>

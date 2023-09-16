@@ -25,15 +25,16 @@ export const Button = styled.button`
   }
 `;
 
-export const Message = styled.div`
-  color: ${(props) => (props.type === "error" ? "red" : "green")};
-  border: 2px solid ${(props) => (props.type === "error" ? "red" : "green")};
+export const Message = styled.div<{ variant: "error" | "success" }>`
+  color: ${(props) => (props.variant === "error" ? "red" : "green")};
+  border: 2px solid ${(props) => (props.variant === "error" ? "red" : "green")};
   padding: 0.5em;
   border-radius: 5px;
   font-size: 1.2em;
   text-align: center;
   margin: 1em 0;
 `;
+
 export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;

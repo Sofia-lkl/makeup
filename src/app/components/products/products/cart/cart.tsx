@@ -1,5 +1,12 @@
 import React from "react";
-import { useCart } from "./contextCart/contextCart";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addItem,
+  incrementItem,
+  decrementItem,
+  removeItem,
+  CartState,  
+} from "../cart/contextCart/cart/cartSlice";  
 
 import {
   IconButton,
@@ -25,24 +32,27 @@ import {
   CheckoutButton,
 } from "./stylesCart";
 
+import { RootState } from '../cart/contextCart/store/rootReducer';  
+
 interface CartProps {
   onClose: () => void;
   onCheckout: () => void;
 }
 
 export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
-  const [cartItems, dispatch] = useCart();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart);
 
   const handleRemove = (id: number) => {
-    dispatch({ type: "REMOVE_ITEM", id });
+    dispatch(removeItem(id));
   };
 
   const handleIncrement = (id: number) => {
-    dispatch({ type: "INCREMENT_ITEM", id });
+    dispatch(incrementItem(id));
   };
 
   const handleDecrement = (id: number) => {
-    dispatch({ type: "DECREMENT_ITEM", id });
+    dispatch(decrementItem(id));
   };
 
   return (

@@ -1,15 +1,20 @@
 "use client";
-import React, { useState, useContext } from "react";
-import { UnifiedContext, useUnified } from "../admin/context/contexto";
-import { useCart } from "../products/products/cart/contextCart/contextCart";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../admin/context/authSlice/authSlice"; 
+import {
+  openLoginModal,
+  closeLoginModal,
+} from "../admin/context/loginModalSlice/loginModalSlice"; 
 import AdminLogin from "../admin/login/loginUserAdmin";
 import ModalPanel from "../admin/modalPanel/modalPanel";
-import { styles, basicStyles } from "./navbarStyles";
+import { RootState } from "../products/products/cart/contextCart/store/rootReducer";
 import DropdownMenu from "./dropDownMenu";
 import Cart from "../products/products/cart/cart";
 import ModalConfirmacionCompra from "../products/products/cart/ModalConfirmacionCompra/modalConfirmacionCompra";
-import Historial from "../products/products/cart/ModalConfirmacionCompra/historial"; // Cambia esto a la ruta correcta a tu componente Historial
-import Modal from "../products/products/cart/ModalConfirmacionCompra/modalOrders"; // Cambia la ruta a la ubicación correcta de tu componente Modal.
+import Historial from "../products/products/cart/ModalConfirmacionCompra/historial";
+import Modal from "../products/products/cart/ModalConfirmacionCompra/modalOrders";
+import { basicStyles, styles } from "./navbarStyles";
 
 interface NavLinkProps {
   href: string;
@@ -32,20 +37,28 @@ const NavLink: React.FC<NavLinkProps> = ({ href, label }) => {
 };
 
 const Navbar: React.FC = () => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
+  const isLoginModalOpen = useSelector(
+    (state: RootState) => state.loginModal.isLoginModalOpen
+  );
+
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [cart] = useCart();
   const [showCartModal, setShowCartModal] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-
-  const totalItemsInCart = cart.reduce((acc, item) => acc + item.cantidad, 0);
-  const { handleLogout, isAuthenticated, userRole } =
-    useContext(UnifiedContext);
-
-  const { isLoginModalOpen, setIsLoginModalOpen } = useUnified();
-
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [cartItems, dispatch] = useCart();
+  useEffect(() => {
+    // Forzar una re-renderización al cambiar isAuthenticated o userRole
+  }, [isAuthenticated, userRole]);
+  const totalItemsInCart = cartItems.reduce(
+    (acc, item) => acc + item.cantidad,
+    0
+  );
 
   const openConfirmationModal = () => {
     setIsConfirmationOpen(true);
@@ -58,11 +71,14 @@ const Navbar: React.FC = () => {
   const handleCheckout = () => {
     if (!isAuthenticated) {
       setShowCartModal(false);
-      setIsLoginModalOpen(true);
+      dispatch(openLoginModal());
     } else {
       setShowCartModal(false);
       openConfirmationModal();
     }
+  };
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -128,14 +144,14 @@ const Navbar: React.FC = () => {
               {isDropdownOpen && (
                 <DropdownMenu
                   onLogout={handleLogout}
-                  onViewHistory={() => setIsHistoryModalOpen(true)} // Pasamos una nueva prop para abrir el modal de historial
+                  onViewHistory={() => setIsHistoryModalOpen(true)}
                 />
               )}
             </div>
           ) : (
             <button
               style={basicStyles.loginButton}
-              onClick={() => setIsLoginModalOpen(true)}
+              onClick={() => dispatch(openLoginModal())}
             >
               Iniciar Sesión
             </button>
@@ -167,9 +183,7 @@ const Navbar: React.FC = () => {
       <ModalConfirmacionCompra
         isOpen={isConfirmationOpen}
         onClose={closeConfirmationModal}
-        productos={cart}
         onContinuar={closeConfirmationModal}
-        dispatch={dispatch}
       />
     </nav>
   );

@@ -1,5 +1,7 @@
 import styled, { keyframes } from "styled-components";
-
+type StyledButtonProps = {
+  $isDeleteButton?: boolean;
+}
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -59,7 +61,7 @@ export const StyledTable = styled.table`
   }
 `;
 
-export const StyledButton = styled.button`
+export const StyledButton = styled.button<StyledButtonProps>`
   padding: 0.5em 1em;
   border: none;
   border-radius: 5px;

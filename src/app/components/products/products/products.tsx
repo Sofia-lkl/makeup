@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useCart } from "./cart/contextCart/contextCart";
+import { useDispatch } from "react-redux";
+import {
+  addItem,
+  CartItem
+} from "./cart/contextCart/cart/cartSlice";
 
 import {
   createProductGrid,
@@ -24,7 +28,7 @@ import {
   SectionTitle,
   SectionDescription,
 } from "./highlightedProductsStyles";
-import { ProductType } from "../context/ProductsFilterContext/ProductsFilterContext";
+import { ProductType } from "../context/ProductsFilterContext/filterSlice";
 
 const getProductLink = (productName: string) => `/products/${productName}`;
 
@@ -38,43 +42,19 @@ const ProductCard: React.FC<ProductType> = ({
   stock,
   descripcion,
 }) => {
-  const [cartItems, dispatch] = useCart();
+  const dispatch = useDispatch();  // Hook de Redux
 
   const handleAddToCart = () => {
-    const currentItem = cartItems.find((item) => item.id === id);
-    if (currentItem) {
-      if (currentItem.cantidad < currentItem.stock) {
-        dispatch({
-          type: "ADD_ITEM",
-          item: {
-            id,
-            nombre,
-            precio,
-            cantidad: 1,
-            imagen_url,
-            stock,
-          },
-        });
-      } else {
-        // Mostrar un mensaje de error: "Stock insuficiente"
-      }
-    } else {
-      if (stock > 0) {
-        dispatch({
-          type: "ADD_ITEM",
-          item: {
-            id,
-            nombre,
-            precio,
-            cantidad: 1,
-            imagen_url,
-            stock,
-          },
-        });
-      } else {
-        // Mostrar un mensaje de error: "Stock insuficiente"
-      }
-    }
+    const itemToAdd: CartItem = {
+      id,
+      nombre,
+      precio,
+      cantidad: 1,
+      imagen_url,
+      stock,
+    };
+
+    dispatch(addItem(itemToAdd));
   };
 
   return (

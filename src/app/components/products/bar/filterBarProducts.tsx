@@ -1,16 +1,13 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { AiOutlineSearch, AiFillStar } from "react-icons/ai";
 import { FaRegSmile, FaRegEye } from "react-icons/fa";
-import { useFilter } from "../context/ProductsFilterContext/ProductsFilterContext"; 
 import { StyledFilterBar, FilterInput, FilterButtons } from "./sideBarStyle";
 
-// Definir las props que FilterBarProducts espera recibir
 interface FilterBarProductsProps {
   searchTerm: string;
-  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchChange: (newTerm: string) => void; // Función para informar al componente padre sobre cambios
   activeFilter: string | undefined;
-  onFilterChange: React.Dispatch<React.SetStateAction<string | undefined>>;
+  onFilterChange: (value: string | undefined) => void;
 }
 
 const FilterBarProducts: React.FC<FilterBarProductsProps> = ({
@@ -19,8 +16,16 @@ const FilterBarProducts: React.FC<FilterBarProductsProps> = ({
   activeFilter,
   onFilterChange,
 }) => {
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+
   const handleFilterClick = (filter: string) => {
     onFilterChange(filter);
+  };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchTerm = e.target.value;
+    setLocalSearchTerm(newSearchTerm);
+    onSearchChange(newSearchTerm);
   };
 
   return (
@@ -38,8 +43,8 @@ const FilterBarProducts: React.FC<FilterBarProductsProps> = ({
         />
         <FilterInput
           style={{ paddingLeft: "40px" }}
-          value={searchTerm}
-          onChange={onSearchChange}
+          value={localSearchTerm}
+          onChange={handleSearchInputChange}
           placeholder="Buscar productos..."
         />
       </div>

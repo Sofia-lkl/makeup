@@ -1,8 +1,15 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Range } from "react-range";
 import FilterBarProducts from "./filterBarProducts";
-import { useFilter } from "../context/ProductsFilterContext/ProductsFilterContext";
-
+import { RootState } from "../products/cart/contextCart/store/rootReducer";
+import {
+  setSearchTerm,
+  setPriceRange,
+  setSelectedColor,
+  setSelectedMarca,
+  setActiveFilter,
+} from "../context/ProductsFilterContext/filterSlice";
 import {
   thumbStyles,
   FilterSelect,
@@ -16,22 +23,22 @@ import {
 } from "./sideBarStyle";
 
 const CombinedFilterComponent: React.FC = () => {
-  const {
-    searchTerm,
-    setSearchTerm,
-    priceRange,
-    setPriceRange,
-    selectedColor,
-    setSelectedColor,
-    selectedMarca,
-    setSelectedMarca,
-    activeFilter,
-    setActiveFilter,
-  } = useFilter();
+  const dispatch = useDispatch();
+  const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
+  const priceRange = useSelector((state: RootState) => state.filter.priceRange);
+  const selectedColor = useSelector(
+    (state: RootState) => state.filter.selectedColor
+  );
+  const selectedMarca = useSelector(
+    (state: RootState) => state.filter.selectedMarca
+  );
+  const activeFilter = useSelector(
+    (state: RootState) => state.filter.activeFilter
+  );
 
   const handleRangeChange = (newRange: number[]) => {
     if (newRange.length === 2) {
-      setPriceRange(newRange as [number, number]);
+      dispatch(setPriceRange(newRange as [number, number]));
     }
   };
 
@@ -41,9 +48,9 @@ const CombinedFilterComponent: React.FC = () => {
 
       <FilterBarProducts
         searchTerm={searchTerm}
-        onSearchChange={(e) => setSearchTerm(e.target.value)}
+        onSearchChange={(newTerm) => dispatch(setSearchTerm(newTerm))}
         activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
+        onFilterChange={(filter) => dispatch(setActiveFilter(filter))}
       />
 
       <FilterSection>
@@ -56,36 +63,28 @@ const CombinedFilterComponent: React.FC = () => {
               max={1000}
               values={priceRange}
               onChange={handleRangeChange}
-              renderTrack={({ props, children }) => {
-                const {  ...restProps } = props;
-                return (
-                  <PriceRangeTrack key="range" {...restProps}>
-                    {children}
-                  </PriceRangeTrack>
-                );
-              }}
-              renderThumb={({ props }) => {
-                const { key, ...restProps } = props;
-                return (
-                  <div
-                    key={key}
-                    {...restProps}
-                    style={{ ...restProps.style, ...thumbStyles }}
-                  />
-                );
-              }}
+              renderTrack={({ props, children }) => (
+                <PriceRangeTrack {...props}>{children}</PriceRangeTrack>
+              )}
+              renderThumb={({ props }) => (
+                <div {...props} style={{ ...props.style, ...thumbStyles }} />
+              )}
             />
           </PriceRangeBar>
           <PriceRangeInputs>
             <PriceRangeInput
               type="number"
               value={priceRange[0]}
-              onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
+              onChange={(e) =>
+                dispatch(setPriceRange([+e.target.value, priceRange[1]]))
+              }
             />
             <PriceRangeInput
               type="number"
               value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
+              onChange={(e) =>
+                dispatch(setPriceRange([priceRange[0], +e.target.value]))
+              }
             />
           </PriceRangeInputs>
         </PriceRangeContainer>
@@ -95,7 +94,7 @@ const CombinedFilterComponent: React.FC = () => {
         <label>Color</label>
         <FilterSelect
           value={selectedColor || ""}
-          onChange={(e) => setSelectedColor(e.target.value)}
+          onChange={(e) => dispatch(setSelectedColor(e.target.value))}
         >
           <option value="">Selecciona un color</option>
           <option value="Rojo">Rojo</option>
@@ -108,7 +107,7 @@ const CombinedFilterComponent: React.FC = () => {
         <label>Marca</label>
         <FilterSelect
           value={selectedMarca || ""}
-          onChange={(e) => setSelectedMarca(e.target.value)}
+          onChange={(e) => dispatch(setSelectedMarca(e.target.value))}
         >
           <option value="">Selecciona una marca</option>
           <option value="Marca1">Marca1</option>

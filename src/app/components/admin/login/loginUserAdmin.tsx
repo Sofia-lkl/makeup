@@ -1,39 +1,105 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import "./stylesLogin.css";
 import { BeatLoader } from "react-spinners";
-import { UnifiedContext, useUnified } from "../context/contexto";
+import {
+  useAppSelector,
+  useAppDispatch,
+} from "../../products/products/cart/contextCart/store/appHooks";
+import { RootState } from "../../products/products/cart/contextCart/store/rootReducer";
+import {
+  loginUser,
+  registerUser,
+  verifyToken,
+} from "../context/authSlice/authThunks"; 
+import {
+  openLoginModal,
+  closeLoginModal,
+} from "../../admin/context/loginModalSlice/loginModalSlice";
+import {
+  setLoginMessage,
+  setLoginError,
+  clearMessages,
+} from "../context/messagesSlice/messagesSlice";
 
 const AdminLogin = () => {
-  const {
-    isLoginModalOpen,
-    setIsLoginModalOpen,
-    isLoading,
-    loginMessage,
-    handleSubmitSignUp,
-    handleSubmitSignIn,
-    loginError,
-  } = useUnified();
+  const dispatch = useAppDispatch();
+  const isLoginModalOpen = useAppSelector(
+    (state: RootState) => state.loginModal.isLoginModalOpen
+  );
+  const isLoading = useAppSelector((state: RootState) => state.auth.isLoading);
+  const loginMessage = useAppSelector(
+    (state: RootState) => state.messages.loginMessage
+  );
+  const loginError = useAppSelector(
+    (state: RootState) => state.messages.loginError
+  );
 
   const [isSignUp, setIsSignUp] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  // Controladores de eventos
   const handleSignInClick = () => setIsSignUp(false);
   const handleSignUpClick = () => setIsSignUp(true);
 
-  // Efectos secundarios
   useEffect(() => {
-    if (loginMessage === "Registro exitoso") {
-      setIsSignUp(false); // Cambia a la vista de inicio de sesión
-    }
-    if (loginMessage === "Inicio de sesión exitoso") {
-      setTimeout(() => setIsLoginModalOpen(false), 2000); // Cierra el modal
-    }
-  }, [loginMessage, setIsLoginModalOpen]);
+    // Al montar el componente, verifica si hay un token válido en localStorage
+    dispatch(verifyToken())
+      .then((action) => {
+        if (verifyToken.fulfilled.match(action)) {
+          dispatch(setLoginMessage("Usuario autenticado con éxito"));
+        }
+      })
+      .catch(() => {
+        dispatch(setLoginError("Error al verificar la autenticación"));
+      });
+  }, [dispatch]);
 
-  // Salida condicional
+  useEffect(() => {
+    if (loginMessage) {
+      if (loginMessage === "Registro exitoso") {
+        setIsSignUp(false);
+      }
+      if (loginMessage === "Inicio de sesión exitoso") {
+        setTimeout(() => dispatch(closeLoginModal()), 2000);
+      }
+      setTimeout(() => dispatch(clearMessages()), 3000);
+    }
+  }, [loginMessage, dispatch]);
+
+  const handleSubmitSignIn = (username: string, password: string) => {
+    dispatch(loginUser({ username, password }))
+      .then((action) => {
+        if (loginUser.fulfilled.match(action)) {
+          dispatch(setLoginMessage("Inicio de sesión exitoso"));
+        }
+      })
+      .catch(() => {
+        dispatch(setLoginError("Error al iniciar sesión"));
+      });
+  };
+
+  const handleSubmitSignUp = (
+    username: string,
+    password: string,
+    email: string
+  ) => {
+    dispatch(registerUser({ username, password, email }))
+      .then((action) => {
+        if (registerUser.fulfilled.match(action)) {
+          dispatch(setLoginMessage("Registro exitoso"));
+          dispatch(setLoginError(null));
+        }
+      })
+      .catch((error) => {
+        dispatch(
+          setLoginError(
+            "Error desconocido al registrarse. Por favor, intente nuevamente."
+          )
+        );
+      });
+  };
+
   if (!isLoginModalOpen) return null;
 
   // Renderizado del componente

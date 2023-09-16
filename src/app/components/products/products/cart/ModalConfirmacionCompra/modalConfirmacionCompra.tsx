@@ -3,16 +3,9 @@ import { Modal, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  ModalContent,
-  Total,
-  Button,
-  ProductRow,
-  ProductName,
-  ProductPrice,
-  ProductQuantity,
-} from "./styleModalConfirmacion/modalConfirmacionCompraStyles";
-import { CartState } from "../contextCart/contextCart";
+import { ModalContent, Total, Button, ProductRow, ProductName, ProductPrice, ProductQuantity } from "./styleModalConfirmacion/modalConfirmacionCompraStyles";
+import { useAppDispatch, useAppSelector } from '../contextCart/store/appHooks'; 
+import { incrementItem, decrementItem, removeItem } from '../contextCart/cart/cartSlice'; 
 import { Stepper } from "./stepper";
 import DatosUsuario from "./datosUsuario";
 import SeleccionEnvio from "./seleccionEnvio";
@@ -20,19 +13,14 @@ import PasarelaPago from "./pasarelaPago";
 
 interface ModalConfirmacionCompraProps {
   isOpen: boolean;
-  productos: CartState;
   onClose: () => void;
   onContinuar: () => void;
-  dispatch?: React.Dispatch<any>;
 }
 
-const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
-  isOpen,
-  productos,
-  onClose,
-  onContinuar,
-  dispatch,
-}) => {
+const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({ isOpen, onClose, onContinuar }) => {
+  const dispatch = useAppDispatch();
+  const productos = useAppSelector(state => state.cart); // Asume que tienes un reducer llamado 'cart'
+
   const [currentStep, setCurrentStep] = useState(1);
   const [ordenId, setOrdenId] = useState<string | null>(null);
   const [datosUsuario, setDatosUsuario] = useState<any | null>(null);
@@ -50,23 +38,12 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
     }
   }, [isOpen]);
 
-  const incrementar = (id: number) => {
-    if (dispatch) {
-      dispatch({ type: "INCREMENT_ITEM", id });
-    }
-  };
+  const incrementar = (id: number) => dispatch(incrementItem(id));
+  const decrementar = (id: number) => dispatch(decrementItem(id));
+  const eliminar = (id: number) => dispatch(removeItem(id));
+  
+  
 
-  const decrementar = (id: number) => {
-    if (dispatch) {
-      dispatch({ type: "DECREMENT_ITEM", id });
-    }
-  };
-
-  const eliminar = (id: number) => {
-    if (dispatch) {
-      dispatch({ type: "REMOVE_ITEM", id });
-    }
-  };
 
   const handleContinuar = () => {
     if (currentStep < 4) {
@@ -75,6 +52,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
       onContinuar();
     }
   };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -134,7 +112,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setCurrentStep(currentStep + 1)}
+                onClick={handleContinuar}
               >
                 Continuar
               </Button>
@@ -166,6 +144,9 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
               setDatosEnvio(datos);
               setCurrentStep(currentStep + 1);
             }}
+            onBack={() => {
+              setCurrentStep(currentStep - 1);
+            }}
           />
         );
       case 4:
@@ -176,7 +157,6 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
             total={total}
             datosUsuario={datosUsuario}
             datosEnvio={datosEnvio}
-            productos={productos}
             ordenId={ordenId}
           />
         );

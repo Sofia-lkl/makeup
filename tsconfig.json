@@ -28,10 +28,10 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/components/admin/adminPanel/adminPanel.jsx",
-    "src/app/components/admin/adminPanel/adminPanel.jsx",
+    "src/app/components/admin/adminPanel/adminPanel.tsx",
+    "src/app/components/admin/adminPanel/adminPanel.tsx",
     "src/app/components/admin/loginModal.jsx",
     "src/app/components/admin/loginModal.jsx"
-, "src/app/components/admin/productContext/ProductContext.jsx"  ],
+, "src/app/components/admin/productContext/ProductManagementContext.jsx", "src/app/components/admin/modalPanel/modalPanel.jsx", "src/app/components/admin/productForm/productFrom.tsx", "src/app/components/admin/productForm/productFrom.Jsx"  ],
   "exclude": ["node_modules"]
 }

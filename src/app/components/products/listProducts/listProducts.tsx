@@ -1,40 +1,68 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useModal } from "../context/ModalContext/ModalContext";
-import { useFilter } from "../context/ProductsFilterContext/ProductsFilterContext";
+import io from "socket.io-client";
+import { useDispatch, useSelector } from "react-redux";
 import ProductPreview from "../previewProducts/previewProductos";
 import ListProductModal from "./listProductsModal";
 
-const ParentComponent: React.FC = () => {
-  const { isModalOpen, openModal, closeModal } = useModal();
-  const {
-    searchTerm,
-    setSearchTerm,
-    priceRange,
-    setPriceRange,
-    activeFilter,
-    filterProducts,
-  } = useFilter();
+import { openModal } from "../context/ModalContext/modalSlice";
+import { RootState } from "../products/cart/contextCart/store/rootReducer";
+import { ProductType } from "../context/ProductsFilterContext/filterSlice";
 
-  const [productList, setProductList] = useState([]); // Estado para almacenar todos los productos del backend
-  const [highlightedProductList, setHighlightedProductList] = useState([]); // Estado para almacenar productos destacados
+const ListProduct: React.FC = () => {
+  const dispatch = useDispatch();
+  const isModalOpen = useSelector((state: RootState) => state.modal.isOpen);
+  const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
+  const priceRange = useSelector((state: RootState) => state.filter.priceRange);
+  const selectedColor = useSelector(
+    (state: RootState) => state.filter.selectedColor
+  );
+  const selectedMarca = useSelector(
+    (state: RootState) => state.filter.selectedMarca
+  );
+
+  const [productList, setProductList] = useState<ProductType[]>([]);
+  const [highlightedProductList, setHighlightedProductList] = useState<
+    ProductType[]
+  >([]);
 
   useEffect(() => {
-    // Llamada al backend para obtener productos
+    const socket = io("http://localhost:3002");
+    socket.on("stock-updated", fetchProducts);
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const fetchProducts = () => {
     axios
       .get("http://localhost:3002/api/products")
       .then((response) => {
         setProductList(response.data);
-        setHighlightedProductList(response.data.slice(0, 3)); // Guarda los primeros 3 productos como destacados
+        setHighlightedProductList(response.data.slice(0, 3));
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
       });
-  }, []); // Dependencias vacías para que solo se ejecute una vez
+  };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  useEffect(fetchProducts, []);
+
+  const filterProducts = (products: ProductType[]): ProductType[] => {
+    return products
+      .filter(
+        (product) =>
+          product.precio >= priceRange[0] && product.precio <= priceRange[1]
+      )
+      .filter((product) =>
+        selectedColor ? product.color === selectedColor : true
+      )
+      .filter((product) =>
+        selectedMarca ? product.marca === selectedMarca : true
+      )
+      .filter((product) =>
+        product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
   };
 
   const filteredProductList = filterProducts(productList);
@@ -42,23 +70,16 @@ const ParentComponent: React.FC = () => {
   return (
     <>
       <ProductPreview
-        onProductClick={openModal}
-        productList={filteredProductList} 
+        onProductClick={() => dispatch(openModal())}
+        productList={filteredProductList}
         isModalOpen={isModalOpen}
       />
-
       <ListProductModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        productList={filteredProductList} 
-        highlightedList={highlightedProductList} 
-        searchTerm={searchTerm}
-        onSearchChange={handleSearchChange}
-        priceRange={priceRange}
-        onPriceRangeChange={setPriceRange}
+        productList={filteredProductList}
+        highlightedList={highlightedProductList}
       />
     </>
   );
 };
 
-export default ParentComponent;
+export default ListProduct;
