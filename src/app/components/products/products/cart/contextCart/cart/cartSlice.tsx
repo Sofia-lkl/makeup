@@ -1,5 +1,3 @@
-// cartSlice.tsx
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "../productManagement/productManagementSlice";
 
@@ -23,10 +21,22 @@ const cartSlice = createSlice({
     syncCartWithUpdatedStock: (state, action: PayloadAction<Product[]>) => {
       action.payload.forEach((updatedProduct) => {
         const itemInCart = state.find((item) => item.id === updatedProduct.id);
-        if (itemInCart && typeof updatedProduct.stock === "number") {
-          itemInCart.stock = updatedProduct.stock;
-          if (itemInCart.cantidad > itemInCart.stock) {
-            itemInCart.cantidad = itemInCart.stock;
+        if (itemInCart) {
+          if (updatedProduct.nombre) {
+            itemInCart.nombre = updatedProduct.nombre;
+          }
+          if (updatedProduct.imagen_url) {
+            itemInCart.imagen_url = updatedProduct.imagen_url;
+          }
+          if (typeof updatedProduct.precio === "number") {
+            itemInCart.precio = updatedProduct.precio;
+          }
+          if (typeof updatedProduct.stock === "number") {
+            itemInCart.stock = updatedProduct.stock;
+            // Si la cantidad en el carrito supera el stock actualizado, ajusta la cantidad
+            if (itemInCart.cantidad > itemInCart.stock) {
+              itemInCart.cantidad = itemInCart.stock;
+            }
           }
         }
       });
@@ -42,9 +52,12 @@ const cartSlice = createSlice({
           state[index].cantidad += 1;
         }
       } else {
-        state.push(action.payload);
+        if (action.payload.stock > 0) {
+          state.push(action.payload);
+        }
       }
     },
+
     incrementItem: (state, action: PayloadAction<number>) => {
       const existingItem = state.find((item) => item.id === action.payload);
       if (existingItem && existingItem.cantidad < existingItem.stock) {

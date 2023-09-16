@@ -28,7 +28,13 @@ const ListProduct: React.FC = () => {
 
   useEffect(() => {
     const socket = io("http://localhost:3002");
-    socket.on("stock-updated", fetchProducts);
+    socket.on("product-updated", () => {
+      console.log("product-updated event received");
+      fetchProducts();
+    });
+    socket.on("product-added", fetchProducts);
+    socket.on("product-edited", fetchProducts);
+    socket.on("product-deleted", fetchProducts);
     return () => {
       socket.disconnect();
     };

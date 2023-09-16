@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import {
@@ -28,6 +28,7 @@ import {
   SectionTitle,
   SectionDescription,
 } from "./highlightedProductsStyles";
+
 import { ProductType } from "../context/ProductsFilterContext/filterSlice";
 
 const getProductLink = (productName: string) => `/products/${productName}`;
@@ -94,6 +95,11 @@ const Products: React.FC<{
   activeFilter,
   onFilterChange,
 }) => {
+
+  useEffect(() => {
+    console.log("Updated product list received:", productList);
+  }, [productList]);
+
   const displayedHighlightedProducts =
     highlightedProductList || productList.slice(0, 3);
 
