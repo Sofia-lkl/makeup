@@ -1,6 +1,5 @@
 import React from "react";
 import Products from "../products/products";
-import { SidebarStyled } from "../bar/sideBarStyle";
 import {
   StyledModal,
   ViewAllButton,
@@ -31,9 +30,17 @@ const ListProductModal: React.FC<ModalProps> = ({
   );
 
   return (
-    <StyledModal open={isOpen}>
+    <StyledModal
+      open={isOpen}
+      onClose={(event, reason) => {
+        if (reason === "backdropClick") {
+          dispatch(closeModal());
+        }
+      }}
+    >
       <ModalContent>
         <CloseButton onClick={() => dispatch(closeModal())}>X</CloseButton>
+        <CombinedFilterComponent />
         <ViewAllButton
           variant="contained"
           size="large"
@@ -42,9 +49,6 @@ const ListProductModal: React.FC<ModalProps> = ({
           No ver más productos
         </ViewAllButton>
         <ModalBody>
-          <SidebarStyled>
-            <CombinedFilterComponent />
-          </SidebarStyled>
           <ProductListStyled>
             <Products type="highlighted" productList={highlightedList} />
             <Products

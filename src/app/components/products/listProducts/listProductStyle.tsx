@@ -2,22 +2,23 @@ import styled from "styled-components";
 import { Button } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
+export const colors = {
+  neutralLight: "#FAF3E0",
+  pinkDark: "#FF69B4",
+  modalBackground: "rgba(0, 0, 0, 0.6)", // Fondo oscuro y semi-transparente
+};
+
 export const StyledModal = styled(Modal)`
   display: flex;
   align-items: center;
   justify-content: center;
-  
-
 `;
-export const colors = {
-  neutralLight: "#FAF3E0",
-  pinkDark: "#FF69B4",
-};
 
 export const ViewAllButton = styled(Button)`
-  margin: 20px auto; // Centra el botón y le da un margen arriba y abajo
+  margin: 20px auto;
   background-color: ${colors.pinkDark};
   color: white;
+
   &:hover {
     background-color: ${colors.pinkDark};
     opacity: 0.9;
@@ -25,42 +26,56 @@ export const ViewAllButton = styled(Button)`
 `;
 
 export const ModalContent = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  
-  overflow-y: auto; // Para hacer scroll si el contenido es muy extenso
-  border-radius: 20px;  // Agrega bordes redondeados para un mejor aspecto
-  padding: 20px;  
+  position: relative;
+  background-color: ${colors.modalBackground}; 
+  overflow-y: auto; 
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 90vw; 
+  max-height: 80vh; 
+  width: 1200px; 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
 `;
+
 export const CloseButton = styled.button`
   position: absolute;
-  top: 20px; // Ajusta según necesites
-  right: 20px; // Ajusta según necesites
+  top: 10px;
+  right: 10px;
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #333; // Color oscuro para el "X"
+  color: white; 
+  border-radius: 50%; 
+  width: 30px; 
+  height: 30px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.2
+    ); 
+  }
 `;
-
-
-
-
 
 export const ModalBody = styled.div`
   display: flex;
+  background-color: white; 
+  border-radius: 15px; 
+  overflow: hidden; 
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); 
 `;
 
-
-
 export const ProductListStyled = styled.div`
-  flex: 1; // Asegura que ocupa todo el espacio disponible
-  overflow-y: auto; // Añade un scrollbar si es necesario
-  padding: 20px; // Espacio alrededor de los productos
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
 `;
 
 export const ResponsiveContainer = styled.div`

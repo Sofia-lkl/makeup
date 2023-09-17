@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const colors = {
   neutralLight: "#FAF3E0",
-  borderGray: "#B0B0B0", 
+  borderGray: "#B0B0B0",
   pinkLight: "#FFD1DC",
   pinkDark: "#FF69B4",
   purpleLight: "#D8BFD8",
@@ -20,16 +20,16 @@ const inactiveColor = "#E0E0E0";
 const hoverColor = "#FFB6C1";
 
 export const SidebarTitle = styled.h2`
-  font-size: 1em; // Disminución del tamaño de fuente
+  font-size: 1em;
   color: ${colors.text};
-  margin-bottom: 10px; // Reducción del margen
+  margin-bottom: 10px; 
   text-align: center;
 `;
 export const StyledFilterBar = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px; // Reducción del espacio entre elementos
-  padding: 10px; // Reducción del padding
+  gap: 8px; 
+  padding: 10px; 
   align-items: center;
   background-color: #fafafa;
   box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
@@ -37,10 +37,10 @@ export const StyledFilterBar = styled.div`
 
 export const FilterInput = styled.input`
   width: 100%;
-  padding: 8px 10px; // Reducción del padding
+  padding: 8px 10px; 
   border: 2px solid ${colors.borderGray};
-  border-radius: 15px; // Reducción del border radius
-  font-size: 0.9em; // Reducción del tamaño de fuente
+  border-radius: 15px; 
+  font-size: 0.9em; 
   outline: none;
   color: ${colors.text};
   transition: border-color 0.3s, box-shadow 0.3s;
@@ -60,18 +60,18 @@ export const FilterInput = styled.input`
 `;
 export const FilterButtons = styled.div`
   display: flex;
-  gap: 6px; // Reducción del espacio entre botones
+  gap: 6px; 
   width: 90%;
   justify-content: center;
 
   button {
     display: flex;
     align-items: center;
-    gap: 5px; // Reducción del espacio entre ícono y texto
-    padding: 8px 12px; // Reducción del padding
+    gap: 5px; 
+    padding: 8px 12px; 
     border: none;
-    border-radius: 15px; // Reducción del border radius
-    font-size: 0.9em; // Reducción del tamaño de fuente
+    border-radius: 15px; 
+    font-size: 0.9em; 
     cursor: pointer;
     background-color: ${colors.neutralLight};
     color: white;
@@ -90,27 +90,33 @@ export const FilterButtons = styled.div`
 `;
 
 export const FilterSection = styled.div`
-  width: 90%;
-  margin-top: 15px; // Reducción del margen
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
 
-  label {
-    display: block;
-    margin-bottom: 5px; // Reducción del margen
-    font-weight: bold;
-    font-size: 0.9em; // Reducción del tamaño de fuente
-    color: ${colors.text};
-    text-align: left;
+  .price-section,
+  .color-section,
+  .brand-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 8px;
+    label {
+      margin-bottom: 8px; 
+    }
   }
 `;
+
 export const FilterSelect = styled.select`
-  width: 100%;
-  padding: 8px; // Reducción del padding
+  width: 60%;
+  padding: 8px;
   border: 2px solid ${colors.borderGray};
-  border-radius: 15px; // Reducción del border radius
-  font-size: 0.9em; // Reducción del tamaño de fuente
+  border-radius: 15px;
+  font-size: 0.9em;
   outline: none;
   color: ${colors.text};
   background-color: white;
@@ -127,26 +133,6 @@ export const FilterSelect = styled.select`
   &:active,
   &:focus {
     transform: scale(1.02);
-  }
-`;
-
-export const SidebarStyled = styled.div`
-  width: 16%; // Establecido al 15% como solicitado
-  height: 60vh;
-  padding: 0.7rem; // Reducción del padding
-  background-color: #fafafa;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  transition: box-shadow 0.3s, transform 0.3s;
-
-  position: fixed;
-  top: 19%;
-  left: 3%;
-  &:hover {
-    box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(
-      -2px
-    ); // Efecto de "elevación" al pasar el ratón por encima
   }
 `;
 
@@ -175,21 +161,20 @@ export const FilterOption = styled.button`
 /* rango de price */
 
 // Colores de tema para el rango de precio
-const primaryColor = "#4CAF50"; // Color verde para el rango activo
-const secondaryColor = "#ccc"; // Color gris para el rango inactivo
-const thumbColor = "#ffffff"; // Color del pulgar (círculo que se arrastra)
-const thumbBorder = "#4CAF50"; // Color del borde del pulgar
+const primaryColor = "#4CAF50"; 
+const secondaryColor = "#ccc"; 
+const thumbColor = "#ffffff"; 
+const thumbBorder = "#4CAF50"; 
 
 export const PriceRangeContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 10px;
-  background-color: #f3f3f3;
+  flex-direction: row; /* Cambio a row */
+  align-items: center;
+  padding: 5px;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
 `;
-
 export const PriceRangeBar = styled.div`
   width: 100%;
   margin: 10px 0;
@@ -206,7 +191,7 @@ export const PriceRangeInputs = styled.div`
 `;
 
 export const PriceRangeInput = styled.input`
-  width: 40%; // Reducido para que los inputs no ocupen toda la anchura
+  width: 40%; 
   padding: 10px;
   border: 2px solid ${primaryColor};
   border-radius: 4px;
@@ -235,4 +220,12 @@ export const PriceRangeTrack = styled.div`
   height: 6px;
   background: ${secondaryColor};
   border-radius: 5px;
+`;
+export const StickyFilterContainer = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #fafafa; 
+  padding: 10px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
 `;

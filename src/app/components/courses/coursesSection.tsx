@@ -4,14 +4,13 @@ import StyledCard from "../courses/courses";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 const colors = {
-  neutralLight: "#FAF3E0",
-  darkerGray: "#808080",
-  pinkLight: "#FFD1DC",
-  pinkDark: "#B03468",  
-  gold: "#D4AF37",  
-  goldd: "black",
-  backgroundColor: "#FDF2F5",  
+  neutralLight: "#F5EAE0",
+  darkerGray: "#5C5C5C",
+  gradientPink: "linear-gradient(45deg, #FFB6C1, #FF69B4)",  // Gradiente rosa
+  gold: "#FFD700",
+  backgroundColor: "#FFF0F5",
 };
+
 const containerStyles: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
@@ -30,22 +29,25 @@ const CoursesSection: React.FC<CoursesSectionProps> = ({ style, children }) => {
   return <div style={{ ...containerStyles, ...style }}>{children}</div>;
 };
 const CoursesIntroContainer = styled.div`
-  background-color: ${colors.backgroundColor};  // Changed to light background color
-  padding: 4rem 0;
-  border-radius: 15px;
+  background-color: ${colors.backgroundColor};
+  padding: 4rem 2rem;
   position: relative;
   z-index: 1;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); 
 `;
 
-
 const AnimatedIntroTitle = styled(motion.h1)`
-  font-size: 2.8em;
-  color: ${colors.pinkDark};
+  font-size: 3em;
+  background: ${colors.gradientPink};  // Aplicamos el gradiente al título
+  color: white;  // Cambiamos el color del texto a blanco para contrastar con el gradiente
+  padding: 0.2em 0;  // Añadimos un poco de padding para que el gradiente se note más
   margin-bottom: 1rem;
   font-weight: bold;
   display: flex;
   justify-content: center;
-  text-shadow: none;  // Removed text-shadow for a cleaner look
+  text-align: center;
+  -webkit-background-clip: text;  // Esta propiedad y la siguiente hacen que el gradiente se aplique solo al texto
+  color: transparent;
 `;
 
 const AnimatedIntroDescription = styled(motion.p)`
@@ -54,8 +56,6 @@ const AnimatedIntroDescription = styled(motion.p)`
   color: ${colors.darkerGray};
   max-width: 800px;
   margin: 0 auto 2rem;
-  background-color: transparent;
-  text-shadow: none;  // Removed text-shadow for a cleaner look
 `;
 
 /* const StyledCard = styled.div`

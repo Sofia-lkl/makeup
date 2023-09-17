@@ -42,7 +42,7 @@ const StyledCard: React.FC<StyledCardProps> = ({
 
         // Calculate the relative position of the cursor within the card
         const offsetX = (event.pageX - centerX) / (rect.width / 2);
-        const offsetY = (event.pageY - centerY) / (rect.height / 2);
+        const offsetY = (event.pageY - centerY) / (rect.height * 1);
 
         // Convert the offset values to rotation values
         const rotateX = -angle * offsetY ; // Multiplicado por 0.5 para reducir su impacto
