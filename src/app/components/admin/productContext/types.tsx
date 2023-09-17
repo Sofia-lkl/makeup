@@ -1,4 +1,6 @@
+
 export interface Product {
+    marca: string;
     imagen_url: string;
     id: number;
     nombre: string;

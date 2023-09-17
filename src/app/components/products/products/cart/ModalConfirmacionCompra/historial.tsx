@@ -122,21 +122,24 @@ const Historial: React.FC = () => {
                   </Button>
                   {showUploadForOrder === order.id && (
                     <CargarComprobante
-                      orderId={order.id.toString()}
-                      onUploadSuccess={(data) => {
-                        setUploadMessage((prevMessages) => ({
-                          ...prevMessages,
-                          [order.id]: "Comprobante cargado con éxito!",
-                        }));
-                      }}
-                      onUploadError={(error) => {
-                        setUploadMessage((prevMessages) => ({
-                          ...prevMessages,
-                          [order.id]:
-                            "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
-                        }));
-                      }}
-                    />
+                    orderId={order.id.toString()}
+                    onUploadSuccess={(data) => {
+                      // Mostrar el mensaje de éxito
+                      setUploadMessage((prevMessages) => ({
+                        ...prevMessages,
+                        [order.id]: "Comprobante cargado con éxito!",
+                      }));
+                  
+                      // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
+                      dispatch(fetchUserOrders());
+                    }}
+                    onUploadError={(error) => {
+                      setUploadMessage((prevMessages) => ({
+                        ...prevMessages,
+                        [order.id]: "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
+                      }));
+                    }}
+                  />
                   )}
                 </OrderSection>
               )}

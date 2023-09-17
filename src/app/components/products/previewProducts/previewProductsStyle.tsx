@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import { Button } from "@mui/material";
+
 export const colors = {
   neutralLight: "#FAF3E0",
   pinkDark: "#FF69B4",
@@ -11,17 +12,25 @@ export const PreviewContainer = styled.div`
   overflow: hidden;
   background-color: ${colors.neutralLight};
   padding: 4rem 0;
+  font-family: "Arial", sans-serif;
 `;
 
-export const ProductSlide = styled(motion.div)`
+export const ProductSlide = styled(motion.div)<{ imageUrl: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 400px;
-  position: relative; // Se necesita para posicionar absolutamente los hijos
+  position: relative;
+  background-image: url(${(props) => props.imageUrl});
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.05); 
+  }
 
   &::before {
-    // Añadir una capa de color negro con cierta transparencia
     content: "";
     position: absolute;
     top: 0;
@@ -29,41 +38,101 @@ export const ProductSlide = styled(motion.div)`
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1; // Asegurar que esté por encima de la imagen, pero debajo del contenido
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute; // Posicionar absolutamente la imagen para que ocupe todo el espacio
-    top: 0;
-    left: 0;
-    z-index: 0; // Asegurar que la imagen esté detrás del pseudoelemento y del contenido
+    z-index: 1;
   }
 `;
 
 export const ViewAllButton = styled(Button)`
   position: absolute;
   bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 43%;
+  transform: translateY(-50%);
   background-color: ${colors.pinkDark};
   color: white;
+  transition: transform 0.3s, background-color 0.3s;
+
   &:hover {
+    transform: translateX(-5px); 
     background-color: ${colors.pinkDark};
     opacity: 0.9;
   }
 `;
+export const ProductFlowAnimation = keyframes`
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+`;
+
+export const ProductFlowContainer = styled.div`
+  position: absolute;
+  top: 23%;  
+  left: 0;
+  transform: translateY(50%);
+  width: 250%;
+  height: 250%;
+
+  display: flex;
+  overflow-x: hidden;
+  animation: ${ProductFlowAnimation} 45s linear infinite;
+`;
+
 export const ProductDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 2;
-  width: 50%; // O el tamaño que desees para el contenedor del producto
-  padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.8); // Fondo blanco semi-transparente
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  height: 250px;
+  padding: 1.5rem;
+  margin-right: 60px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  
+  transition: width 0.3s, height 0.3s, border-radius 0.3s, transform 0.3s;
+  transform-origin: center center;  
+
+  &:hover {
+    width: 370px;
+    height: 300px;
+    border-radius: 50px;
+    transform: scale(1.1);
+  }
+  img {
+    max-width: 100%;
+    max-height: 70%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  h4, p {
+    margin: 0;
+    min-height: 25px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+  }
+
+  h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #555;
+  }
 `;
