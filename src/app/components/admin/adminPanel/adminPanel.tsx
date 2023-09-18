@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import cookie from "cookie";
-import ProductForm from "../productForm/productFrom.tsx";
+import ProductForm from "../productForm/productFrom";
 import ProductTable from "../productTable/productTable";
 import { useRouter } from "next/router";
 import { Button, StyledH1, ButtonContainer, Message } from "./adminPanelStyled";
