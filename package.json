@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/cookie": "^0.5.2",
     "@types/node": "^20.6.2",
-    "@types/react": "^18.2.22",
+    "@types/react": "^17.0.0",
     "@types/react-slick": "^0.23.10",
     "@types/redux-thunk": "^2.1.32",
     "babel-plugin-styled-components": "^2.1.4"
