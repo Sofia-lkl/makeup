@@ -34,18 +34,18 @@ align-items: center;
 
 const CategoryTitle = styled.h2`
 font-family: 'Roboto', sans-serif;
-font-size: 42px; // Aumentamos el tamaño
+font-size: 42px; 
 color: ${colors.darkerGray};
-margin-bottom: 25px; // Aumentamos el espaciado
+margin-bottom: 25px; 
 `;
   
   const CategoryDescription = styled.p`
   font-family: 'Roboto', sans-serif;
   text-align: center;
   color: ${colors.pinkDark};
-  margin-bottom: 50px; // Aumentamos el espaciado
+  margin-bottom: 50px; 
   max-width: 800px;
-  font-size: 22px; // Aumentamos el tamaño
+  font-size: 22px; 
 `;
   const ServicesGrid = styled.div`
   display: flex;
@@ -57,10 +57,10 @@ margin-bottom: 25px; // Aumentamos el espaciado
 `;
 const ServiceCard = styled.div`
   background: ${colors.purpleLight};
-  padding: 35px; // Aumentamos el padding
+  padding: 35px; 
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); // Sombra más suave
-  margin: 15px; // Aumentamos el margen
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
+  margin: 15px; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,7 +70,7 @@ const ServiceCard = styled.div`
 
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); // Sombra más suave al hacer hover
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); 
   }
 `;
   
@@ -82,8 +82,8 @@ const ServiceCard = styled.div`
   
   const ServiceTitle = styled.h3`
   font-family: 'Roboto', sans-serif;
-  font-size: 26px; // Aumentamos el tamaño
-  margin-bottom: 18px; // Ajustamos el espaciado
+  font-size: 26px; 
+  margin-bottom: 18px; 
   color: ${colors.darkerGray};
 `;
 
@@ -91,23 +91,23 @@ const ServiceDescription = styled.p`
   font-family: 'Roboto', sans-serif;
   text-align: center;
   color: ${colors.pinkLight};
-  margin-bottom: 25px; // Ajustamos el espaciado
-  font-size: 18px; // Aumentamos el tamaño
+  margin-bottom: 25px; 
+  font-size: 18px; 
 `;
 
 const SeeMoreButton = styled.button`
   background: ${colors.pinkDark};
   color: white;
-  padding: 12px 24px; // Ajustamos el padding
+  padding: 12px 24px; 
   border: none;
-  border-radius: 30px; // Ajustamos el borde
+  border-radius: 30px; 
   cursor: pointer;
   transition: background 0.3s, transform 0.3s;
-  font-size: 16px; // Aumentamos el tamaño de letra
+  font-size: 16px; 
 
   &:hover {
-    background: ${colors.gold}; // Cambiamos el color al hacer hover
-    transform: translateY(-3px); // Ajustamos el movimiento al hacer hover
+    background: ${colors.gold}; 
+    transform: translateY(-3px); 
   }
 `;
 

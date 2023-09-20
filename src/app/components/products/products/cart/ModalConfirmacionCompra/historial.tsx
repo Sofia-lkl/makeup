@@ -145,8 +145,7 @@ const Historial: React.FC = () => {
                     .unwrap()
                     .then((result) => {
                       if ("orderId" in result) {
-                        // Aquí es donde despachas la acción para actualizar el stock, 
-                        // pero ahora debes pasarle los detalles de la orden que acabas de eliminar.
+                       
                         const orderToDelete = orders.find(
                           (o) => o.id === result.orderId
                         );

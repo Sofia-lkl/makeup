@@ -17,7 +17,7 @@ import {
   apiGetAllProducts,
 } from "../../products/products/cart/contextCart/productManagement/productManagementSlice";
 interface ProductTableProps {
-  products: any[]; // Puedes cambiar 'any' por el tipo correcto de tus productos
+  products: any[]; 
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ products }) => {

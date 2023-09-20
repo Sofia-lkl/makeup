@@ -19,7 +19,7 @@ interface ModalConfirmacionCompraProps {
 
 const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({ isOpen, onClose, onContinuar }) => {
   const dispatch = useAppDispatch();
-  const productos = useAppSelector(state => state.cart); // Asume que tienes un reducer llamado 'cart'
+  const productos = useAppSelector(state => state.cart);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [ordenId, setOrdenId] = useState<string | null>(null);

@@ -39,10 +39,10 @@ const ProductCard: React.FC<ProductType> = ({
   stock,
   descripcion,
 }) => {
-  const dispatch = useDispatch(); // Hook de Redux
+  const dispatch = useDispatch(); 
 
   const handleAddToCart = () => {
-    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`); // Nuevo log
+    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`); 
 
     const itemToAdd: CartItem = {
       id,

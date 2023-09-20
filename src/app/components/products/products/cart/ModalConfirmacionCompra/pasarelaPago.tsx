@@ -34,7 +34,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   datosEnvio,
   ordenId,
 }) => {
-  const cartItems = useAppSelector((state) => state.cart); // Aquí tomamos los productos desde Redux
+  const cartItems = useAppSelector((state) => state.cart); 
 
   const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,7 +73,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       total,
       datosUsuario,
       datosEnvio,
-      productos: cartItems, // Usamos cartItems en lugar de productos
+      productos: cartItems, 
     };
 
     const userToken = localStorage.getItem("jwt");
@@ -179,7 +179,6 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
         </p>
 
         <div className="payment-actions">
-          {/* Muestra el botón "Pagar con Depósito" solo si showUploadOption es false */}
           {!showUploadOption && (
             <Button
               variant="contained"

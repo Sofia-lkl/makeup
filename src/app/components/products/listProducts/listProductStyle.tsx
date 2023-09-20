@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 export const colors = {
   neutralLight: "#FAF3E0",
   pinkDark: "#FF69B4",
-  modalBackground: "rgba(0, 0, 0, 0.6)", // Fondo oscuro y semi-transparente
+  modalBackground: "rgba(0, 0, 0, 0.6)", 
 };
 
 export const StyledModal = styled(Modal)`

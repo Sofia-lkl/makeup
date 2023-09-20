@@ -5,7 +5,7 @@ import { StyledFilterBar, FilterInput, FilterButtons } from "./sideBarStyle";
 
 interface FilterBarProductsProps {
   searchTerm: string;
-  onSearchChange: (newTerm: string) => void; // Función para informar al componente padre sobre cambios
+  onSearchChange: (newTerm: string) => void; 
   activeFilter: string | undefined;
   onFilterChange: (value: string | undefined) => void;
 }

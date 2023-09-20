@@ -48,7 +48,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    // Al montar el componente, limpiamos ciertos estados:
     setUsername("");
     setPassword("");
     setEmail("");
@@ -56,7 +55,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
   }, [dispatch]);
   const handleModalClose = () => {
     dispatch(closeLoginModal());
-    // Limpiamos el estado aquí también
     setUsername("");
     setPassword("");
     setEmail("");
@@ -70,9 +68,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
         setIsSignUp(false);
       } else if (loginMessage === "Inicio de sesión exitoso") {
         setTimeout(() => {
-          handleModalClose(); // Usamos la función de cierre aquí
-          // Aquí es donde actualizamos isLoading después del delay
-          dispatch(setLoading(false)); // Asumiendo que tienes una acción setLoading
+          handleModalClose(); 
+          dispatch(setLoading(false)); 
         }, 2000);
       }
     }
@@ -83,7 +80,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
     .then((action) => {
       if (loginUser.fulfilled.match(action)) {
         dispatch(setLoginMessage("Inicio de sesión exitoso"));
-        setIsDropdownOpen(false); // Colapsamos el menú aquí
+        setIsDropdownOpen(false);
         if (typeof onSuccess === "function") {
           onSuccess();
         }

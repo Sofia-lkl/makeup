@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
-        buttonRef.current !== event.target // Añade esta línea
+        buttonRef.current !== event.target 
       ) {
         setIsDropdownOpen(false);
       }
@@ -101,10 +101,10 @@ const Navbar: React.FC = () => {
     dispatch(verifyToken())
       .unwrap()
       .then((action) => {
-        // Colapsar el menú desplegable cuando un usuario inicie sesión
+        
         setTimeout(() => {
           setIsDropdownOpen(false);
-        }, 50); // Puedes ajustar este tiempo si es necesario
+        }, 50); 
       })
       .catch(() => {
         dispatch(logout());

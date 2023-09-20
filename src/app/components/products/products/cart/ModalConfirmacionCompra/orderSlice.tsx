@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { updateStockFromOrder } from '../contextCart/cart/cartSlice';/* El módulo ""../contextCart/cart/cartSlice"" no tiene ningún miembro "updateStockFromOrder" exportado. ¿Pretendía usar "import updateStockFromOrder from "../contextCart/cart/cartSlice"" en su lugar?ts(2614)
-import updateStockFromOrder */
+import { updateStockFromOrder } from '../contextCart/cart/cartSlice';
 
 export interface OrderDetail {
   producto_id: number;
@@ -80,8 +79,7 @@ export const addNewOrder = createAsyncThunk(
 
     const data = await response.json();
 
-    // Aquí asumimos que la respuesta del backend incluye los detalles de la orden en el campo 'detalles'
-    // Si la estructura de la respuesta es diferente, ajusta la siguiente línea según corresponda.
+   
     if (data.estado === "Activo" || data.estado === "Aprobado") {
       dispatch(updateStockFromOrder(data.detalles));
     }
@@ -210,7 +208,7 @@ export const deleteOrderById = createAsyncThunk<
     }
 
     const data: { message: string } = await response.json();
-    return { ...data, orderId }; // <-- Incluir orderId en el retorno
+    return { ...data, orderId };
   } catch (error) {
     const err = error as Error;
     return rejectWithValue(err.message || "Error desconocido.");

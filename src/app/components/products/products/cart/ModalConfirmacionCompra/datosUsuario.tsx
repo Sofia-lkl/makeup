@@ -19,7 +19,7 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
   const [email, setEmail] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
 
-  const cart = useSelector((state: RootState) => state.cart); // <-- Aquí accedemos al carrito usando useSelector
+  const cart = useSelector((state: RootState) => state.cart); 
   const userId = useSelector((state: RootState) => state.auth.userId);
   const userToken = localStorage.getItem("jwt");
 

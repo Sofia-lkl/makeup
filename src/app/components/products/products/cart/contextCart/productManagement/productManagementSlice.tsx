@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { syncCartWithUpdatedStock } from "../cart/cartSlice"; // Asegúrate de importarlo desde el path correcto
+import { syncCartWithUpdatedStock } from "../cart/cartSlice"; 
 
 export interface Product {
   id: number;
@@ -38,7 +38,7 @@ export const apiAddProduct = createAsyncThunk(
       console.error("Error al crear el producto:", error);
       dispatch(setError("Error al crear el producto. Por favor, inténtalo de nuevo."));
       dispatch(setLoading(false));
-      throw error; // Esto es para que el thunk sea rechazado y podamos manejarlo en el componente si es necesario
+      throw error; 
     }
   }
 );
@@ -53,14 +53,13 @@ export const apiDeleteProduct = createAsyncThunk(
 
 export const apiEditProduct = createAsyncThunk(
   "productManagement/editProduct",
-  async (updatedProduct: Product, { dispatch }) => { // Añadimos { dispatch }
+  async (updatedProduct: Product, { dispatch }) => { 
     const response = await axios.put(
       `http://localhost:3002/api/products/${updatedProduct.id}`,
       updatedProduct
     );
     console.log("Respuesta del servidor después de editar:", response.data);
     
-    // Después de recibir la respuesta, vamos a sincronizar el carrito con el producto actualizado
     dispatch(syncCartWithUpdatedStock(response.data));
 
     return response.data;
@@ -125,7 +124,7 @@ const productManagementSlice = createSlice({
       })
       .addCase(apiDeleteProduct.rejected, (state, action) => {
         state.error = action.error.message || "Error al eliminar el producto";
-        console.log(action.error); // detalles sobre el error
+        console.log(action.error); 
         
       })
       .addCase(apiEditProduct.fulfilled, (state, action) => {
@@ -142,7 +141,7 @@ const productManagementSlice = createSlice({
             "Producto actualizado en estado:",
             state.allProducts[index]
           );
-          console.log("Estado completo después de editar:", state.allProducts); // Nuevo console.log
+          console.log("Estado completo después de editar:", state.allProducts); 
         } else {
           console.log("Producto no encontrado en el estado.");
         }
@@ -154,7 +153,7 @@ const productManagementSlice = createSlice({
       })
       .addCase(apiGetAllProducts.fulfilled, (state, action) => {
         state.allProducts = action.payload;
-        state.error = null; // Clear any previous errors
+        state.error = null; 
       });
   },
 });

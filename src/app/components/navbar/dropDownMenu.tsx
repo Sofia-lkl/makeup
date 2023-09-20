@@ -6,8 +6,8 @@ interface DropdownMenuProps {
   onLogout: () => void;
   onViewHistory: () => void;
   toggleDropdown: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement>;  // Actualiza esta línea
-  buttonRef: React.RefObject<HTMLButtonElement>; // Y esta
+  dropdownRef: React.RefObject<HTMLDivElement>; 
+  buttonRef: React.RefObject<HTMLButtonElement>; 
 }
 
 
