@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { setLoginError, setLoginMessage } from "../messagesSlice/messagesSlice";
+import { setLoginError, setLoginMessage, setLoading } from "../messagesSlice/messagesSlice";
 
 interface DecodedToken {
   role: string;
@@ -43,6 +43,9 @@ export const verifyToken = createAsyncThunk("auth/verifyToken", async () => {
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials: { username: string; password: string }, thunkAPI) => {
+    // Establecer isLoading a true al inicio de la operación
+    thunkAPI.dispatch(setLoading(true));
+
     try {
       const response = await axios.post(
         "http://localhost:3002/api/login",
@@ -53,12 +56,19 @@ export const loginUser = createAsyncThunk(
 
       const decodedToken = jwt_decode(token) as DecodedToken;
 
+      // Establecer isLoading a false inmediatamente después de recibir el token
+      thunkAPI.dispatch(setLoading(false));
+
       return {
         userRole: decodedToken.role,
         userId: decodedToken.id,
       };
     } catch (error: any) {
       console.error("Login failed:", error);
+      
+      // Establecer isLoading a false en caso de error
+      thunkAPI.dispatch(setLoading(false));
+
       thunkAPI.dispatch(setLoginError(error.message || "Login failed"));
       throw error;
     }
@@ -69,11 +79,21 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData: RegisterUserData, thunkAPI) => {
+    // Establecer isLoading a true al inicio de la operación
+    thunkAPI.dispatch(setLoading(true));
+
     try {
       await axios.post("http://localhost:3002/api/users/register", userData);
+
+      // Establecer isLoading a false una vez que se complete con éxito
+      thunkAPI.dispatch(setLoading(false));
+
       return "Registro exitoso";
     } catch (error: any) {
       console.error("Registration failed:", error);
+
+      // Establecer isLoading a false en caso de error
+      thunkAPI.dispatch(setLoading(false));
 
       let errorMessage = "";
 

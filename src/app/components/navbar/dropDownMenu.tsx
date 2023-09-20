@@ -5,18 +5,28 @@ import { styless } from './navbarStyles';
 interface DropdownMenuProps {
   onLogout: () => void;
   onViewHistory: () => void;
+  toggleDropdown: () => void;
+  dropdownRef: React.RefObject<HTMLDivElement>;  // Actualiza esta línea
+  buttonRef: React.RefObject<HTMLButtonElement>; // Y esta
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onLogout, onViewHistory }) => {
+
+export const DropdownMenu: React.FC<DropdownMenuProps> = ({
+  onLogout,
+  onViewHistory,
+  dropdownRef,
+  buttonRef,
+}) => {
   return (
-    <div style={{...styless.dropdownMenu, border: '1px solid red'}}> {/* Agregamos un borde rojo para debuggear */}
-      <button style={buttonStyle} onClick={onViewHistory}>Ver Órdenes</button> {/* Estilo explícito */}
-      <button style={buttonStyle} onClick={onLogout}>Cerrar Sesión</button> {/* Estilo explícito */}
+    <div ref={dropdownRef} style={{...styless.dropdownMenu, border: '1px solid red'}}>
+      <button style={buttonStyle} onClick={onViewHistory}>Ver Órdenes</button>
+      <button style={buttonStyle} onClick={onLogout}>Cerrar Sesión</button>
     </div>
   );
 };
 
-const buttonStyle = { // Estilo para los botones
+const buttonStyle = {
+  // Estilo para los botones
   backgroundColor: 'white',
   color: 'black',
   border: '1px solid gray',

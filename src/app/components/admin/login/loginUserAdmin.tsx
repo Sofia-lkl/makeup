@@ -19,6 +19,7 @@ import {
   setLoginMessage,
   setLoginError,
   clearMessages,
+  setLoading,
 } from "../context/messagesSlice/messagesSlice";
 import { logout } from "../context/authSlice/authSlice";
 
@@ -27,7 +28,9 @@ const AdminLogin: React.FC = () => {
   const isLoginModalOpen = useAppSelector(
     (state: RootState) => state.loginModal.isLoginModalOpen
   );
-  const isLoading = useAppSelector((state: RootState) => state.auth.isLoading);
+  const isLoading = useAppSelector(
+    (state: RootState) => state.messages.isLoading
+  );
   const loginMessage = useAppSelector(
     (state: RootState) => state.messages.loginMessage
   );
@@ -39,37 +42,36 @@ const AdminLogin: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  useEffect(() => {
+    // Al montar el componente, limpiamos ciertos estados:
+    setUsername("");
+    setPassword("");
+    setEmail("");
+    dispatch(clearMessages());
+  }, [dispatch]);
+  const handleModalClose = () => {
+    dispatch(closeLoginModal());
+    // Limpiamos el estado aquí también
+    setUsername("");
+    setPassword("");
+    setEmail("");
+    dispatch(clearMessages());
+  };
   const handleSignInClick = () => setIsSignUp(false);
   const handleSignUpClick = () => setIsSignUp(true);
-
-  useEffect(() => {
-    dispatch(verifyToken())
-      .then((action) => {
-        if (verifyToken.fulfilled.match(action)) {
-          dispatch(setLoginMessage("Usuario autenticado con éxito"));
-        }
-      })
-      .catch(() => {
-        dispatch(setLoginError("Error al verificar la autenticación"));
-        dispatch(logout());
-      });
-  }, [dispatch]);
-
   useEffect(() => {
     if (loginMessage) {
-      const clearMessageTimeout = setTimeout(
-        () => dispatch(clearMessages()),
-        3000
-      );
-
       if (loginMessage === "Registro exitoso") {
         setIsSignUp(false);
       } else if (loginMessage === "Inicio de sesión exitoso") {
-        setTimeout(() => dispatch(closeLoginModal()), 2000);
+        setTimeout(() => {
+          handleModalClose(); // Usamos la función de cierre aquí
+          // Aquí es donde actualizamos isLoading después del delay
+          dispatch(setLoading(false)); // Asumiendo que tienes una acción setLoading
+        }, 2000);
       }
-
-      return () => clearTimeout(clearMessageTimeout);
     }
   }, [loginMessage, dispatch]);
 
@@ -78,6 +80,7 @@ const AdminLogin: React.FC = () => {
       .then((action) => {
         if (loginUser.fulfilled.match(action)) {
           dispatch(setLoginMessage("Inicio de sesión exitoso"));
+          setIsDropdownOpen(false); // Colapsamos el menú aquí
         }
       })
       .catch(() => {
@@ -131,8 +134,13 @@ const AdminLogin: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <button type="submit" className="form-button" disabled={isLoading}>
-              {isLoading ? <BeatLoader color={"#123abc"} /> : "Iniciar sesión"}
+              {isLoading ? (
+                <BeatLoader size={8} color={"#123abc"} />
+              ) : (
+                "Iniciar sesión"
+              )}
             </button>
+
             {loginError && <div style={{ color: "red" }}>{loginError}</div>}
             {loginMessage && (
               <div style={{ color: "green" }}>{loginMessage}</div>
@@ -168,8 +176,13 @@ const AdminLogin: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <button type="submit" className="form-button" disabled={isLoading}>
-              {isLoading ? <BeatLoader color={"#123abc"} /> : "Registrarse"}
+              {isLoading ? (
+                <BeatLoader size={8} color={"#123abc"} />
+              ) : (
+                "Registrarse"
+              )}
             </button>
+
             {loginError && <div style={{ color: "red" }}>{loginError}</div>}
             {loginMessage && (
               <div style={{ color: "green" }}>{loginMessage}</div>
@@ -196,6 +209,12 @@ const AdminLogin: React.FC = () => {
               </button>
             </div>
           </div>
+          <button
+            onClick={handleModalClose}
+            style={{ position: "absolute", top: 10, right: 10 }}
+          >
+            X
+          </button>
         </div>
       </div>
     </div>

@@ -4,11 +4,14 @@ import { registerUser } from "../authSlice/authThunks";
 interface MessagesState {
   loginMessage: string | null;
   loginError: string | null;
+  isLoading: boolean;
 }
 
 const initialState: MessagesState = {
   loginMessage: null,
   loginError: null,
+  isLoading: false, 
+
 };
 
 const messagesSlice = createSlice({
@@ -25,6 +28,9 @@ const messagesSlice = createSlice({
       state.loginMessage = null;
       state.loginError = null;
     },
+    setLoading: (state, action: PayloadAction<boolean>) => { 
+      state.isLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -39,6 +45,8 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { setLoginMessage, setLoginError, clearMessages } =
+
+export const { setLoginMessage, setLoginError, clearMessages, setLoading } =
   messagesSlice.actions;
+
 export default messagesSlice.reducer;

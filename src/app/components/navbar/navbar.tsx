@@ -1,6 +1,9 @@
 "use client";
-import React, { useState, useEffect, Fragment } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect, Fragment, useRef } from "react";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../products/products/cart/contextCart/store/appHooks";
 import { logout } from "../admin/context/authSlice/authSlice";
 import {
   openLoginModal,
@@ -8,13 +11,14 @@ import {
 } from "../admin/context/loginModalSlice/loginModalSlice";
 import AdminLogin from "../admin/login/loginUserAdmin";
 import ModalPanel from "../admin/modalPanel/modalPanel";
-import { RootState } from "../products/products/cart/contextCart/store/rootReducer";
 import DropdownMenu from "./dropDownMenu";
 import Cart from "../products/products/cart/cart";
 import ModalConfirmacionCompra from "../products/products/cart/ModalConfirmacionCompra/modalConfirmacionCompra";
 import Historial from "../products/products/cart/ModalConfirmacionCompra/historial";
 import Modal from "../products/products/cart/ModalConfirmacionCompra/modalOrders";
 import { basicStyles, styles } from "./navbarStyles";
+import { verifyToken } from "../admin/context/authSlice/authThunks";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 interface NavLinkProps {
   href: string;
@@ -37,35 +41,33 @@ const NavLink: React.FC<NavLinkProps> = ({ href, label }) => {
 };
 
 const Navbar: React.FC = () => {
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state: RootState) => state.cart);
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const userRole = useAppSelector((state) => state.auth.userRole);
+  const isLoginModalOpen = useAppSelector(
+    (state) => state.loginModal.isLoginModalOpen
   );
-  const userRole = useSelector((state: RootState) => state.auth.userRole);
-  const isLoginModalOpen = useSelector(
-    (state: RootState) => state.loginModal.isLoginModalOpen
-  );
-  const [isMounted, setIsMounted] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const [isMounted, setIsMounted] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
 
   const totalItemsInCart = cartItems.reduce(
     (acc, item) => acc + item.cantidad,
     0
   );
 
-  const openConfirmationModal = () => {
-    setIsConfirmationOpen(true);
-  };
-
-  const closeConfirmationModal = () => {
-    setIsConfirmationOpen(false);
-  };
+  const openConfirmationModal = () => setIsConfirmationOpen(true);
+  const closeConfirmationModal = () => setIsConfirmationOpen(false);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -76,15 +78,43 @@ const Navbar: React.FC = () => {
       openConfirmationModal();
     }
   };
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+
+  const handleLogout = () => dispatch(logout());
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        buttonRef.current !== event.target // Añade esta línea
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    dispatch(verifyToken())
+      .unwrap()
+      .then((action) => {
+        // Colapsar el menú desplegable cuando un usuario inicie sesión
+        setIsDropdownOpen(false);
+      })
+      .catch(() => {
+        dispatch(logout());
+      });
+  }, [dispatch]);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  
+
   if (!isMounted) {
-    return null; // o algún placeholder/loading state
+    return null;
   }
   return (
     <nav style={basicStyles.navbar}>
@@ -139,6 +169,7 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <button
+                ref={buttonRef}
                 style={{
                   ...basicStyles.loginButton,
                   position: "relative",
@@ -148,10 +179,14 @@ const Navbar: React.FC = () => {
               >
                 👤
               </button>
+
               {isDropdownOpen && (
                 <DropdownMenu
                   onLogout={handleLogout}
                   onViewHistory={() => setIsHistoryModalOpen(true)}
+                  toggleDropdown={toggleDropdown}
+                  dropdownRef={dropdownRef}
+                  buttonRef={buttonRef}
                 />
               )}
             </>
