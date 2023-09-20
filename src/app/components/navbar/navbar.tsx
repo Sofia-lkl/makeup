@@ -5,10 +5,7 @@ import {
   useAppSelector,
 } from "../products/products/cart/contextCart/store/appHooks";
 import { logout } from "../admin/context/authSlice/authSlice";
-import {
-  openLoginModal,
-  closeLoginModal,
-} from "../admin/context/loginModalSlice/loginModalSlice";
+import { openLoginModal } from "../admin/context/loginModalSlice/loginModalSlice";
 import AdminLogin from "../admin/login/loginUserAdmin";
 import ModalPanel from "../admin/modalPanel/modalPanel";
 import DropdownMenu from "./dropDownMenu";
@@ -18,7 +15,13 @@ import Historial from "../products/products/cart/ModalConfirmacionCompra/histori
 import Modal from "../products/products/cart/ModalConfirmacionCompra/modalOrders";
 import { basicStyles, styles } from "./navbarStyles";
 import { verifyToken } from "../admin/context/authSlice/authThunks";
-import { PayloadAction } from "@reduxjs/toolkit";
+import {
+  MobileMenuButton,
+  NavLinksContainerDesktop,
+  MobileMenuContainer,
+} from "./navBarResponsiveStyles";
+import styled from "@emotion/styled";
+import MenuIcon from "@mui/icons-material/Menu";
 
 interface NavLinkProps {
   href: string;
@@ -50,7 +53,16 @@ const Navbar: React.FC = () => {
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const MobileMenuContainer = styled.div<{ isOpen: boolean }>`
+    display: ${(props) => (props.isOpen ? "flex" : "none")};
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #faf3e0; // Puedes cambiar el color de fondo si lo deseas
+  `;
   const [isMounted, setIsMounted] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -85,7 +97,7 @@ const Navbar: React.FC = () => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
-        buttonRef.current !== event.target 
+        buttonRef.current !== event.target
       ) {
         setIsDropdownOpen(false);
       }
@@ -101,10 +113,9 @@ const Navbar: React.FC = () => {
     dispatch(verifyToken())
       .unwrap()
       .then((action) => {
-        
         setTimeout(() => {
           setIsDropdownOpen(false);
-        }, 50); 
+        }, 50);
       })
       .catch(() => {
         dispatch(logout());
@@ -122,6 +133,7 @@ const Navbar: React.FC = () => {
   if (!isMounted) {
     return null;
   }
+
   return (
     <nav style={basicStyles.navbar}>
       <div
@@ -144,10 +156,15 @@ const Navbar: React.FC = () => {
           <div style={styles.logoText}>Makeup Magic</div>
         </div>
 
-        <div style={basicStyles.navLinksContainer}>
+        {/* Botón de menú para dispositivos móviles */}
+        <MobileMenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <MenuIcon fontSize="large" />
+        </MobileMenuButton>
+
+        {/* El contenido del menú para pantallas grandes */}
+        <NavLinksContainerDesktop>
           <NavLink href="/" label="Inicio" />
           <NavLink href="/productos" label="Productos" />
-
           {isAuthenticated && userRole === "admin" && (
             <button
               style={styles.loginButton}
@@ -156,10 +173,8 @@ const Navbar: React.FC = () => {
               Panel de Administración
             </button>
           )}
-
           <NavLink href="/sobre-nosotros" label="Sobre Nosotros" />
           <NavLink href="/contacto" label="Contacto" />
-
           <div
             style={{
               marginLeft: "1rem",
@@ -171,7 +186,6 @@ const Navbar: React.FC = () => {
           >
             🛒 <span style={{ marginLeft: "0.5rem" }}>{totalItemsInCart}</span>
           </div>
-
           {isAuthenticated ? (
             <>
               <button
@@ -185,7 +199,6 @@ const Navbar: React.FC = () => {
               >
                 👤
               </button>
-
               {isDropdownOpen && (
                 <DropdownMenu
                   onLogout={handleLogout}
@@ -204,10 +217,68 @@ const Navbar: React.FC = () => {
               Iniciar Sesión
             </button>
           )}
-        </div>
+        </NavLinksContainerDesktop>
+
+        {/* El contenido del menú para dispositivos móviles */}
+        <MobileMenuContainer isOpen={isMenuOpen}>
+          <NavLink href="/" label="Inicio" />
+          <NavLink href="/productos" label="Productos" />
+          {isAuthenticated && userRole === "admin" && (
+            <button
+              style={styles.loginButton}
+              onClick={() => setShowAdminModal(true)}
+            >
+              Panel de Administración
+            </button>
+          )}
+          <NavLink href="/sobre-nosotros" label="Sobre Nosotros" />
+          <NavLink href="/contacto" label="Contacto" />
+          <div
+            style={{
+              marginLeft: "1rem",
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => setShowCartModal(true)}
+          >
+            🛒 <span style={{ marginLeft: "0.5rem" }}>{totalItemsInCart}</span>
+          </div>
+          {isAuthenticated ? (
+            <>
+              <button
+                ref={buttonRef}
+                style={{
+                  ...basicStyles.loginButton,
+                  position: "relative",
+                  marginLeft: "1rem",
+                }}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                👤
+              </button>
+              {isDropdownOpen && (
+                <DropdownMenu
+                  onLogout={handleLogout}
+                  onViewHistory={() => setIsHistoryModalOpen(true)}
+                  toggleDropdown={toggleDropdown}
+                  dropdownRef={dropdownRef}
+                  buttonRef={buttonRef}
+                />
+              )}
+            </>
+          ) : (
+            <button
+              style={basicStyles.loginButton}
+              onClick={() => dispatch(openLoginModal())}
+            >
+              Iniciar Sesión
+            </button>
+          )}
+        </MobileMenuContainer>
       </div>
       <Fragment>
-      {isLoginModalOpen && <AdminLogin onSuccess={handleSuccessfulLogin} />}
+        {isLoginModalOpen && <AdminLogin onSuccess={handleSuccessfulLogin} />}
         {showAdminModal && (
           <ModalPanel
             isOpen={showAdminModal}
