@@ -22,8 +22,11 @@ import {
   setLoading,
 } from "../context/messagesSlice/messagesSlice";
 import { logout } from "../context/authSlice/authSlice";
+interface AdminLoginProps {
+  onSuccess?: () => void;
+}
 
-const AdminLogin: React.FC = () => {
+const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
   const dispatch = useAppDispatch();
   const isLoginModalOpen = useAppSelector(
     (state: RootState) => state.loginModal.isLoginModalOpen
@@ -77,15 +80,19 @@ const AdminLogin: React.FC = () => {
 
   const handleSubmitSignIn = (username: string, password: string) => {
     dispatch(loginUser({ username, password }))
-      .then((action) => {
-        if (loginUser.fulfilled.match(action)) {
-          dispatch(setLoginMessage("Inicio de sesión exitoso"));
-          setIsDropdownOpen(false); // Colapsamos el menú aquí
+    .then((action) => {
+      if (loginUser.fulfilled.match(action)) {
+        dispatch(setLoginMessage("Inicio de sesión exitoso"));
+        setIsDropdownOpen(false); // Colapsamos el menú aquí
+        if (typeof onSuccess === "function") {
+          onSuccess();
         }
-      })
-      .catch(() => {
-        dispatch(setLoginError("Error al iniciar sesión"));
-      });
+      }
+    })
+    .catch(() => {
+      dispatch(setLoginError("Error al iniciar sesión"));
+    });
+
   };
 
   const handleSubmitSignUp = (

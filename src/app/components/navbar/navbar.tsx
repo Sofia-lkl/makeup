@@ -102,12 +102,18 @@ const Navbar: React.FC = () => {
       .unwrap()
       .then((action) => {
         // Colapsar el menú desplegable cuando un usuario inicie sesión
-        setIsDropdownOpen(false);
+        setTimeout(() => {
+          setIsDropdownOpen(false);
+        }, 50); // Puedes ajustar este tiempo si es necesario
       })
       .catch(() => {
         dispatch(logout());
       });
   }, [dispatch]);
+
+  const handleSuccessfulLogin = () => {
+    setIsDropdownOpen(false);
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -201,7 +207,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       <Fragment>
-        {isLoginModalOpen && <AdminLogin />}
+      {isLoginModalOpen && <AdminLogin onSuccess={handleSuccessfulLogin} />}
         {showAdminModal && (
           <ModalPanel
             isOpen={showAdminModal}
