@@ -4,9 +4,21 @@ import type { AppDispatch, RootState } from "../contextCart/store/rootReducer";
 import {
   fetchUserOrders,
   Order as OrderType,
-  OrderDetail as OrderDetailType,
+  OrderDetail,
   ShippingInfo as ShippingInfoType,
+  fetchOrdersByStatus,
+  deleteOrderById,
 } from "./orderSlice";
+
+import {
+  Button,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import CargarComprobante from "./uploadComprobant";
+import { updateStockFromOrder } from "../contextCart/cart/cartSlice";
 import {
   StyledOrderContainer,
   OrderHeader,
@@ -15,17 +27,18 @@ import {
   SectionTitle,
   ListItem,
 } from "./styledHistorial";
-import { Button } from "@mui/material";
-import CargarComprobante from "./uploadComprobant";
 
 const Historial: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const orders: OrderType[] = useSelector(
     (state: RootState) => state.order.orders
   );
-
-  console.log("Orders:", orders); // <-- Añadido para diagnóstico
-
+  const userRole: string | null = useSelector(
+    (state: RootState) => state.auth.userRole
+  );
+  const [orderSorting, setOrderSorting] = useState<"asc" | "desc">("desc");
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [showUploadForOrder, setShowUploadForOrder] = useState<number | null>(
     null
@@ -33,37 +46,126 @@ const Historial: React.FC = () => {
   const [uploadMessage, setUploadMessage] = useState<{
     [orderId: number]: string;
   }>({});
+  const [selectedStatus, setSelectedStatus] = useState<string>("activo");
+  const isAdmin = userRole === "admin";
+
+  useEffect(() => {
+    if (isAdmin) {
+      const fetchParams: any = {
+        status: selectedStatus,
+        sortByDate: orderSorting,
+      };
+
+      if (startDate && endDate) {
+        fetchParams.startDate = startDate;
+        fetchParams.endDate = endDate;
+      }
+
+      dispatch(fetchOrdersByStatus(fetchParams));
+    } else {
+      dispatch(fetchUserOrders());
+    }
+  }, [dispatch, isAdmin, selectedStatus, orderSorting, startDate, endDate]);
 
   const handleReplaceComprobante = (orderId: number) => {
-    if (showUploadForOrder === orderId) {
-      setShowUploadForOrder(null);
-    } else {
-      setShowUploadForOrder(orderId);
-    }
+    setShowUploadForOrder((prevOrderId) =>
+      prevOrderId === orderId ? null : orderId
+    );
   };
 
   const handleOrderClick = (orderId: number) => {
-    if (expandedOrderId === orderId) {
-      setExpandedOrderId(null);
-    } else {
-      setExpandedOrderId(orderId);
-    }
+    setExpandedOrderId((prevOrderId) =>
+      prevOrderId === orderId ? null : orderId
+    );
   };
-
-  useEffect(() => {
-    dispatch(fetchUserOrders());
-  }, [dispatch]);
-
   return (
     <div>
       <h2>Historial de Órdenes</h2>
+      {isAdmin && (
+        <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <MenuItem value="activo">Activo</MenuItem>
+              <MenuItem value="aprobado">Aprobado</MenuItem>
+              <MenuItem value="pendiente">Pendiente</MenuItem>
+            </Select>
+            <Select
+              value={orderSorting}
+              onChange={(e) =>
+                setOrderSorting(e.target.value as "asc" | "desc")
+              }
+            >
+              <MenuItem value="desc">Fecha - Recientes primero</MenuItem>
+              <MenuItem value="asc">Fecha - Antiguos primero</MenuItem>
+            </Select>
+          </div>
 
+          <div style={{ display: "flex", gap: "10px" }}>
+            <TextField
+              label="Fecha inicio"
+              type="date"
+              value={startDate || ""}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="Fecha fin"
+              type="date"
+              value={endDate || ""}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </div>
+        </div>
+      )}
       {orders.map((order: OrderType, index: number) => (
         <StyledOrderContainer key={order.id}>
           <OrderHeader onClick={() => handleOrderClick(order.id)}>
-            Orden #{index + 1} - Haga clic para ver detalles
+            Orden #{index + 1} - {new Date(order.fecha).toLocaleDateString()} -
+            Haga clic para ver detalles
           </OrderHeader>
-
+          {isAdmin && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "¿Estás seguro de que deseas eliminar esta orden?"
+                  )
+                ) {
+                  dispatch(deleteOrderById(order.id))
+                    .unwrap()
+                    .then((result) => {
+                      if ("orderId" in result) {
+                        // Aquí es donde despachas la acción para actualizar el stock, 
+                        // pero ahora debes pasarle los detalles de la orden que acabas de eliminar.
+                        const orderToDelete = orders.find(
+                          (o) => o.id === result.orderId
+                        );
+                        if (orderToDelete && orderToDelete.detalles) {
+                          dispatch(
+                            updateStockFromOrder(orderToDelete.detalles)
+                          );
+                        }
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("Error al eliminar la orden:", error);
+                    });
+                }
+              }}
+            >
+              Eliminar Orden
+            </Button>
+          )}
           {expandedOrderId === order.id && (
             <OrderDetailsContainer>
               <OrderSection>
@@ -76,7 +178,7 @@ const Historial: React.FC = () => {
               <OrderSection>
                 <SectionTitle>Productos</SectionTitle>
                 <ul>
-                  {order.detalles?.map((detail: OrderDetailType) => (
+                  {order.detalles?.map((detail: OrderDetail) => (
                     <ListItem key={detail.producto_id}>
                       <img
                         src={detail?.imagen_url}
@@ -122,24 +224,25 @@ const Historial: React.FC = () => {
                   </Button>
                   {showUploadForOrder === order.id && (
                     <CargarComprobante
-                    orderId={order.id.toString()}
-                    onUploadSuccess={(data) => {
-                      // Mostrar el mensaje de éxito
-                      setUploadMessage((prevMessages) => ({
-                        ...prevMessages,
-                        [order.id]: "Comprobante cargado con éxito!",
-                      }));
-                  
-                      // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
-                      dispatch(fetchUserOrders());
-                    }}
-                    onUploadError={(error) => {
-                      setUploadMessage((prevMessages) => ({
-                        ...prevMessages,
-                        [order.id]: "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
-                      }));
-                    }}
-                  />
+                      orderId={order.id.toString()}
+                      onUploadSuccess={(data) => {
+                        // Mostrar el mensaje de éxito
+                        setUploadMessage((prevMessages) => ({
+                          ...prevMessages,
+                          [order.id]: "Comprobante cargado con éxito!",
+                        }));
+
+                        // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
+                        dispatch(fetchUserOrders());
+                      }}
+                      onUploadError={(error) => {
+                        setUploadMessage((prevMessages) => ({
+                          ...prevMessages,
+                          [order.id]:
+                            "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
+                        }));
+                      }}
+                    />
                   )}
                 </OrderSection>
               )}

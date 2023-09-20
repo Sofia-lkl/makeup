@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "../productManagement/productManagementSlice";
+import { OrderDetail } from "../../ModalConfirmacionCompra/orderSlice";
 
 export interface CartItem {
   imagen_url: string;
@@ -18,30 +19,21 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    syncCartWithUpdatedStock: (state, action: PayloadAction<Product[]>) => {
-      action.payload.forEach((updatedProduct) => {
-        const itemInCart = state.find((item) => item.id === updatedProduct.id);
-        if (itemInCart) {
-          if (updatedProduct.nombre) {
-            itemInCart.nombre = updatedProduct.nombre;
-          }
-          if (updatedProduct.imagen_url) {
-            itemInCart.imagen_url = updatedProduct.imagen_url;
-          }
-          if (typeof updatedProduct.precio === "number") {
-            itemInCart.precio = updatedProduct.precio;
-          }
-          if (typeof updatedProduct.stock === "number") {
-            itemInCart.stock = updatedProduct.stock;
-            // Si la cantidad en el carrito supera el stock actualizado, ajusta la cantidad
-            if (itemInCart.cantidad > itemInCart.stock) {
-              itemInCart.cantidad = itemInCart.stock;
-            }
-          }
-        }
-      });
-    },
+    syncCartWithUpdatedStock: (state, action: PayloadAction<Product>) => {
+      const updatedProduct = action.payload;
+      const itemInCart = state.find((item) => item.id === updatedProduct.id);
+      if (itemInCart) {
+        itemInCart.nombre = updatedProduct.nombre || itemInCart.nombre;
+        itemInCart.imagen_url =
+          updatedProduct.imagen_url || itemInCart.imagen_url;
+        itemInCart.precio = updatedProduct.precio || itemInCart.precio;
+        itemInCart.stock = (typeof updatedProduct.stock !== 'undefined') ? updatedProduct.stock : itemInCart.stock;
 
+        if (itemInCart.cantidad > itemInCart.stock) {
+          itemInCart.cantidad = itemInCart.stock;
+        }
+      }
+    },
     addItem: (state, action: PayloadAction<CartItem>) => {
       const existingItem = state.find((item) => item.id === action.payload.id);
       if (existingItem) {
@@ -57,7 +49,6 @@ const cartSlice = createSlice({
         }
       }
     },
-
     incrementItem: (state, action: PayloadAction<number>) => {
       const existingItem = state.find((item) => item.id === action.payload);
       if (existingItem && existingItem.cantidad < existingItem.stock) {
@@ -94,6 +85,17 @@ const cartSlice = createSlice({
         }
       }
     },
+    updateStockFromOrder: (state, action: PayloadAction<OrderDetail[]>) => {
+      action.payload.forEach((detail) => {
+        const itemInCart = state.find((item) => item.id === detail.producto_id);
+        if (itemInCart) {
+          itemInCart.stock -= detail.cantidad;
+          if (itemInCart.cantidad > itemInCart.stock) {
+            itemInCart.cantidad = itemInCart.stock;
+          }
+        }
+      });
+    },
   },
 });
 
@@ -106,6 +108,7 @@ export const {
   initCart,
   updateItemStock,
   syncCartWithUpdatedStock,
+  updateStockFromOrder,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

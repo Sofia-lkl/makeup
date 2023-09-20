@@ -15,19 +15,19 @@ export const PreviewContainer = styled.div`
   font-family: "Arial", sans-serif;
 `;
 
-export const ProductSlide = styled(motion.div)<{ imageUrl: string }>`
+export const ProductSlide = styled.div<{ $imageUrl: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 400px;
   position: relative;
-  background-image: url(${(props) => props.imageUrl});
+  background-image: url(${(props) => props.$imageUrl});
   background-size: cover;
   background-position: center;
   transition: transform 0.3s;
 
   &:hover {
-    transform: scale(1.05); 
+    transform: scale(1.05);
   }
 
   &::before {
@@ -52,7 +52,7 @@ export const ViewAllButton = styled(Button)`
   transition: transform 0.3s, background-color 0.3s;
 
   &:hover {
-    transform: translateX(-5px); 
+    transform: translateX(-5px);
     background-color: ${colors.pinkDark};
     opacity: 0.9;
   }
@@ -64,7 +64,7 @@ export const ProductFlowAnimation = keyframes`
 
 export const ProductFlowContainer = styled.div`
   position: absolute;
-  top: 23%;  
+  top: 23%;
   left: 0;
   transform: translateY(50%);
   width: 250%;
@@ -89,9 +89,9 @@ export const ProductDetailsContainer = styled.div`
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   overflow: hidden;
-  
+
   transition: width 0.3s, height 0.3s, border-radius 0.3s, transform 0.3s;
-  transform-origin: center center;  
+  transform-origin: center center;
 
   &:hover {
     width: 370px;
@@ -114,7 +114,8 @@ export const ProductDetailsContainer = styled.div`
     }
   }
 
-  h4, p {
+  h4,
+  p {
     margin: 0;
     min-height: 25px;
     text-align: center;

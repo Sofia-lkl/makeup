@@ -1,7 +1,7 @@
-
+import React from "react";
 import Slider from "react-slick";
+
 import {
-  colors,
   PreviewContainer,
   ProductSlide,
   ViewAllButton,
@@ -14,8 +14,6 @@ const slideVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
 };
-
-
 
 type ProductPreviewProps = {
   onProductClick: () => void;
@@ -37,26 +35,23 @@ const ProductPreview: React.FC<ProductPreviewProps> = ({
     autoplaySpeed: 3000,
   };
   const imageBackgrounds = [
-    '/img/44.jpg',
-    '/img/3.jpg',
-    '/img/6.jpg',
-    '/img/2.jpg',]
+    "/img/44.jpg",
+    "/img/3.jpg",
+    "/img/6.jpg",
+    "/img/2.jpg",
+  ];
+
   return (
     <PreviewContainer>
-      <Slider {...settings}>
-        {imageBackgrounds.map((imageUrl, index) => (
-          <ProductSlide
-            key={index}
-            imageUrl={imageUrl}
-            variants={slideVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ duration: 0.6 }}
-          />
-        ))}
-      </Slider>
+      {
+        <Slider {...settings}>
+          {imageBackgrounds.map((imageUrl, index) => (
+            <ProductSlide key={index} $imageUrl={imageUrl} />
+          ))}
+        </Slider>
+      }
 
-      <ProductFlow products={productList} /> 
+      <ProductFlow products={productList} />
 
       <ViewAllButton variant="contained" size="large" onClick={onProductClick}>
         Ver todos los productos

@@ -1,28 +1,20 @@
 import React, { useState } from "react";
-import jwt_decode from "jwt-decode";
-import cookie from "cookie";
 import ProductForm from "../productForm/productFrom";
 import ProductTable from "../productTable/productTable";
-import { useRouter } from "next/router";
 import { Button, StyledH1, ButtonContainer, Message } from "./adminPanelStyled";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setMessage,
-  setError,
-} from "../../products/products/cart/contextCart/productManagement/productManagementSlice";
+import { useSelector } from "react-redux";
+import { setMessage, setError } from "../../products/products/cart/contextCart/productManagement/productManagementSlice";
 import { RootState } from "../../products/products/cart/contextCart/store/rootReducer";
 import { GetServerSideProps } from "next";
+import axios from "axios";
 
-interface DecodedToken {
-  role: string;
-  exp: number;
-  iat: number;
+interface Props {
+  products: any[]; // Puedes cambiar 'any' por el tipo correcto de tus productos
 }
 
-const AdminPanel = () => {
+const AdminPanel: React.FC<Props> = ({ products }) => {
   const [showTable, setShowTable] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const dispatch = useDispatch();
 
   const productManagementState = useSelector(
     (state: RootState) => state.productManagement
@@ -46,35 +38,17 @@ const AdminPanel = () => {
       {productManagementState.error && (
         <Message variant="error">{productManagementState.error}</Message>
       )}
-      {showTable && <ProductTable />}
+      {showTable && <ProductTable products={products} />}
     </div>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { jwt } = cookie.parse(context.req.headers.cookie || "");
-
-  if (!jwt) {
-    return {
-      redirect: {
-        destination: "/loginUserAdmin",
-        permanent: false,
-      },
-    };
-  }
-
-  const decodedToken = jwt_decode(jwt) as DecodedToken;
-  if (decodedToken.role !== "admin") {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  const response = await axios.get(`http://localhost:3002/api/products`);
+  const products = response.data;
 
   return {
-    props: {},
+    props: { products },
   };
 };
 

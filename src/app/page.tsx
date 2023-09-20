@@ -12,11 +12,11 @@ import { store } from "./components/products/products/cart/contextCart/store/roo
 export default function Home() {
   return (
     <Provider store={store}>
+      <Navbar />
       <HeaderPresentation />
       <AcercaDe />
       <CoursesSection />
       <ServicesSection />
-      <Navbar />
       <ParentComponent />
     </Provider>
   );

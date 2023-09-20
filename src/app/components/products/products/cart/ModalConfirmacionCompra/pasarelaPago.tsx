@@ -44,7 +44,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   >(null);
   const [loadedComprobante, setLoadedComprobante] = useState<File | null>(null);
 
-  initMercadoPago("TEST-75e8ff76-27ca-4d24-8d0e-9ea271a2ef88");
+  initMercadoPago("APP_USR-52dc916a-1c65-4a6e-88b6-8ebe99a2b48c");
 
   const closePaymentMethod = () => {
     setShowUploadOption(false);

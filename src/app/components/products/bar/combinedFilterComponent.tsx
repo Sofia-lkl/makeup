@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Range } from "react-range";
+import Range from "rc-slider";
 import FilterBarProducts from "./filterBarProducts";
 import { RootState } from "../products/cart/contextCart/store/rootReducer";
 import {
@@ -37,11 +37,11 @@ const CombinedFilterComponent: React.FC = () => {
     (state: RootState) => state.filter.activeFilter
   );
 
-  const handleRangeChange = (newRange: number[]) => {
-    if (newRange.length === 2) {
-      dispatch(setPriceRange(newRange as [number, number]));
+  const handleSliderChange = (newRange: number | number[]) => {
+    if (Array.isArray(newRange) && newRange.length === 2) {
+        dispatch(setPriceRange(newRange as [number, number]));
     }
-  };
+};
 
   return (
     <StickyFilterContainer>
@@ -60,17 +60,39 @@ const CombinedFilterComponent: React.FC = () => {
           <PriceRangeContainer>
             <PriceRangeBar>
               <Range
-                step={10}
                 min={0}
                 max={1000}
-                values={priceRange}
-                onChange={handleRangeChange}
-                renderTrack={({ props, children }) => (
-                  <PriceRangeTrack {...props}>{children}</PriceRangeTrack>
-                )}
-                renderThumb={({ props }) => (
-                  <div {...props} style={{ ...props.style, ...thumbStyles }} />
-                )}
+                step={10}
+                value={priceRange}
+                onChange={handleSliderChange}
+                trackStyle={[
+                  {
+                    backgroundColor: "blue",
+                    height: 10,
+                  },
+                ]}
+                handleStyle={[
+                  {
+                    borderColor: "blue",
+                    height: 28,
+                    width: 28,
+                    marginLeft: -14,
+                    marginTop: -9,
+                    backgroundColor: "black",
+                  },
+                  {
+                    borderColor: "blue",
+                    height: 28,
+                    width: 28,
+                    marginLeft: -14,
+                    marginTop: -9,
+                    backgroundColor: "black",
+                  },
+                ]}
+                railStyle={{
+                  backgroundColor: "red",
+                  height: 10,
+                }}
               />
             </PriceRangeBar>
             <PriceRangeInputs>

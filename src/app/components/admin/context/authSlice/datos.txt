@@ -1,0 +1,61 @@
+1) crear para el administrador un panel para ver las ordenes divididas con sus estados;
+
+2)crear notificaciones que se vayan cargando con un mini numerito cuando haya ordenes nuevas  con determinado estado (aprobado o activa)
+
+3) arreglar el stock para que si una orden esta activa o aprobado y saque productos, si se borra la orden desde el panel de administrador que se vuelva a agregar el productos removido;
+
+4) arreglar el estado de los productos al refrescar la pagina con el localstorage en el carrito
+
+5) crear una ruta prductos y listar los productos ahi en vez de tener un modal
+
+6) que aparezcan notificaciones cuando se agrega un producto en el carrito
+
+7) crear un id para cada producto para que tenga una vista de detalles del producto;
+
+8) hacer que una orden este activa aparte si se carga un comprobante, si hace click en el boton de pagar con mercadopago y ver si hace click en el boton azul mejor para mas certeza;
+
+9) que las ordenes se suban a una nube
+
+10) cambiar el gradiente de los botones de onCheckout
+
+11) terminar la logica de filtrado por color o marca
+
+12) poner la opcion en los productos para la vista previa como para cuando se vea en su detalle los colores que hay dispobile aparecido para seleccionar
+
+13) crear una opcion para poner productos en favoritos y guardarlos en una seccion del perfil del usuario
+
+14) crear un item perfil desplegable y crear una ruta perfil con (ordenes, foviritos, datos del perfil)
+
+15) implmentar verificacion de email para registrar una cuenta y para recuperar Contraseña
+
+16) hacer llegar el email al ususario si carga un comprobante de pago o apreta el boton de mercado pago
+
+17) crear un checkout para resevar un turno en un calendario aparte de agregarle otros pasos
+
+18) el calendario de reservas tiene que poder manipularse por un usuario con el rol de ayudande para poner sus dias y horarios disponible;
+
+19) que el ayudante solamente tenga eso nomas. Las reservas se tienen que ir sctockeando cada vez que se haya creado una reserva y cargado un comprobante como reserva activa
+
+20) crarle un panel de reservas al ayudante para que pueda ver las ordenes activas como con el admin y las ordenes y pueda sacar las ordenes que no se ejecutaron o mejor dicho no pasaron  activas
+
+21) detalles: hacer que el admin / ayudante puedan filtrar las ordenes o reservas por fechas tanto para ativa, aprobadas o pendientes
+
+22) que el admin pueda cargar las imagenes de los productos 
+
+23) crear una ruta cursor donde se explique de que se trata y pueda adiquirlo ahi, (le aparece info y los dias y hora y dia que arranca a abonar)
+
+24) crear tambien una seccion para el usuario que diga cursos y pueda verlo con sus detalles 
+
+25) para el admin crear una seccion para que pueda ver la compras activas o aprobadas de los cursos 
+
+26) crear un modo osucro
+
+27) pensar en implementar algun chatbot con ai que responda algunas cosas
+
+poner 10mb como maximo para carga de comprobantes, arreglar los colores gradientes del cheout, arreglar el navbar con el error del div, 
+arreglar el inicio de sesoin que no aparezca de la nada verificado
+crear un pie de pagina 
+ajustar lo que dicen los textos
+ajustar en movile
+organizar carpetas y archivos
+agregar botones de las redes sociales, agregar boton de whatsapp en la esquina

@@ -5,8 +5,8 @@ import {
   incrementItem,
   decrementItem,
   removeItem,
-  CartState,  
-} from "../cart/contextCart/cart/cartSlice";  
+  CartState,
+} from "../cart/contextCart/cart/cartSlice";
 
 import {
   IconButton,
@@ -32,7 +32,7 @@ import {
   CheckoutButton,
 } from "./stylesCart";
 
-import { RootState } from '../cart/contextCart/store/rootReducer';  
+import { RootState } from "../cart/contextCart/store/rootReducer";
 
 interface CartProps {
   onClose: () => void;
@@ -42,17 +42,25 @@ interface CartProps {
 export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart);
+  const cartItemsToDisplay = cartItems.filter((item) => item.stock > 0);
+  const canCheckout = cartItems.every((item) => item.stock > 0);
 
   const handleRemove = (id: number) => {
     dispatch(removeItem(id));
   };
 
   const handleIncrement = (id: number) => {
-    dispatch(incrementItem(id));
+    const currentItem = cartItems.find((item) => item.id === id);
+    if (currentItem && currentItem.cantidad < currentItem.stock) {
+      dispatch(incrementItem(id));
+    }
   };
 
   const handleDecrement = (id: number) => {
-    dispatch(decrementItem(id));
+    const currentItem = cartItems.find((item) => item.id === id);
+    if (currentItem && currentItem.cantidad > 1) {
+      dispatch(decrementItem(id));
+    }
   };
 
   return (
@@ -64,12 +72,12 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
         </IconButton>
       </CartHeaderContainer>
 
-      {cartItems.length === 0 ? (
+      {cartItemsToDisplay.length === 0 ? (
         <CartEmptyMessage>Tu carrito está vacío.</CartEmptyMessage>
       ) : (
         <>
           <List>
-            {cartItems.map((item) => (
+            {cartItemsToDisplay.map((item) => (
               <React.Fragment key={item.id}>
                 <ListItem>
                   <img
@@ -79,8 +87,15 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
                   />
                   <ListItemText
                     primary={item.nombre}
-                    secondary={`$${item.precio.toFixed(2)} x ${item.cantidad}`}
+                    secondary={`$${item.precio.toFixed(2)} x ${item.cantidad} ${
+                      item.stock === 0
+                        ? "(Agotado)"
+                        : item.stock < 3
+                        ? "(Pocas unidades disponibles)"
+                        : ""
+                    }`}
                   />
+
                   <IconButton onClick={() => handleIncrement(item.id)}>
                     <AddIcon />
                   </IconButton>
@@ -104,11 +119,11 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
           <CartFooter>
             <Typography variant="h6">
               Total: $
-              {cartItems
+              {cartItemsToDisplay
                 .reduce((acc, item) => acc + item.precio * item.cantidad, 0)
                 .toFixed(2)}
             </Typography>
-            <CheckoutButton onClick={onCheckout}>
+            <CheckoutButton onClick={onCheckout} disabled={!canCheckout}>
               Finalizar Compra
             </CheckoutButton>
           </CartFooter>

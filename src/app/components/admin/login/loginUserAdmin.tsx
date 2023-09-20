@@ -10,7 +10,7 @@ import {
   loginUser,
   registerUser,
   verifyToken,
-} from "../context/authSlice/authThunks"; 
+} from "../context/authSlice/authThunks";
 import {
   openLoginModal,
   closeLoginModal,
@@ -20,8 +20,9 @@ import {
   setLoginError,
   clearMessages,
 } from "../context/messagesSlice/messagesSlice";
+import { logout } from "../context/authSlice/authSlice";
 
-const AdminLogin = () => {
+const AdminLogin: React.FC = () => {
   const dispatch = useAppDispatch();
   const isLoginModalOpen = useAppSelector(
     (state: RootState) => state.loginModal.isLoginModalOpen
@@ -34,16 +35,15 @@ const AdminLogin = () => {
     (state: RootState) => state.messages.loginError
   );
 
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [isSignUp, setIsSignUp] = useState<boolean>(true);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   const handleSignInClick = () => setIsSignUp(false);
   const handleSignUpClick = () => setIsSignUp(true);
 
   useEffect(() => {
-    // Al montar el componente, verifica si hay un token válido en localStorage
     dispatch(verifyToken())
       .then((action) => {
         if (verifyToken.fulfilled.match(action)) {
@@ -52,18 +52,24 @@ const AdminLogin = () => {
       })
       .catch(() => {
         dispatch(setLoginError("Error al verificar la autenticación"));
+        dispatch(logout());
       });
   }, [dispatch]);
 
   useEffect(() => {
     if (loginMessage) {
+      const clearMessageTimeout = setTimeout(
+        () => dispatch(clearMessages()),
+        3000
+      );
+
       if (loginMessage === "Registro exitoso") {
         setIsSignUp(false);
-      }
-      if (loginMessage === "Inicio de sesión exitoso") {
+      } else if (loginMessage === "Inicio de sesión exitoso") {
         setTimeout(() => dispatch(closeLoginModal()), 2000);
       }
-      setTimeout(() => dispatch(clearMessages()), 3000);
+
+      return () => clearTimeout(clearMessageTimeout);
     }
   }, [loginMessage, dispatch]);
 
@@ -91,7 +97,7 @@ const AdminLogin = () => {
           dispatch(setLoginError(null));
         }
       })
-      .catch((error) => {
+      .catch(() => {
         dispatch(
           setLoginError(
             "Error desconocido al registrarse. Por favor, intente nuevamente."
@@ -101,8 +107,6 @@ const AdminLogin = () => {
   };
 
   if (!isLoginModalOpen) return null;
-
-  // Renderizado del componente
   return (
     <div className="container">
       <div className={`main ${isSignUp ? "sing-up" : "sing-in"}`}>

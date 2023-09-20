@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { syncCartWithUpdatedStock } from "../cart/cartSlice"; // Asegúrate de importarlo desde el path correcto
 
 export interface Product {
   id: number;
@@ -52,12 +53,16 @@ export const apiDeleteProduct = createAsyncThunk(
 
 export const apiEditProduct = createAsyncThunk(
   "productManagement/editProduct",
-  async (updatedProduct: Product) => {
+  async (updatedProduct: Product, { dispatch }) => { // Añadimos { dispatch }
     const response = await axios.put(
       `http://localhost:3002/api/products/${updatedProduct.id}`,
       updatedProduct
     );
-    console.log("Respuesta del servidor después de editar:", response.data); // Nuevo console.log
+    console.log("Respuesta del servidor después de editar:", response.data);
+    
+    // Después de recibir la respuesta, vamos a sincronizar el carrito con el producto actualizado
+    dispatch(syncCartWithUpdatedStock(response.data));
+
     return response.data;
   }
 );
@@ -121,6 +126,7 @@ const productManagementSlice = createSlice({
       .addCase(apiDeleteProduct.rejected, (state, action) => {
         state.error = action.error.message || "Error al eliminar el producto";
         console.log(action.error); // detalles sobre el error
+        
       })
       .addCase(apiEditProduct.fulfilled, (state, action) => {
         const index = state.allProducts.findIndex(

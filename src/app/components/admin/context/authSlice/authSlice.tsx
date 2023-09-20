@@ -38,6 +38,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.userRole = null;
       state.userId = null;
+      localStorage.removeItem("jwt");
     },
     setUserId(state, action: PayloadAction<string | null>) {
       state.userId = action.payload;

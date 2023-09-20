@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { updateStockFromOrder } from '../contextCart/cart/cartSlice';/* El módulo ""../contextCart/cart/cartSlice"" no tiene ningún miembro "updateStockFromOrder" exportado. ¿Pretendía usar "import updateStockFromOrder from "../contextCart/cart/cartSlice"" en su lugar?ts(2614)
+import updateStockFromOrder */
 
 export interface OrderDetail {
   producto_id: number;
@@ -54,6 +56,39 @@ type RejectWithValue<T> = {
     };
   };
 };
+export const addNewOrder = createAsyncThunk(
+  'order/addNewOrder',
+  async (orderData, { dispatch }) => {
+    const isClient = typeof window !== "undefined";
+    const userToken = isClient ? localStorage.getItem("jwt") : null;
+    if (!userToken) {
+      throw new Error("Token no encontrado. Asegúrate de estar autenticado.");
+    }
+
+    const response = await fetch('http://localhost:3002/api/orders/add-order', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-auth-token": userToken,
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al agregar la orden');
+    }
+
+    const data = await response.json();
+
+    // Aquí asumimos que la respuesta del backend incluye los detalles de la orden en el campo 'detalles'
+    // Si la estructura de la respuesta es diferente, ajusta la siguiente línea según corresponda.
+    if (data.estado === "Activo" || data.estado === "Aprobado") {
+      dispatch(updateStockFromOrder(data.detalles));
+    }
+
+    return data;
+  }
+);
 
 export const fetchUserOrders = createAsyncThunk<
   Order[] | RejectWithValue<string>,
@@ -91,6 +126,96 @@ export const fetchUserOrders = createAsyncThunk<
     return rejectWithValue(err.message || "Error desconocido.");
   }
 });
+export const fetchOrdersByStatus = createAsyncThunk<
+  Order[] | RejectWithValue<string>,
+  {
+    status: string;
+    sortByDate?: "asc" | "desc";
+    startDate?: string;
+    endDate?: string;
+  },
+  {
+    rejectValue: string;
+  }
+>(
+  "order/fetchOrdersByStatus",
+  async ({ status, sortByDate, startDate, endDate }, { rejectWithValue }) => {
+    const isClient = typeof window !== "undefined";
+    const userToken = isClient ? localStorage.getItem("jwt") : null;
+
+    if (!userToken) {
+      return rejectWithValue(
+        "Token no encontrado. Asegúrate de estar autenticado."
+      );
+    }
+
+    let url = `http://localhost:3002/api/orders/orders-by-status/${status}`;
+    const queryParams = [];
+    if (sortByDate) {
+      queryParams.push(`sortByDate=${sortByDate}`);
+    }
+    if (startDate && endDate) {
+      queryParams.push(`startDate=${startDate}`, `endDate=${endDate}`);
+    }
+    if (queryParams.length) {
+      url += `?${queryParams.join("&")}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "x-auth-token": userToken,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching orders by status: ${response.statusText}`
+        );
+      }
+
+      const data: Order[] = await response.json();
+      return data;
+    } catch (error) {
+      const err = error as Error;
+      return rejectWithValue(err.message || "Error desconocido.");
+    }
+  }
+);
+
+export const deleteOrderById = createAsyncThunk<
+  { orderId: number; message: string } | RejectWithValue<string>,
+  number,
+  {
+    rejectValue: string;
+  }
+>("order/deleteOrderById", async (orderId, { rejectWithValue }) => {
+  const isClient = typeof window !== "undefined";
+  const userToken = isClient ? localStorage.getItem("jwt") : null;
+
+  if (!userToken) {
+    return rejectWithValue("Token no encontrado. Asegúrate de estar autenticado.");
+  }
+
+  try {
+    const response = await fetch(`http://localhost:3002/api/orders/order/${orderId}`, {
+      method: "DELETE",
+      headers: {
+        "x-auth-token": userToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error deleting order: ${response.statusText}`);
+    }
+
+    const data: { message: string } = await response.json();
+    return { ...data, orderId }; // <-- Incluir orderId en el retorno
+  } catch (error) {
+    const err = error as Error;
+    return rejectWithValue(err.message || "Error desconocido.");
+  }
+});
 
 const orderSlice = createSlice({
   name: "order",
@@ -103,31 +228,43 @@ const orderSlice = createSlice({
       state.orders.push(action.payload);
     },
     removeOrder: (state, action: PayloadAction<number>) => {
-      state.orders = state.orders.filter(
-        (order) => order.id !== action.payload
-      );
+      state.orders = state.orders.filter((order) => order.id !== action.payload);
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(
-        fetchUserOrders.fulfilled,
-        (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
-          console.log("Datos devueltos por la API:", action.payload); // Registro agregado aquí
-          if (Array.isArray(action.payload)) {
-            state.orders = action.payload;
-            state.error = null;
-          } else {
-            state.error = action.payload.action.error.message;
-          }
+      .addCase(fetchUserOrders.fulfilled, (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
+        if (Array.isArray(action.payload)) {
+          state.orders = action.payload;
+          state.error = null;
+        } else {
+          state.error = action.payload.action.error.message;
         }
-      )
-      .addCase(
-        fetchUserOrders.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          state.error = action.payload || "Error desconocido.";
+      })
+      .addCase(fetchUserOrders.rejected, (state, action: PayloadAction<string | undefined>) => {
+        state.error = action.payload || "Error desconocido.";
+      })
+      .addCase(fetchOrdersByStatus.fulfilled, (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
+        if (Array.isArray(action.payload)) {
+          state.orders = action.payload;
+          state.error = null;
+        } else {
+          state.error = action.payload.action.error.message;
         }
-      );
+      })
+      .addCase(fetchOrdersByStatus.rejected, (state, action: PayloadAction<string | undefined>) => {
+        state.error = action.payload || "Error desconocido.";
+      })
+      .addCase(deleteOrderById.fulfilled, (state, action: PayloadAction<{ orderId: number; message: string } | RejectWithValue<string>>) => {
+        if ("orderId" in action.payload) {
+            const { orderId } = action.payload as {
+                orderId: number;
+                message: string;
+            };
+            state.orders = state.orders.filter((order) => order.id !== orderId);
+        }
+    });
+    
   },
 });
 

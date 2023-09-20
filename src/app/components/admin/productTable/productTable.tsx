@@ -13,35 +13,35 @@ import {
 import {
   apiEditProduct,
   apiDeleteProduct,
-  apiGetAllProducts,
   Product,
+  apiGetAllProducts,
 } from "../../products/products/cart/contextCart/productManagement/productManagementSlice";
+interface ProductTableProps {
+  products: any[]; // Puedes cambiar 'any' por el tipo correcto de tus productos
+}
 
-const ProductTable = () => {
+const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
   const allProducts = useAppSelector(
     (state) => state.productManagement.allProducts
   );
   const message = useAppSelector((state) => state.productManagement.message);
   const error = useAppSelector((state) => state.productManagement.error);
   const dispatch = useAppDispatch();
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [updatedProduct, setUpdatedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    console.log("Llamando a apiGetAllProducts desde useEffect"); // Nuevo console.log
     dispatch(apiGetAllProducts());
   }, [dispatch]);
 
   const startEditing = (product: Product) => {
-    console.log("Estado actual de todos los productos:", allProducts); // Nuevo console.log
-    console.log(`Comenzando a editar producto con ID: ${product.id}`);
     setEditingId(product.id);
     setUpdatedProduct(product);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(`Cambio en el input ${name} con valor: ${value}`);
     if (updatedProduct) {
       setUpdatedProduct({
         ...updatedProduct,
@@ -52,7 +52,6 @@ const ProductTable = () => {
 
   const handleUpdate = async () => {
     if (updatedProduct) {
-      console.log(`Actualizando producto con ID: ${updatedProduct.id}`);
       try {
         await dispatch(apiEditProduct(updatedProduct)).unwrap();
         setEditingId(null);
@@ -69,6 +68,7 @@ const ProductTable = () => {
       console.error("Error deleting product:", error);
     }
   };
+
   return (
     <ProductContainer>
       <StyledH2>Productos existentes</StyledH2>
@@ -88,8 +88,8 @@ const ProductTable = () => {
           </tr>
         </thead>
         <tbody>
-          {allProducts.map((product, index) => (
-            <tr key={index}>
+          {allProducts.map((product) => (
+            <tr key={product.id}>
               <td>
                 <div style={{ width: "100px" }}>{product.id}</div>
               </td>

@@ -5,6 +5,7 @@ import jwt_decode from "jwt-decode";
 import { loginSuccess } from "../../../../../../admin/context/authSlice/authSlice";
 import axios from "axios";
 import { DecodedToken } from "../../../../../../admin/productContext/types";
+import { Product } from "../../productManagement/productManagementSlice";
 
 const websocketMiddleware = (storeAPI: any) => {
   // Verificamos si estamos en el entorno del cliente
@@ -39,12 +40,22 @@ const websocketMiddleware = (storeAPI: any) => {
 
   socket.on("stock-updated", async () => {
     try {
+      console.log("Evento stock-updated recibido.");
+  
       const updatedProducts = await storeAPI
         .dispatch(fetchUpdatedProducts())
         .unwrap();
-      storeAPI.dispatch(syncCartWithUpdatedStock(updatedProducts));
+  
+      console.log('Productos actualizados después de fetchUpdatedProducts:', updatedProducts);
+  
+      // Itera sobre la lista de productos actualizados y sincroniza cada uno con el carrito.
+      updatedProducts.forEach((product: Product) => {
+        storeAPI.dispatch(syncCartWithUpdatedStock(product));
+      });
+      
+  
     } catch (error) {
-      console.error("Error fetching updated products:", error);
+      console.error("Error obteniendo productos actualizados:", error);
     }
   });
 

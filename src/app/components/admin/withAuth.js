@@ -1,11 +1,12 @@
 // withAuth.jsx
-import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
-import { LoginContext } from "./LoginContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export default function withAuth(Component, role) {
   return function ProtectedRoute(props) {
-    const { isAuthenticated, userRole } = useContext(LoginContext);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const userRole = useSelector(state => state.auth.userRole);
     const router = useRouter();
 
     useEffect(() => {

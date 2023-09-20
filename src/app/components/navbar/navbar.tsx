@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../admin/context/authSlice/authSlice"; 
+import { logout } from "../admin/context/authSlice/authSlice";
 import {
   openLoginModal,
   closeLoginModal,
-} from "../admin/context/loginModalSlice/loginModalSlice"; 
+} from "../admin/context/loginModalSlice/loginModalSlice";
 import AdminLogin from "../admin/login/loginUserAdmin";
 import ModalPanel from "../admin/modalPanel/modalPanel";
 import { RootState } from "../products/products/cart/contextCart/store/rootReducer";
@@ -46,15 +46,14 @@ const Navbar: React.FC = () => {
   const isLoginModalOpen = useSelector(
     (state: RootState) => state.loginModal.isLoginModalOpen
   );
+  const [isMounted, setIsMounted] = useState(false);
 
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  useEffect(() => {
-    // Forzar una re-renderización al cambiar isAuthenticated o userRole
-  }, [isAuthenticated, userRole]);
+
   const totalItemsInCart = cartItems.reduce(
     (acc, item) => acc + item.cantidad,
     0
@@ -80,7 +79,13 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
-
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  if (!isMounted) {
+    return null; // o algún placeholder/loading state
+  }
   return (
     <nav style={basicStyles.navbar}>
       <div
@@ -132,22 +137,24 @@ const Navbar: React.FC = () => {
           </div>
 
           {isAuthenticated ? (
-            <div
-              style={{
-                ...basicStyles.loginButton,
-                position: "relative",
-                marginLeft: "1rem",
-              }}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            >
-              👤
+            <>
+              <button
+                style={{
+                  ...basicStyles.loginButton,
+                  position: "relative",
+                  marginLeft: "1rem",
+                }}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                👤
+              </button>
               {isDropdownOpen && (
                 <DropdownMenu
                   onLogout={handleLogout}
                   onViewHistory={() => setIsHistoryModalOpen(true)}
                 />
               )}
-            </div>
+            </>
           ) : (
             <button
               style={basicStyles.loginButton}
@@ -157,7 +164,8 @@ const Navbar: React.FC = () => {
             </button>
           )}
         </div>
-
+      </div>
+      <Fragment>
         {isLoginModalOpen && <AdminLogin />}
         {showAdminModal && (
           <ModalPanel
@@ -165,26 +173,25 @@ const Navbar: React.FC = () => {
             onClose={() => setShowAdminModal(false)}
           />
         )}
-      </div>
-      {showCartModal && (
-        <Cart
-          onClose={() => setShowCartModal(false)}
-          onCheckout={handleCheckout}
+        {showCartModal && (
+          <Cart
+            onClose={() => setShowCartModal(false)}
+            onCheckout={handleCheckout}
+          />
+        )}
+        <Modal
+          isOpen={isHistoryModalOpen}
+          title="Historial de Órdenes"
+          onClose={() => setIsHistoryModalOpen(false)}
+        >
+          <Historial />
+        </Modal>
+        <ModalConfirmacionCompra
+          isOpen={isConfirmationOpen}
+          onClose={closeConfirmationModal}
+          onContinuar={closeConfirmationModal}
         />
-      )}
-      <Modal
-        isOpen={isHistoryModalOpen}
-        title="Historial de Órdenes"
-        onClose={() => setIsHistoryModalOpen(false)}
-      >
-        <Historial />
-      </Modal>
-
-      <ModalConfirmacionCompra
-        isOpen={isConfirmationOpen}
-        onClose={closeConfirmationModal}
-        onContinuar={closeConfirmationModal}
-      />
+      </Fragment>
     </nav>
   );
 };

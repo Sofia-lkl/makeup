@@ -1,11 +1,7 @@
-"use client";
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import {
-  addItem,
-  CartItem
-} from "./cart/contextCart/cart/cartSlice";
+import { addItem, CartItem } from "./cart/contextCart/cart/cartSlice";
 
 import {
   createProductGrid,
@@ -43,9 +39,11 @@ const ProductCard: React.FC<ProductType> = ({
   stock,
   descripcion,
 }) => {
-  const dispatch = useDispatch();  // Hook de Redux
+  const dispatch = useDispatch(); // Hook de Redux
 
   const handleAddToCart = () => {
+    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`); // Nuevo log
+
     const itemToAdd: CartItem = {
       id,
       nombre,
@@ -95,7 +93,6 @@ const Products: React.FC<{
   activeFilter,
   onFilterChange,
 }) => {
-
   useEffect(() => {
     console.log("Updated product list received:", productList);
   }, [productList]);
