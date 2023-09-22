@@ -3,7 +3,6 @@ import axios from "axios";
 import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import ProductPreview from "../previewProducts/previewProductos";
-import ListProductModal from "./listProductsModal";
 
 import { openModal } from "../context/ModalContext/modalSlice";
 import { RootState } from "../products/cart/contextCart/store/rootReducer";
@@ -45,7 +44,7 @@ const ListProduct: React.FC = () => {
       .get("http://localhost:3002/api/products")
       .then((response) => {
         setProductList(response.data);
-        setHighlightedProductList(response.data.slice(0, 3));
+        setHighlightedProductList(response.data.slice(0, 6));
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
@@ -79,10 +78,6 @@ const ListProduct: React.FC = () => {
         onProductClick={() => dispatch(openModal())}
         productList={filteredProductList}
         isModalOpen={isModalOpen}
-      />
-      <ListProductModal
-        productList={filteredProductList}
-        highlightedList={highlightedProductList}
       />
     </>
   );

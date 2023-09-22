@@ -6,12 +6,13 @@ export interface Product {
   id: number;
   nombre: string;
   precio: number;
-  stock?: number;
-  imagen_url?: string;
+  stock?: number;  // Asegurarse de que sea opcional.
+  imagen_url?: string;  // Asegurarse de que sea opcional.
   descripcion?: string;
   color?: string;
   marca?: string;
 }
+
 
 export interface ProductManagementState {
   allProducts: Product[];

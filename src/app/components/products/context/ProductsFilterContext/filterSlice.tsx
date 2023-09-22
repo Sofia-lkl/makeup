@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface ProductType {
   id: number;
-  imagen_url: string;
+  imagen_url?: string;
   nombre: string;
   precio: number;
-  stock: number;
-  marca: string;
-  color: string;
-  descripcion: string;
+  stock?: number;
+  marca?: string; // Aquí haces la propiedad "marca" opcional
+  color?: string;
+  descripcion?: string;
 }
 
 interface FilterState {

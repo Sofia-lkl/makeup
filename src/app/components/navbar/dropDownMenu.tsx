@@ -1,15 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import { styless } from './navbarStyles';
+import { styless } from "./navbarStyles";
 
 interface DropdownMenuProps {
   onLogout: () => void;
   onViewHistory: () => void;
   toggleDropdown: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement>; 
-  buttonRef: React.RefObject<HTMLButtonElement>; 
+  dropdownRef: React.RefObject<HTMLDivElement>;
+  buttonRef: React.RefObject<HTMLButtonElement>;
 }
-
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   onLogout,
@@ -17,22 +16,38 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   dropdownRef,
   buttonRef,
 }) => {
+  const handleViewHistoryClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onViewHistory();
+  };
+
+  const handleLogoutClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onLogout();
+  };
+
   return (
-    <div ref={dropdownRef} style={{...styless.dropdownMenu, border: '1px solid red'}}>
-      <button style={buttonStyle} onClick={onViewHistory}>Ver Órdenes</button>
-      <button style={buttonStyle} onClick={onLogout}>Cerrar Sesión</button>
+    <div
+      ref={dropdownRef}
+      style={{ ...styless.dropdownMenu, border: "1px solid red" }}
+    >
+      <button style={buttonStyle} onClick={handleViewHistoryClick}>
+        Ver Órdenes
+      </button>
+      <button style={buttonStyle} onClick={handleLogoutClick}>
+        Cerrar Sesión
+      </button>
     </div>
   );
 };
 
 const buttonStyle = {
-  // Estilo para los botones
-  backgroundColor: 'white',
-  color: 'black',
-  border: '1px solid gray',
-  padding: '0.5rem 1rem',
-  margin: '0.5rem',
-  cursor: 'pointer',
+  backgroundColor: "white",
+  color: "black",
+  border: "1px solid gray",
+  padding: "0.5rem 1rem",
+  margin: "0.5rem",
+  cursor: "pointer",
 };
 
 export default DropdownMenu;

@@ -3,13 +3,14 @@ import { Product } from "../productManagement/productManagementSlice";
 import { OrderDetail } from "../../ModalConfirmacionCompra/orderSlice";
 
 export interface CartItem {
-  imagen_url: string;
+  imagen_url?: string;  
   id: number;
   nombre: string;
   precio: number;
   cantidad: number;
   stock: number;
 }
+
 
 export type CartState = CartItem[];
 

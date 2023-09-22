@@ -1,5 +1,6 @@
 import React from "react";
 import Slider from "react-slick";
+import Link from "next/link"; // Importa el componente Link
 
 import {
   PreviewContainer,
@@ -43,19 +44,19 @@ const ProductPreview: React.FC<ProductPreviewProps> = ({
 
   return (
     <PreviewContainer>
-      {
-        <Slider {...settings}>
-          {imageBackgrounds.map((imageUrl, index) => (
-            <ProductSlide key={index} $imageUrl={imageUrl} />
-          ))}
-        </Slider>
-      }
+      <Slider {...settings}>
+        {imageBackgrounds.map((imageUrl, index) => (
+          <ProductSlide key={index} $imageUrl={imageUrl} />
+        ))}
+      </Slider>
 
       <ProductFlow products={productList} />
 
-      <ViewAllButton variant="contained" size="large" onClick={onProductClick}>
-        Ver todos los productos
-      </ViewAllButton>
+      <Link href="/todosLosProductos">
+        <ViewAllButton variant="contained" size="large">
+          Ver todos los productos
+        </ViewAllButton>
+      </Link>
     </PreviewContainer>
   );
 };

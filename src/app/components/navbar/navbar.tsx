@@ -94,12 +94,16 @@ const Navbar: React.FC = () => {
   const handleLogout = () => dispatch(logout());
   useEffect(() => {
     const handleClickOutside = (event: any) => {
+      // Si el dropdown está abierto y el clic fue fuera del dropdown y del botón
       if (
+        isDropdownOpen &&
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         buttonRef.current !== event.target
       ) {
-        setIsDropdownOpen(false);
+        setTimeout(() => {
+          setIsDropdownOpen(false);
+        }, 100);
       }
     };
 
@@ -107,7 +111,7 @@ const Navbar: React.FC = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isDropdownOpen]);
 
   useEffect(() => {
     dispatch(verifyToken())

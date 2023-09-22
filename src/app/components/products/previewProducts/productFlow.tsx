@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { ProductDetailsContainer, ProductFlowContainer } from './previewProductsStyle';
+import { Product } from "@/app/components/admin/productContext/types";  
 
-type Product = {
-  imagen_url: string;
-  nombre: string;
-  marca: string;
-};
+
 
 type ProductFlowProps = {
   products: Product[];

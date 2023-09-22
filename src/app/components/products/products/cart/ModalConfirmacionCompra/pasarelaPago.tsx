@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Button } from "@mui/material";
 import axios from "axios";
 import { StyledPasarelaPago } from "./styledPasarelaPago";
-import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import CargarComprobante from "./uploadComprobant";
-import { useAppSelector } from "../../cart/contextCart/store/appHooks"; 
+import { useAppSelector } from "../../cart/contextCart/store/appHooks";
 
 interface PasarelaPagoProps {
   onPaymentSuccess: () => void;
@@ -34,7 +33,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   datosEnvio,
   ordenId,
 }) => {
-  const cartItems = useAppSelector((state) => state.cart); 
+  const cartItems = useAppSelector((state) => state.cart);
 
   const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -43,8 +42,6 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
     string | null
   >(null);
   const [loadedComprobante, setLoadedComprobante] = useState<File | null>(null);
-
-  initMercadoPago("APP_USR-52dc916a-1c65-4a6e-88b6-8ebe99a2b48c");
 
   const closePaymentMethod = () => {
     setShowUploadOption(false);
@@ -73,7 +70,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       total,
       datosUsuario,
       datosEnvio,
-      productos: cartItems, 
+      productos: cartItems,
     };
 
     const userToken = localStorage.getItem("jwt");
@@ -90,10 +87,10 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
         }
       );
 
-      if (response.data && response.data.id) {
-        setPreferenceId(response.data.id);
+      if (response.data && response.data.init_point) {
+        window.location.href = response.data.init_point; // Redirige al usuario a MercadoPago
       } else {
-        console.error("No se recibió el id de preferencia de MercadoPago.");
+        console.error("No se recibió la URL de MercadoPago.");
         onPaymentFailure();
       }
     } catch (error: any) {
@@ -128,23 +125,19 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       <div className="section-card products-section">
         <h6>Productos a comprar:</h6>
         <ul className="products-list">
-          {cartItems.map(
-            (
-              producto 
-            ) => (
-              <li key={producto.id}>
-                <img
-                  src={producto.imagen_url}
-                  alt={producto.nombre}
-                  className="product-image"
-                />
-                <span>
-                  <strong>{producto.nombre}</strong> - $
-                  {producto.precio.toFixed(2)} x {producto.cantidad}
-                </span>
-              </li>
-            )
-          )}
+          {cartItems.map((producto) => (
+            <li key={producto.id}>
+              <img
+                src={producto.imagen_url}
+                alt={producto.nombre}
+                className="product-image"
+              />
+              <span>
+                <strong>{producto.nombre}</strong> - $
+                {producto.precio.toFixed(2)} x {producto.cantidad}
+              </span>
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -215,7 +208,6 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       </div>
 
       <div className="notifications">
-        {preferenceId && <Wallet initialization={{ preferenceId }} />}
         {uploadSuccessMessage && (
           <p className="success-message">{uploadSuccessMessage}</p>
         )}

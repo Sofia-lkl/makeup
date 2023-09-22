@@ -1,35 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { addItem, CartItem } from "./cart/contextCart/cart/cartSlice";
+import { motion } from "framer-motion";
+import Slider from "react-slick";
 
-import {
-  createProductGrid,
-  ProductOptions,
-  ProductCardContainer,
-  ProductName,
-  ProductPrice,
-  ProductImage,
-  createProductContainer,
-  ProductGrid,
-  ProductListContainer,
-  AddToCartButton,
-  ProductContainer,
-  ProductDescription,
-  ProductColor,
-  ProductBrand,
-} from "./allProductsStyles";
 import {
   HighlightedContainer,
   SectionTitle,
   SectionDescription,
 } from "./highlightedProductsStyles";
-
 import { ProductType } from "../context/ProductsFilterContext/filterSlice";
+import {
+  AddToCartButton,
+  ProductBrand,
+  ProductCardContainer,
+  ProductColor,
+  ProductDescription,
+  ProductImage,
+  ProductName,
+  ProductOptions,
+  ProductPrice,
+} from "./styleProducts";
+import {
+  CarouselContainer,
+  HighlightedProductCardContainer,
+} from "./stylesCarousel";
+import { ProductContainer, ProductListContainer } from "./stylesContainer";
 
 const getProductLink = (productName: string) => `/products/${productName}`;
 
-const ProductCard: React.FC<ProductType> = ({
+const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
   id,
   imagen_url,
   nombre,
@@ -38,33 +39,33 @@ const ProductCard: React.FC<ProductType> = ({
   marca,
   stock,
   descripcion,
+  highlighted = false,
 }) => {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
+  const CardContainer = (
+    highlighted ? HighlightedProductCardContainer : ProductCardContainer
+  ) as React.ElementType;
 
   const handleAddToCart = () => {
-    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`); 
-
+    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`);
     const itemToAdd: CartItem = {
       id,
       nombre,
       precio,
       cantidad: 1,
-      imagen_url,
-      stock,
+      imagen_url: imagen_url || "ruta_por_defecto.jpg",
+      stock: stock || 0,
     };
-
     dispatch(addItem(itemToAdd));
   };
 
   return (
-    <ProductCardContainer>
+    <CardContainer>
       <Link href={getProductLink(nombre)}>
-        <div style={{ cursor: "pointer" }}>
-          <ProductImage
-            src={imagen_url || "path_to_default_image.jpg"}
-            alt={nombre}
-          />
-        </div>
+        <ProductImage
+          src={imagen_url || "path_to_default_image.jpg"}
+          alt={nombre}
+        />
       </Link>
       <ProductName>{nombre}</ProductName>
       <ProductPrice>${precio.toFixed(2)}</ProductPrice>
@@ -76,20 +77,49 @@ const ProductCard: React.FC<ProductType> = ({
           Agregar al Carrito
         </AddToCartButton>
       </ProductOptions>
-    </ProductCardContainer>
+    </CardContainer>
   );
 };
 
+const HighlightedCarousel: React.FC<{ products: ProductType[] }> = ({
+  products,
+}) => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    centerMode: true,
+    centerPadding: "60px",
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    focusOnSelect: true,
+    adaptiveHeight: true,
+  };
+
+  return (
+    <CarouselContainer>
+      <Slider {...settings}>
+        {products.map((product) => (
+          <div key={product.id}>
+            <ProductCard {...product} />
+          </div>
+        ))}
+      </Slider>
+    </CarouselContainer>
+  );
+};
 const Products: React.FC<{
   productList: ProductType[];
   highlightedProductList?: ProductType[];
-  type?: "highlighted" | "fullList";
+  displayMode: "highlighted" | "fullList" | "both";
   activeFilter?: string | undefined;
   onFilterChange?: (filter: string | null) => void;
 }> = ({
   productList,
   highlightedProductList,
-  type = "highlighted",
+  displayMode = "highlighted",
   activeFilter,
   onFilterChange,
 }) => {
@@ -98,24 +128,22 @@ const Products: React.FC<{
   }, [productList]);
 
   const displayedHighlightedProducts =
-    highlightedProductList || productList.slice(0, 3);
+    highlightedProductList || productList.slice(0, 6);
 
   return (
-    <ProductContainer displayType={type}>
-      {type === "highlighted" && (
+    <ProductContainer
+      displayType={displayMode === "both" ? "fullList" : displayMode}
+    >
+      {(displayMode === "highlighted" || displayMode === "both") && (
         <>
           <SectionTitle>Productos Destacados</SectionTitle>
           <SectionDescription>
             Descubre los productos que están marcando tendencia esta temporada.
           </SectionDescription>
-          <ProductGrid>
-            {displayedHighlightedProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </ProductGrid>
+          <HighlightedCarousel products={displayedHighlightedProducts} />
         </>
       )}
-      {type === "fullList" && (
+      {(displayMode === "fullList" || displayMode === "both") && (
         <ProductListContainer>
           {productList.map((product) => (
             <ProductCard key={product.id} {...product} />
