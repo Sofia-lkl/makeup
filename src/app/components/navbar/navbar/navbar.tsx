@@ -1,9 +1,6 @@
 "use client";
 import React, { useState, useEffect, Fragment, useRef } from "react";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "../../../redux/store/appHooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/store/appHooks";
 import { logout } from "../../../redux/authSlice/authSlice";
 import { openLoginModal } from "../../../redux/loginModalSlice/loginModalSlice";
 import AdminLogin from "../../admin/login/loginUserAdmin/loginUserAdmin";
@@ -192,26 +189,27 @@ const Navbar: React.FC = () => {
           </div>
           {isAuthenticated ? (
             <>
-              <button
-                ref={buttonRef}
-                style={{
-                  ...basicStyles.loginButton,
-                  position: "relative",
-                  marginLeft: "1rem",
-                }}
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
-                👤
-              </button>
-              {isDropdownOpen && (
-                <DropdownMenu
-                  onLogout={handleLogout}
-                  onViewHistory={() => setIsHistoryModalOpen(true)}
-                  toggleDropdown={toggleDropdown}
-                  dropdownRef={dropdownRef}
-                  buttonRef={buttonRef}
-                />
-              )}
+               <div style={{ position: 'relative' }}>
+                <button
+                    ref={buttonRef}
+                    style={{
+                        ...basicStyles.loginButton,
+                        marginLeft: "1rem",
+                    }}
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                    👤
+                </button>
+                {isDropdownOpen && (
+                    <DropdownMenu
+                        onLogout={handleLogout}
+                        onViewHistory={() => setIsHistoryModalOpen(true)}
+                        toggleDropdown={toggleDropdown}
+                        dropdownRef={dropdownRef}
+                        buttonRef={buttonRef}
+                    />
+                )}
+            </div>
             </>
           ) : (
             <button
