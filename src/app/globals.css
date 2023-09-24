@@ -48,3 +48,6 @@ body {
 .slick-prev {
   left: -10px; 
 }
+body .react-input-range__label--value {
+  display: none !important;
+}
