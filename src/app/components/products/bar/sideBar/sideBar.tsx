@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaRegSmile, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import InputRange from "react-input-range";
 import { RootState } from "../../../../redux/store/rootReducer";
 import {
   setSearchTerm,
@@ -21,7 +20,6 @@ import {
 } from "../sideBarStyles/sideBarStyle";
 import { PriceRangeInputs, PriceRangeContainer } from "../sideBarStyles/priceRangeStyles";
 import { FilterInput, PriceRangeInput } from "../sideBarStyles/inputStyles";
-import "react-input-range/lib/css/index.css";
 import { FilterButtons } from "../sideBarStyles/buttonStyles";
 const CombinedFilterComponent: React.FC = () => {
   const dispatch = useDispatch();

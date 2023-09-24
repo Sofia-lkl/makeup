@@ -4,7 +4,7 @@ import { syncCartWithUpdatedStock } from "../../cartSlice/cartSlice";
 import jwt_decode from "jwt-decode";
 import { loginSuccess } from "../../authSlice/authSlice";
 import axios from "axios";
-import { DecodedToken } from "../../../../components/admin/productAction-reducer-types/types/types";
+import { DecodedToken } from "../../../components/admin/productAction-reducer-types/types/types";
 import { Product } from "../../productManagementSlice/productManagementSlice";
 
 const websocketMiddleware = (storeAPI: any) => {
