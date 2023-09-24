@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, CartItem } from "../../../../redux/cartSlice/cartSlice";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-
+import { toast } from "react-toastify";
 import {
   HighlightedContainer,
   SectionTitle,
@@ -28,7 +28,10 @@ import {
   CarouselContainer,
   HighlightedProductCardContainer,
 } from "../styles/stylesCarousel";
-import { ProductContainer, ProductListContainer } from "../styles/stylesContainer";
+import {
+  ProductContainer,
+  ProductListContainer,
+} from "../styles/stylesContainer";
 import { RootState } from "../../../../redux/store/rootReducer";
 import CombinedFilterComponent from "../../bar/sideBar/sideBar";
 
@@ -51,6 +54,11 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
   ) as React.ElementType;
 
   const handleAddToCart = () => {
+    if (typeof stock === "undefined" || stock <= 0) {
+      toast.error("Producto sin stock!");
+      return;
+    }
+
     console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`);
     const itemToAdd: CartItem = {
       id,
@@ -61,6 +69,9 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
       stock: stock || 0,
     };
     dispatch(addItem(itemToAdd));
+
+    const uniqueToastId = `${id}-${Date.now()}`;
+    toast.success("Producto agregado al carrito!", { toastId: uniqueToastId });
   };
 
   return (
@@ -175,8 +186,10 @@ const Products: React.FC<{
       .filter((product) =>
         product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
       )
-      .filter((product) => 
-        selectedCategory && selectedCategory !== "Todos" ? product.categoria === selectedCategory : true
+      .filter((product) =>
+        selectedCategory && selectedCategory !== "Todos"
+          ? product.categoria === selectedCategory
+          : true
       );
   };
 

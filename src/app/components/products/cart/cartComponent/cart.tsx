@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
@@ -44,6 +44,7 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
   const cartItems = useSelector((state: RootState) => state.cart);
   const cartItemsToDisplay = cartItems.filter((item) => item.stock > 0);
   const canCheckout = cartItems.every((item) => item.stock > 0);
+  const cartRef = useRef<HTMLDivElement>(null);
 
   const handleRemove = (id: number) => {
     dispatch(removeItem(id));
@@ -62,9 +63,21 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
       dispatch(decrementItem(id));
     }
   };
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
 
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [onClose]);
   return (
-    <CartMainContainer>
+    <CartMainContainer ref={cartRef}>
       <CartHeaderContainer>
         <CartHeader>Tu Carrito</CartHeader>
         <IconButton onClick={onClose}>

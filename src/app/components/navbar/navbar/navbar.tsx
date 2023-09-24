@@ -19,6 +19,7 @@ import {
 } from "../navbarStyles/navBarResponsiveStyles";
 import styled from "@emotion/styled";
 import MenuIcon from "@mui/icons-material/Menu";
+import Badge from "@mui/material/Badge";
 
 interface NavLinkProps {
   href: string;
@@ -185,31 +186,33 @@ const Navbar: React.FC = () => {
             }}
             onClick={() => setShowCartModal(true)}
           >
-            🛒 <span style={{ marginLeft: "0.5rem" }}>{totalItemsInCart}</span>
+            <Badge badgeContent={totalItemsInCart} color="error">
+              🛒
+            </Badge>
           </div>
           {isAuthenticated ? (
             <>
-               <div style={{ position: 'relative' }}>
+              <div style={{ position: "relative" }}>
                 <button
-                    ref={buttonRef}
-                    style={{
-                        ...basicStyles.loginButton,
-                        marginLeft: "1rem",
-                    }}
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  ref={buttonRef}
+                  style={{
+                    ...basicStyles.loginButton,
+                    marginLeft: "1rem",
+                  }}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                    👤
+                  👤
                 </button>
                 {isDropdownOpen && (
-                    <DropdownMenu
-                        onLogout={handleLogout}
-                        onViewHistory={() => setIsHistoryModalOpen(true)}
-                        toggleDropdown={toggleDropdown}
-                        dropdownRef={dropdownRef}
-                        buttonRef={buttonRef}
-                    />
+                  <DropdownMenu
+                    onLogout={handleLogout}
+                    onViewHistory={() => setIsHistoryModalOpen(true)}
+                    toggleDropdown={toggleDropdown}
+                    dropdownRef={dropdownRef}
+                    buttonRef={buttonRef}
+                  />
                 )}
-            </div>
+              </div>
             </>
           ) : (
             <button

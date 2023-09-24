@@ -3,7 +3,7 @@ import { Product } from "../productManagementSlice/productManagementSlice";
 import { OrderDetail } from "../orderSlice/orderSlice";
 
 export interface CartItem {
-  imagen_url?: string;  
+  imagen_url?: string;
   id: number;
   nombre: string;
   precio: number;
@@ -11,10 +11,14 @@ export interface CartItem {
   stock: number;
 }
 
-
 export type CartState = CartItem[];
 
-const initialState: CartState = [];
+const isBrowser = typeof window !== "undefined";
+
+const savedCartItems = isBrowser ? localStorage.getItem("cartItems") : null;
+const initialState: CartState = savedCartItems
+  ? JSON.parse(savedCartItems)
+  : [];
 
 const cartSlice = createSlice({
   name: "cart",
@@ -28,7 +32,10 @@ const cartSlice = createSlice({
         itemInCart.imagen_url =
           updatedProduct.imagen_url || itemInCart.imagen_url;
         itemInCart.precio = updatedProduct.precio || itemInCart.precio;
-        itemInCart.stock = (typeof updatedProduct.stock !== 'undefined') ? updatedProduct.stock : itemInCart.stock;
+        itemInCart.stock =
+          typeof updatedProduct.stock !== "undefined"
+            ? updatedProduct.stock
+            : itemInCart.stock;
 
         if (itemInCart.cantidad > itemInCart.stock) {
           itemInCart.cantidad = itemInCart.stock;
@@ -49,11 +56,17 @@ const cartSlice = createSlice({
           state.push(action.payload);
         }
       }
+      if (isBrowser) {
+        localStorage.setItem("cartItems", JSON.stringify(state));
+      }
     },
     incrementItem: (state, action: PayloadAction<number>) => {
       const existingItem = state.find((item) => item.id === action.payload);
       if (existingItem && existingItem.cantidad < existingItem.stock) {
         existingItem.cantidad += 1;
+      }
+      if (isBrowser) {
+        localStorage.setItem("cartItems", JSON.stringify(state));
       }
     },
     decrementItem: (state, action: PayloadAction<number>) => {
@@ -61,14 +74,23 @@ const cartSlice = createSlice({
       if (existingItem && existingItem.cantidad > 1) {
         existingItem.cantidad -= 1;
       }
+      if (isBrowser) {
+        localStorage.setItem("cartItems", JSON.stringify(state));
+      }
     },
     removeItem: (state, action: PayloadAction<number>) => {
       const index = state.findIndex((item) => item.id === action.payload);
       if (index !== -1) {
         state.splice(index, 1);
       }
+      if (isBrowser) {
+        localStorage.setItem("cartItems", JSON.stringify(state));
+      }
     },
     clearCart: (state) => {
+      if (isBrowser) {
+        localStorage.removeItem("cartItems");
+      }
       return [];
     },
     initCart: (state, action: PayloadAction<CartState>) => {

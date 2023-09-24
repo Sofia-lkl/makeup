@@ -7,6 +7,9 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { GlobalRangeStyles } from "@/app/components/products/bar/sideBarStyles/sideBarStyle";
 
 const theme = createTheme();
@@ -17,10 +20,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalRangeStyles />
+        <ToastContainer /> 
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>
   );
 }
+
 
 export default MyApp;
