@@ -1,4 +1,4 @@
-import InputRange from "react-input-range";
+import Slider from '@mui/material/Slider';
 import styled from "styled-components";
 
 export const colors = {
@@ -128,9 +128,8 @@ export const StickyFilterContainer = styled(StyledFilterBar)`
 `;
 
 
-import "react-input-range/lib/css/index.css";
 
-export const StyledInputRange = styled(InputRange)`
+export const StyledInputRange = styled(Slider)`
   &.input-range {
     .input-range__track {
       background-color: #000;

@@ -18,9 +18,18 @@ import {
   StyledInputRange,
   StyledFilterBar,
 } from "../sideBarStyles/sideBarStyle";
-import { PriceRangeInputs, PriceRangeContainer } from "../sideBarStyles/priceRangeStyles";
+import {
+  PriceRangeInputs,
+  PriceRangeContainer,
+} from "../sideBarStyles/priceRangeStyles";
 import { FilterInput, PriceRangeInput } from "../sideBarStyles/inputStyles";
 import { FilterButtons } from "../sideBarStyles/buttonStyles";
+import Slider from "@mui/material/Slider";
+interface MyRange {
+  min: number;
+  max: number;
+}
+
 const CombinedFilterComponent: React.FC = () => {
   const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
@@ -46,11 +55,12 @@ const CombinedFilterComponent: React.FC = () => {
     max: number;
   }
 
-  const handleSliderChange = (value: number | MyRange) => {
-    if (typeof value === "object" && value !== null) {
-      dispatch(setPriceRange([value.min, value.max]));
+  const handleSliderChange = (value: number | number[]) => {
+    if (Array.isArray(value) && value.length === 2) {
+      dispatch(setPriceRange([value[0], value[1]]));
     }
-  };
+};
+
 
   const handleFilterClick = (category: string) => {
     dispatch(setSelectedCategory(category));
@@ -158,12 +168,13 @@ const CombinedFilterComponent: React.FC = () => {
         <div className="price-section">
           <label>Rango de Precio</label>
           <PriceRangeContainer>
-            <StyledInputRange
-              minValue={0}
-              maxValue={1000}
-              value={{ min: priceRange[0], max: priceRange[1] }}
-              onChange={handleSliderChange}
-              formatLabel={() => ""}
+            <Slider
+              value={priceRange}
+              onChange={(event, newValue) => handleSliderChange(newValue)}
+              valueLabelDisplay="auto"
+              min={0}
+              max={1000}
+              track="inverted"
             />
 
             <PriceRangeInputs>
