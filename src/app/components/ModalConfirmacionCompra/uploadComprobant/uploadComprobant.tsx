@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from "react";
-import axios from "axios";
+import React, { ChangeEvent, useState } from "react";
+import axios, { AxiosError } from "axios";
 
 interface CargarComprobanteProps {
   orderId: string | null;
@@ -9,6 +9,10 @@ interface CargarComprobanteProps {
   loadedComprobante?: File | null;
 }
 
+interface ErrorResponse {
+  message?: string;
+}
+
 const CargarComprobante: React.FC<CargarComprobanteProps> = ({
   orderId,
   total,
@@ -16,6 +20,8 @@ const CargarComprobante: React.FC<CargarComprobanteProps> = ({
   onUploadError,
   loadedComprobante,
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -31,8 +37,15 @@ const CargarComprobante: React.FC<CargarComprobanteProps> = ({
           formData
         );
         onUploadSuccess(response.data);
+        setErrorMessage(null);
       } catch (error) {
         onUploadError(error);
+        const axiosError = error as AxiosError<ErrorResponse>;
+        if (axiosError.response?.data?.message) {
+          setErrorMessage(axiosError.response.data.message);
+        } else {
+          setErrorMessage("Ocurrió un error al subir el archivo.");
+        }
       }
     }
   };
@@ -56,6 +69,7 @@ const CargarComprobante: React.FC<CargarComprobanteProps> = ({
         <strong>Total a transferir:</strong> ${total ? total.toFixed(2) : "N/A"}
       </p>
       <input type="file" onChange={handleUpload} />
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
       {loadedComprobante && (
         <div>Archivo cargado: {loadedComprobante.name}</div>
       )}

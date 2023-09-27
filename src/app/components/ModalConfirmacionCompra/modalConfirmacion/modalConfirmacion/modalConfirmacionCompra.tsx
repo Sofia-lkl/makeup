@@ -3,9 +3,24 @@ import { Modal, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ModalContent, Total, Button, ProductRow, ProductName, ProductPrice, ProductQuantity } from "../modalConfirmacionStyles/modalConfirmacionCompraStyles";
-import { useAppDispatch, useAppSelector } from '../../../../redux/store/appHooks'; 
-import { incrementItem, decrementItem, removeItem } from '../../../../redux/cartSlice/cartSlice'; 
+import {
+  ModalContent,
+  Total,
+  Button,
+  ProductRow,
+  ProductName,
+  ProductPrice,
+  ProductQuantity,
+} from "../modalConfirmacionStyles/modalConfirmacionCompraStyles";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../../../../redux/store/appHooks";
+import {
+  incrementItem,
+  decrementItem,
+  removeItem,
+} from "../../../../redux/cartSlice/cartSlice";
 import { Stepper } from "../../stepper/stepper";
 import DatosUsuario from "../../datosUsuario/datosUsuario/datosUsuario";
 import SeleccionEnvio from "../../seccionEnvio/seccionEnvio/seleccionEnvio";
@@ -17,9 +32,13 @@ interface ModalConfirmacionCompraProps {
   onContinuar: () => void;
 }
 
-const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({ isOpen, onClose, onContinuar }) => {
+const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
+  isOpen,
+  onClose,
+  onContinuar,
+}) => {
   const dispatch = useAppDispatch();
-  const productos = useAppSelector(state => state.cart);
+  const productos = useAppSelector((state) => state.cart);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [ordenId, setOrdenId] = useState<string | null>(null);
@@ -41,9 +60,6 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({ isOpe
   const incrementar = (id: number) => dispatch(incrementItem(id));
   const decrementar = (id: number) => dispatch(decrementItem(id));
   const eliminar = (id: number) => dispatch(removeItem(id));
-  
-  
-
 
   const handleContinuar = () => {
     if (currentStep < 4) {

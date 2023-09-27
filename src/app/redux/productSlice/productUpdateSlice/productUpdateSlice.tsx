@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface UpdatedProduct {
+export interface UpdatedProduct {
   id: number;
   nombre: string;
   descripcion?: string;

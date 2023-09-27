@@ -3,7 +3,8 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import { StyledPasarelaPago } from "../styledPasarelaPago/styledPasarelaPago";
 import CargarComprobante from "../../uploadComprobant/uploadComprobant";
-import { useAppSelector } from "../../../../redux/store/appHooks";
+import { useAppDispatch, useAppSelector } from "../../../../redux/store/appHooks";
+import { clearCart } from "../../../../redux/cartSlice/cartSlice"; 
 
 interface PasarelaPagoProps {
   onPaymentSuccess: () => void;
@@ -34,6 +35,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   ordenId,
 }) => {
   const cartItems = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch(); // Obtén el dispatch de Redux
 
   const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -59,6 +61,8 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       setUploadSuccessMessage(null);
       closePaymentMethod();
     }, 3000);
+    dispatch(clearCart()); // Limpia el carrito después de cargar el comprobante con éxito
+
   };
 
   const handleUploadError = (error: any) => {
@@ -67,6 +71,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 
   const handlePayment = async () => {
     const paymentData = {
+      orden_id: ordenId,
       total,
       datosUsuario,
       datosEnvio,
@@ -93,6 +98,8 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
         console.error("No se recibió la URL de MercadoPago.");
         onPaymentFailure();
       }
+      dispatch(clearCart()); // Limpia el carrito después de procesar el pago
+
     } catch (error: any) {
       console.error("Error procesando el pago:", error);
       if (error.response && error.response.status === 400) {

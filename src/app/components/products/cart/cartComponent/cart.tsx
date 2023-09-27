@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
   incrementItem,
   decrementItem,
   removeItem,
   CartState,
+  syncCartWithUpdatedStock,
 } from "../../../../redux/cartSlice/cartSlice";
-
 import {
   IconButton,
   List,
@@ -21,7 +20,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-
 import {
   CartMainContainer,
   CartHeaderContainer,
@@ -31,8 +29,9 @@ import {
   CloseButton,
   CheckoutButton,
 } from "../stylesCartComponent/stylesCart";
-
-import { RootState } from "../../../../redux/store/rootReducer";
+import { io } from "socket.io-client";
+import { UpdatedProduct, fetchUpdatedProducts } from "../../../../redux/productSlice/productUpdateSlice/productUpdateSlice";
+import { useAppDispatch, useAppSelector } from "../../../../redux/store/appHooks";
 
 interface CartProps {
   onClose: () => void;
@@ -40,11 +39,39 @@ interface CartProps {
 }
 
 export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state: RootState) => state.cart);
-  const cartItemsToDisplay = cartItems.filter((item) => item.stock > 0);
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart);
+  const cartItemsToDisplay = cartItems.filter((item) => item.stock > 0 && item.cantidad <= item.stock);
   const canCheckout = cartItems.every((item) => item.stock > 0);
   const cartRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const socket = io("http://localhost:3002");
+
+    socket.on("stock-updated", async () => {
+      try {
+        const action = await dispatch(fetchUpdatedProducts());
+
+        if (fetchUpdatedProducts.fulfilled.match(action)) {
+          const updatedProducts: UpdatedProduct[] = action.payload;
+
+          updatedProducts.forEach((product: UpdatedProduct) => {
+            dispatch(syncCartWithUpdatedStock(product));
+          });
+        }
+      } catch (error) {
+        console.error("Error updating cart items:", error);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Los artículos del carrito han cambiado:", cartItemsToDisplay);
+  }, [cartItemsToDisplay]);
 
   const handleRemove = (id: number) => {
     dispatch(removeItem(id));
@@ -63,6 +90,7 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
       dispatch(decrementItem(id));
     }
   };
+
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
@@ -76,6 +104,7 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [onClose]);
+
   return (
     <CartMainContainer ref={cartRef}>
       <CartHeaderContainer>

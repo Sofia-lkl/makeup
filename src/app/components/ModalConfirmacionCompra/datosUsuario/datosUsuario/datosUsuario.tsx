@@ -19,7 +19,7 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
   const [email, setEmail] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
 
-  const cart = useSelector((state: RootState) => state.cart); 
+  const cart = useSelector((state: RootState) => state.cart);
   const userId = useSelector((state: RootState) => state.auth.userId);
   const userToken = localStorage.getItem("jwt");
 
@@ -65,8 +65,17 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
           "Error al crear la orden o no se recibió un orderId válido"
         );
       }
-    } catch (error) {
-      console.error("Error al crear la orden:", error);
+    } catch (error: any) {
+      if (error.response) {
+        console.error("Data:", error.response.data);
+        console.error("Status:", error.response.status);
+        console.error("Headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+      } else {
+        console.error("Error setting up the request:", error.message);
+      }
+      console.error("Config:", error.config);
     }
   };
 

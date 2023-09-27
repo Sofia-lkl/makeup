@@ -15,10 +15,22 @@ export type CartState = CartItem[];
 
 const isBrowser = typeof window !== "undefined";
 
-const savedCartItems = isBrowser ? localStorage.getItem("cartItems") : null;
-const initialState: CartState = savedCartItems
-  ? JSON.parse(savedCartItems)
-  : [];
+const setCartToLocalStorage = (cart: CartState) => {
+  if (isBrowser) {
+    localStorage.setItem("cartItems", JSON.stringify(cart));
+  }
+};
+
+const getCartFromLocalStorage = (): CartState => {
+  if (isBrowser) {
+    const savedCartItems = localStorage.getItem("cartItems");
+    return savedCartItems ? JSON.parse(savedCartItems) : [];
+  }
+  return [];
+};
+
+
+const initialState: CartState = getCartFromLocalStorage();
 
 const cartSlice = createSlice({
   name: "cart",
@@ -29,26 +41,24 @@ const cartSlice = createSlice({
       const itemInCart = state.find((item) => item.id === updatedProduct.id);
       if (itemInCart) {
         itemInCart.nombre = updatedProduct.nombre || itemInCart.nombre;
-        itemInCart.imagen_url =
-          updatedProduct.imagen_url || itemInCart.imagen_url;
+        itemInCart.imagen_url = updatedProduct.imagen_url || itemInCart.imagen_url;
         itemInCart.precio = updatedProduct.precio || itemInCart.precio;
-        itemInCart.stock =
-          typeof updatedProduct.stock !== "undefined"
-            ? updatedProduct.stock
-            : itemInCart.stock;
+        itemInCart.stock = typeof updatedProduct.stock !== "undefined" ? updatedProduct.stock : itemInCart.stock;
 
-        if (itemInCart.cantidad > itemInCart.stock) {
+        if (itemInCart.stock === 0 || itemInCart.cantidad > itemInCart.stock) {
+          const index = state.findIndex(item => item.id === updatedProduct.id);
+          state.splice(index, 1);
+      } else if (itemInCart.cantidad > itemInCart.stock) {
           itemInCart.cantidad = itemInCart.stock;
         }
       }
+      setCartToLocalStorage(state);
     },
     addItem: (state, action: PayloadAction<CartItem>) => {
-      const existingItem = state.find((item) => item.id === action.payload.id);
+      const existingItem = state.find(item => item.id === action.payload.id);
       if (existingItem) {
         if (existingItem.stock && existingItem.cantidad < existingItem.stock) {
-          const index = state.findIndex(
-            (item) => item.id === action.payload.id
-          );
+          const index = state.findIndex(item => item.id === action.payload.id);
           state[index].cantidad += 1;
         }
       } else {
@@ -56,51 +66,38 @@ const cartSlice = createSlice({
           state.push(action.payload);
         }
       }
-      if (isBrowser) {
-        localStorage.setItem("cartItems", JSON.stringify(state));
-      }
+      setCartToLocalStorage(state);
     },
     incrementItem: (state, action: PayloadAction<number>) => {
-      const existingItem = state.find((item) => item.id === action.payload);
+      const existingItem = state.find(item => item.id === action.payload);
       if (existingItem && existingItem.cantidad < existingItem.stock) {
         existingItem.cantidad += 1;
       }
-      if (isBrowser) {
-        localStorage.setItem("cartItems", JSON.stringify(state));
-      }
+      setCartToLocalStorage(state);
     },
     decrementItem: (state, action: PayloadAction<number>) => {
-      const existingItem = state.find((item) => item.id === action.payload);
+      const existingItem = state.find(item => item.id === action.payload);
       if (existingItem && existingItem.cantidad > 1) {
         existingItem.cantidad -= 1;
       }
-      if (isBrowser) {
-        localStorage.setItem("cartItems", JSON.stringify(state));
-      }
+      setCartToLocalStorage(state);
     },
     removeItem: (state, action: PayloadAction<number>) => {
-      const index = state.findIndex((item) => item.id === action.payload);
+      const index = state.findIndex(item => item.id === action.payload);
       if (index !== -1) {
         state.splice(index, 1);
       }
-      if (isBrowser) {
-        localStorage.setItem("cartItems", JSON.stringify(state));
-      }
+      setCartToLocalStorage(state);
     },
     clearCart: (state) => {
-      if (isBrowser) {
-        localStorage.removeItem("cartItems");
-      }
+      setCartToLocalStorage([]);
       return [];
     },
     initCart: (state, action: PayloadAction<CartState>) => {
       return action.payload;
     },
-    updateItemStock: (
-      state,
-      action: PayloadAction<{ id: number; newStock: number }>
-    ) => {
-      const existingItem = state.find((item) => item.id === action.payload.id);
+    updateItemStock: (state, action: PayloadAction<{ id: number; newStock: number }>) => {
+      const existingItem = state.find(item => item.id === action.payload.id);
       if (existingItem) {
         existingItem.stock = action.payload.newStock;
         if (existingItem.cantidad > existingItem.stock) {
@@ -109,8 +106,8 @@ const cartSlice = createSlice({
       }
     },
     updateStockFromOrder: (state, action: PayloadAction<OrderDetail[]>) => {
-      action.payload.forEach((detail) => {
-        const itemInCart = state.find((item) => item.id === detail.producto_id);
+      action.payload.forEach(detail => {
+        const itemInCart = state.find(item => item.id === detail.producto_id);
         if (itemInCart) {
           itemInCart.stock -= detail.cantidad;
           if (itemInCart.cantidad > itemInCart.stock) {

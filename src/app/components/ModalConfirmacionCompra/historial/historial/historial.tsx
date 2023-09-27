@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../../../redux/store/rootReducer";
+import type {
+  AppDispatch,
+  RootState,
+} from "../../../../redux/store/rootReducer";
 import {
   fetchUserOrders,
   Order as OrderType,
@@ -26,13 +29,24 @@ import {
   OrderSection,
   SectionTitle,
   ListItem,
+  successMessageStyle,
 } from "../styledHistorial/styledHistorial";
+import axios from "axios";
+console.log("Componente Historial se está renderizando");
 
 const Historial: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const orders: OrderType[] = useSelector(
     (state: RootState) => state.order.orders
   );
+  console.log("Órdenes obtenidas:", orders);
+  const orderError: string | null = useSelector(
+    (state: RootState) => state.order.error
+  );
+
+  if (orderError) {
+    return <div>Error al obtener las órdenes: {orderError}</div>;
+  }
   const userRole: string | null = useSelector(
     (state: RootState) => state.auth.userRole
   );
@@ -48,7 +62,28 @@ const Historial: React.FC = () => {
   }>({});
   const [selectedStatus, setSelectedStatus] = useState<string>("activo");
   const isAdmin = userRole === "admin";
+  const getExtensionFromUrl = (url: string) => {
+    const match = url.match(/\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gm);
+    return match && match[0];
+  };
+  const handleDownload = async (url: string) => {
+    try {
+      const response = await axios.get(url, {
+        responseType: "blob",
+      });
 
+      const extension = getExtensionFromUrl(url);
+      const fileName = extension ? `comprobante${extension}` : "comprobante";
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([response.data]));
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error descargando el archivo:", error);
+    }
+  };
   useEffect(() => {
     if (isAdmin) {
       const fetchParams: any = {
@@ -72,15 +107,23 @@ const Historial: React.FC = () => {
       prevOrderId === orderId ? null : orderId
     );
   };
-
+  const getOrderDetails = (order: OrderType): OrderDetail[] | undefined => {
+    return order.details || order.detalles;
+  };
   const handleOrderClick = (orderId: number) => {
     setExpandedOrderId((prevOrderId) =>
       prevOrderId === orderId ? null : orderId
     );
   };
+  console.log("Estado seleccionado:", selectedStatus);
+  console.log("Ordenamiento seleccionado:", orderSorting);
+  console.log("Fecha de inicio:", startDate);
+  console.log("Fecha de fin:", endDate);
+
   return (
     <div>
-      <h2>Historial de Órdenes</h2>
+      {/*       <h2>Historial de Órdenes</h2>
+       */}{" "}
       {isAdmin && (
         <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
           <div style={{ display: "flex", gap: "10px" }}>
@@ -131,6 +174,7 @@ const Historial: React.FC = () => {
             Orden #{index + 1} - {new Date(order.fecha).toLocaleDateString()} -
             Haga clic para ver detalles
           </OrderHeader>
+
           {isAdmin && (
             <Button
               variant="contained"
@@ -145,14 +189,11 @@ const Historial: React.FC = () => {
                     .unwrap()
                     .then((result) => {
                       if ("orderId" in result) {
-                       
                         const orderToDelete = orders.find(
                           (o) => o.id === result.orderId
                         );
-                        if (orderToDelete && orderToDelete.detalles) {
-                          dispatch(
-                            updateStockFromOrder(orderToDelete.detalles)
-                          );
+                        if (orderToDelete && orderToDelete.details) {
+                          dispatch(updateStockFromOrder(orderToDelete.details));
                         }
                       }
                     })
@@ -177,7 +218,7 @@ const Historial: React.FC = () => {
               <OrderSection>
                 <SectionTitle>Productos</SectionTitle>
                 <ul>
-                  {order.detalles?.map((detail: OrderDetail) => (
+                  {getOrderDetails(order)?.map((detail: OrderDetail) => (
                     <ListItem key={detail.producto_id}>
                       <img
                         src={detail?.imagen_url}
@@ -191,28 +232,36 @@ const Historial: React.FC = () => {
                 </ul>
               </OrderSection>
 
-              <OrderSection>
-                <SectionTitle>Información de Envío</SectionTitle>
-                <div>Dirección: {order.shippingInfo?.direccion}</div>
-                <div>Ciudad: {order.shippingInfo?.ciudad}</div>
-                <div>Estado: {order.shippingInfo?.estado}</div>
-                <div>Código Postal: {order.shippingInfo?.codigo_postal}</div>
-                <div>País: {order.shippingInfo?.pais}</div>
-              </OrderSection>
+              {order.direccion ? (
+                <OrderSection>
+                  <SectionTitle>Información de Envío</SectionTitle>
+                  <div>Dirección: {order.direccion}</div>
+                  <div>Ciudad: {order.ciudad}</div>
+                  <div>Estado: {order.estado}</div>
+                  <div>Código Postal: {order.codigo_postal}</div>
+                  <div>País: {order.pais}</div>
+                </OrderSection>
+              ) : (
+                <OrderSection>
+                  <SectionTitle>Información de Envío</SectionTitle>
+                  <div>No hay información de envío para esta orden.</div>
+                </OrderSection>
+              )}
 
-              {order.comprobante_pago && (
+              {order.comprobante_pago ? (
                 <OrderSection>
                   <SectionTitle>Comprobante de Pago</SectionTitle>
-                  <a
-                    href={`http://localhost:3002${order.comprobante_pago}`}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
+
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() =>
+                      order.comprobante_pago &&
+                      handleDownload(order.comprobante_pago)
+                    }
                   >
-                    <Button variant="contained" color="secondary">
-                      Descargar Comprobante
-                    </Button>
-                  </a>
+                    Descargar Comprobante
+                  </Button>
 
                   <Button
                     variant="contained"
@@ -231,6 +280,14 @@ const Historial: React.FC = () => {
                           [order.id]: "Comprobante cargado con éxito!",
                         }));
 
+                        // Esconder el mensaje después de 3 segundos
+                        setTimeout(() => {
+                          setUploadMessage((prevMessages) => ({
+                            ...prevMessages,
+                            [order.id]: "",
+                          }));
+                        }, 3000);
+
                         // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
                         dispatch(fetchUserOrders());
                       }}
@@ -238,13 +295,23 @@ const Historial: React.FC = () => {
                         setUploadMessage((prevMessages) => ({
                           ...prevMessages,
                           [order.id]:
-                            "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo.",
+                            "Hubo un error al cargar el comprobante. Por favor, intenta de nuevo (Maximo 10MB).",
                         }));
                       }}
                     />
                   )}
+                  {uploadMessage[order.id] && (
+                    <div style={successMessageStyle}>
+                      {uploadMessage[order.id]}
+                    </div>
+                  )}
                 </OrderSection>
-              )}
+              ) : order.estado === "Aprobado" ? (
+                <OrderSection>
+                  <SectionTitle>Pago con MercadoPago</SectionTitle>
+                  <div>Pago realizado exitosamente con MercadoPago</div>
+                </OrderSection>
+              ) : null}
             </OrderDetailsContainer>
           )}
         </StyledOrderContainer>

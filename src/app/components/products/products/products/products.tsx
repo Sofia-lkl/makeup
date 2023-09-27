@@ -3,7 +3,11 @@ import Link from "next/link";
 import axios from "axios";
 import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, CartItem } from "../../../../redux/cartSlice/cartSlice";
+import {
+  addItem,
+  CartItem,
+  syncCartWithUpdatedStock,
+} from "../../../../redux/cartSlice/cartSlice";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { toast } from "react-toastify";
@@ -53,13 +57,22 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
     highlighted ? HighlightedProductCardContainer : ProductCardContainer
   ) as React.ElementType;
 
+  // Usar useSelector fuera del manejador de eventos
+  const existingItem = useSelector((state: RootState) =>
+    state.cart.find((item) => item.id === id)
+  );
+
   const handleAddToCart = () => {
     if (typeof stock === "undefined" || stock <= 0) {
       toast.error("Producto sin stock!");
       return;
     }
 
-    console.log(`Agregando producto al carrito: ${nombre} con ID: ${id}`);
+    if (existingItem && existingItem.cantidad >= stock) {
+      toast.error("No se pueden agregar más unidades, producto sin stock!");
+      return;
+    }
+
     const itemToAdd: CartItem = {
       id,
       nombre,
@@ -68,12 +81,12 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
       imagen_url: imagen_url || "ruta_por_defecto.jpg",
       stock: stock || 0,
     };
+
     dispatch(addItem(itemToAdd));
 
     const uniqueToastId = `${id}-${Date.now()}`;
     toast.success("Producto agregado al carrito!", { toastId: uniqueToastId });
   };
-
   return (
     <CardContainer>
       <Link href={getProductLink(nombre)}>
@@ -148,6 +161,7 @@ const Products: React.FC<{
 
   useEffect(() => {
     const socket = io("http://localhost:3002");
+    socket.on("stock-updated", fetchProducts);
     socket.on("product-updated", fetchProducts);
     socket.on("product-added", fetchProducts);
     socket.on("product-edited", fetchProducts);
@@ -158,9 +172,11 @@ const Products: React.FC<{
   }, []);
 
   const fetchProducts = () => {
+    console.log("Fetching products...");
     axios
       .get("http://localhost:3002/api/products")
       .then((response) => {
+        console.log("Fetched products:", response.data);
         setProductList(response.data);
         setHighlightedProductList(response.data.slice(0, 6));
       })
@@ -168,7 +184,6 @@ const Products: React.FC<{
         console.error("Error fetching products:", error);
       });
   };
-
   useEffect(fetchProducts, []);
 
   const filterProducts = (products: ProductType[]): ProductType[] => {

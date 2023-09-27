@@ -20,6 +20,13 @@ export const OrderDetailsContainer = styled.div`
   gap: 20px;
   padding: 20px 0;
 `;
+export const successMessageStyle = {
+  color: 'green',
+  border: '1px solid green',
+  padding: '10px',
+  borderRadius: '5px',
+  marginTop: '10px'
+};
 
 export const OrderSection = styled.div``;
 

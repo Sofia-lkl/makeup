@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { syncCartWithUpdatedStock } from "../cartSlice/cartSlice"; 
+import { syncCartWithUpdatedStock } from "../cartSlice/cartSlice";
 
 export interface Product {
   id: number;
@@ -11,10 +11,8 @@ export interface Product {
   imagen_url?: string;
   marca?: string;
   color?: string;
-  categoria?: string;  
+  categoria?: string;
 }
-
-
 
 export interface ProductManagementState {
   allProducts: Product[];
@@ -22,7 +20,6 @@ export interface ProductManagementState {
   error: string | null;
   isLoading: boolean;
 }
-
 
 export const initialState: ProductManagementState = {
   allProducts: [],
@@ -34,14 +31,19 @@ export const apiAddProduct = createAsyncThunk(
   "productManagement/addProduct",
   async (newProduct: Omit<Product, "id">, { dispatch }) => {
     try {
-      const response = await axios.post(`http://localhost:3002/api/products`, newProduct);
+      const response = await axios.post(
+        `http://localhost:3002/api/products`,
+        newProduct
+      );
       dispatch(setMessage(`Producto creado con éxito.`));
       return response.data;
     } catch (error) {
       console.error("Error al crear el producto:", error);
-      dispatch(setError("Error al crear el producto. Por favor, inténtalo de nuevo."));
+      dispatch(
+        setError("Error al crear el producto. Por favor, inténtalo de nuevo.")
+      );
       dispatch(setLoading(false));
-      throw error; 
+      throw error;
     }
   }
 );
@@ -56,13 +58,13 @@ export const apiDeleteProduct = createAsyncThunk(
 
 export const apiEditProduct = createAsyncThunk(
   "productManagement/editProduct",
-  async (updatedProduct: Product, { dispatch }) => { 
+  async (updatedProduct: Product, { dispatch }) => {
     const response = await axios.put(
       `http://localhost:3002/api/products/${updatedProduct.id}`,
       updatedProduct
     );
     console.log("Respuesta del servidor después de editar:", response.data);
-    
+
     dispatch(syncCartWithUpdatedStock(response.data));
 
     return response.data;
@@ -81,6 +83,17 @@ const productManagementSlice = createSlice({
   name: "productManagement",
   initialState,
   reducers: {
+    updateProductStock: (
+      state,
+      action: PayloadAction<{ productId: number; newStock: number }>
+    ) => {
+      const product = state.allProducts.find(
+        (p) => p.id === action.payload.productId
+      );
+      if (product) {
+        product.stock = action.payload.newStock;
+      }
+    },
     addProduct: (state, action: PayloadAction<Product>) => {
       state.allProducts.push(action.payload);
     },
@@ -90,10 +103,11 @@ const productManagementSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
-    
+
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
+
     validateForm: (
       state,
       action: PayloadAction<{ nombre: string; precio: number }>
@@ -111,7 +125,7 @@ const productManagementSlice = createSlice({
         state.allProducts.push(action.payload);
         state.message = "Producto agregado con éxito";
         state.error = null;
-        state.isLoading = false; 
+        state.isLoading = false;
       })
 
       .addCase(apiAddProduct.rejected, (state, action) => {
@@ -127,8 +141,7 @@ const productManagementSlice = createSlice({
       })
       .addCase(apiDeleteProduct.rejected, (state, action) => {
         state.error = action.error.message || "Error al eliminar el producto";
-        console.log(action.error); 
-        
+        console.log(action.error);
       })
       .addCase(apiEditProduct.fulfilled, (state, action) => {
         const index = state.allProducts.findIndex(
@@ -144,7 +157,7 @@ const productManagementSlice = createSlice({
             "Producto actualizado en estado:",
             state.allProducts[index]
           );
-          console.log("Estado completo después de editar:", state.allProducts); 
+          console.log("Estado completo después de editar:", state.allProducts);
         } else {
           console.log("Producto no encontrado en el estado.");
         }
@@ -156,11 +169,17 @@ const productManagementSlice = createSlice({
       })
       .addCase(apiGetAllProducts.fulfilled, (state, action) => {
         state.allProducts = action.payload;
-        state.error = null; 
+        state.error = null;
       });
   },
 });
-export const { addProduct, setMessage, setError, setLoading, validateForm } =
-  productManagementSlice.actions;
+export const {
+  addProduct,
+  setMessage,
+  setError,
+  setLoading,
+  validateForm,
+  updateProductStock,
+} = productManagementSlice.actions;
 
 export default productManagementSlice.reducer;

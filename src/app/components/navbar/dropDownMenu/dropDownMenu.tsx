@@ -1,6 +1,8 @@
 import React from "react";
-
+import { useAppSelector, useAppDispatch } from "../../../redux/store/appHooks";
+import { resetNewOrdersCount } from "../../../redux/orderSlice/orderSlice"; // Asegúrate de exportar esta action desde orderSlice
 import { styless } from "../navbarStyles/navbarStyles";
+import Badge from "@mui/material/Badge";
 
 interface DropdownMenuProps {
   onLogout: () => void;
@@ -16,8 +18,12 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   dropdownRef,
   buttonRef,
 }) => {
+  const dispatch = useAppDispatch();
+  const newOrdersCount = useAppSelector((state) => state.order.newOrdersCount); // Asumiendo que has agregado un campo 'newOrdersCount' en tu orderSlice
+
   const handleViewHistoryClick = (event: React.MouseEvent) => {
     event.stopPropagation();
+    dispatch(resetNewOrdersCount()); // Resetea el contador de nuevas órdenes cuando el usuario hace clic en "Ver Órdenes"
     onViewHistory();
   };
 
@@ -32,7 +38,10 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
       style={{ ...styless.dropdownMenu, border: "1px solid red" }}
     >
       <button style={buttonStyle} onClick={handleViewHistoryClick}>
-        Ver Órdenes
+        Ver Órdenes 
+        {newOrdersCount > 0 && ( // Muestra el badge solo si hay nuevas órdenes
+          <Badge badgeContent={newOrdersCount} color="error" />
+        )}
       </button>
       <button style={buttonStyle} onClick={handleLogoutClick}>
         Cerrar Sesión
@@ -41,13 +50,16 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   );
 };
 
-const buttonStyle = {
+const buttonStyle: React.CSSProperties = {
   backgroundColor: "white",
   color: "black",
   border: "1px solid gray",
   padding: "0.5rem 1rem",
   margin: "0.5rem",
   cursor: "pointer",
+  position: "relative",
 };
 
+
 export default DropdownMenu;
+

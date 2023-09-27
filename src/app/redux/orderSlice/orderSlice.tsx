@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { updateStockFromOrder } from '../cartSlice/cartSlice';
+import { updateStockFromOrder } from "../cartSlice/cartSlice";
 
 export interface OrderDetail {
   producto_id: number;
@@ -31,14 +31,26 @@ export interface Order {
   nombre: string;
   email: string;
   telefono: string;
+  details?: OrderDetail[];
   detalles?: OrderDetail[];
-  shippingInfo?: ShippingInfo;
+
+  direccion?: string;
+  ciudad?: string;
+  estado?: string;
+  codigo_postal?: string;
+  pais?: string;
+  metodo_envio?: string;
   comprobante_pago?: string;
 }
 
-const initialState: { orders: Order[]; error: string | null } = {
+const initialState: {
+  orders: Order[];
+  error: string | null;
+  newOrdersCount: number;
+} = {
   orders: [],
   error: null,
+  newOrdersCount: 0, // Nuevo estado para rastrear las órdenes nuevas
 };
 
 interface UserOrdersResponse {
@@ -56,32 +68,37 @@ type RejectWithValue<T> = {
   };
 };
 export const addNewOrder = createAsyncThunk(
-  'order/addNewOrder',
+  "order/addNewOrder",
   async (orderData, { dispatch }) => {
+    console.log("Ejecutando addNewOrder con datos:", orderData);
+
     const isClient = typeof window !== "undefined";
     const userToken = isClient ? localStorage.getItem("jwt") : null;
     if (!userToken) {
       throw new Error("Token no encontrado. Asegúrate de estar autenticado.");
     }
 
-    const response = await fetch('http://localhost:3002/api/orders/add-order', { 
-      method: 'POST',
+    const response = await fetch("http://localhost:3002/api/orders/create", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         "x-auth-token": userToken,
       },
       body: JSON.stringify(orderData),
     });
 
     if (!response.ok) {
-      throw new Error('Error al agregar la orden');
+      throw new Error("Error al agregar la orden");
     }
 
     const data = await response.json();
 
-   
     if (data.estado === "Activo" || data.estado === "Aprobado") {
+      console.log(
+        "Actualizando stock y incrementando contador de órdenes nuevas."
+      );
       dispatch(updateStockFromOrder(data.detalles));
+      dispatch(incrementNewOrdersCount());
     }
 
     return data;
@@ -118,6 +135,7 @@ export const fetchUserOrders = createAsyncThunk<
     }
 
     const data: UserOrdersResponse = await response.json();
+
     return data.orders;
   } catch (error) {
     const err = error as Error;
@@ -173,6 +191,7 @@ export const fetchOrdersByStatus = createAsyncThunk<
       }
 
       const data: Order[] = await response.json();
+      console.log("Data received:", data); // <-- Agrega este log
       return data;
     } catch (error) {
       const err = error as Error;
@@ -192,16 +211,21 @@ export const deleteOrderById = createAsyncThunk<
   const userToken = isClient ? localStorage.getItem("jwt") : null;
 
   if (!userToken) {
-    return rejectWithValue("Token no encontrado. Asegúrate de estar autenticado.");
+    return rejectWithValue(
+      "Token no encontrado. Asegúrate de estar autenticado."
+    );
   }
 
   try {
-    const response = await fetch(`http://localhost:3002/api/orders/order/${orderId}`, {
-      method: "DELETE",
-      headers: {
-        "x-auth-token": userToken,
-      },
-    });
+    const response = await fetch(
+      `http://localhost:3002/api/orders/order/${orderId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "x-auth-token": userToken,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Error deleting order: ${response.statusText}`);
@@ -226,46 +250,102 @@ const orderSlice = createSlice({
       state.orders.push(action.payload);
     },
     removeOrder: (state, action: PayloadAction<number>) => {
-      state.orders = state.orders.filter((order) => order.id !== action.payload);
+      state.orders = state.orders.filter(
+        (order) => order.id !== action.payload
+      );
+    },
+    incrementNewOrdersCount: (state) => {
+      // Incrementa en 1 el contador de órdenes nuevas
+      console.log("Incrementando contador de órdenes nuevas.");
+
+      state.newOrdersCount += 1;
+    },
+    resetNewOrdersCount: (state) => {
+      // Restablece el contador de órdenes nuevas a 0
+      state.newOrdersCount = 0;
+    },
+    setNewOrdersCount: (state, action: PayloadAction<number>) => {
+      // Establece el contador a un valor específico
+      state.newOrdersCount = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserOrders.fulfilled, (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
-        if (Array.isArray(action.payload)) {
-          state.orders = action.payload;
-          state.error = null;
-        } else {
-          state.error = action.payload.action.error.message;
+      .addCase(
+        fetchUserOrders.fulfilled,
+        (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
+          if (Array.isArray(action.payload)) {
+            console.log("Cargando órdenes del usuario:", action.payload);
+
+            state.orders = action.payload;
+            state.error = null;
+          } else {
+            console.error(
+              "Error cargando órdenes del usuario:",
+              action.payload.action.error.message
+            );
+
+            state.error = action.payload.action.error.message;
+          }
         }
-      })
-      .addCase(fetchUserOrders.rejected, (state, action: PayloadAction<string | undefined>) => {
-        state.error = action.payload || "Error desconocido.";
-      })
-      .addCase(fetchOrdersByStatus.fulfilled, (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
-        if (Array.isArray(action.payload)) {
-          state.orders = action.payload;
-          state.error = null;
-        } else {
-          state.error = action.payload.action.error.message;
+      )
+      .addCase(
+        fetchUserOrders.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Error desconocido.";
         }
-      })
-      .addCase(fetchOrdersByStatus.rejected, (state, action: PayloadAction<string | undefined>) => {
-        state.error = action.payload || "Error desconocido.";
-      })
-      .addCase(deleteOrderById.fulfilled, (state, action: PayloadAction<{ orderId: number; message: string } | RejectWithValue<string>>) => {
-        if ("orderId" in action.payload) {
+      )
+      .addCase(
+        fetchOrdersByStatus.fulfilled,
+        (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
+          if (Array.isArray(action.payload)) {
+            console.log("Cargando órdenes del usuario:", action.payload);
+
+            state.orders = action.payload;
+            state.error = null;
+          } else {
+            console.error(
+              "Error cargando órdenes del usuario:",
+              action.payload.action.error.message
+            );
+
+            state.error = action.payload.action.error.message;
+          }
+        }
+      )
+      .addCase(
+        fetchOrdersByStatus.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Error desconocido.";
+        }
+      )
+      .addCase(
+        deleteOrderById.fulfilled,
+        (
+          state,
+          action: PayloadAction<
+            { orderId: number; message: string } | RejectWithValue<string>
+          >
+        ) => {
+          if ("orderId" in action.payload) {
             const { orderId } = action.payload as {
-                orderId: number;
-                message: string;
+              orderId: number;
+              message: string;
             };
             state.orders = state.orders.filter((order) => order.id !== orderId);
+          }
         }
-    });
-    
+      );
   },
 });
 
-export const { setOrders, addOrder, removeOrder } = orderSlice.actions;
+export const {
+  setOrders,
+  addOrder,
+  removeOrder,
+  incrementNewOrdersCount,
+  resetNewOrdersCount,
+  setNewOrdersCount,
+} = orderSlice.actions;
 
 export default orderSlice.reducer;

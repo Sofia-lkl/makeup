@@ -1,0 +1,13 @@
+Orden #31 - 25/9/2023 - Haga Clic Para Ver Detalles
+Datos Del Usuario
+Nombre: SOFIA SOFIAAAAA
+Email: Nicolasluciuk@Yahoo.Com
+Teléfono: 12312312312
+Productos
+Producto 1Producto ID: 1, Cantidad: 1, Precio: 999
+Información De Envío
+Dirección: Sofia
+Ciudad: Sofia
+Estado: Aprobado
+Código Postal: Sofia
+País: Sofia

@@ -45,6 +45,8 @@ const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart);
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const newOrdersCount = useAppSelector((state) => state.order.newOrdersCount);
+
   const userRole = useAppSelector((state) => state.auth.userRole);
   const isLoginModalOpen = useAppSelector(
     (state) => state.loginModal.isLoginModalOpen
@@ -191,29 +193,29 @@ const Navbar: React.FC = () => {
             </Badge>
           </div>
           {isAuthenticated ? (
-            <>
-              <div style={{ position: "relative" }}>
-                <button
-                  ref={buttonRef}
-                  style={{
-                    ...basicStyles.loginButton,
-                    marginLeft: "1rem",
-                  }}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
+            <div style={{ position: "relative" }}>
+              <button
+                ref={buttonRef}
+                style={{
+                  ...basicStyles.loginButton,
+                  marginLeft: "1rem",
+                }}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <Badge badgeContent={newOrdersCount} color="error">
                   👤
-                </button>
-                {isDropdownOpen && (
-                  <DropdownMenu
-                    onLogout={handleLogout}
-                    onViewHistory={() => setIsHistoryModalOpen(true)}
-                    toggleDropdown={toggleDropdown}
-                    dropdownRef={dropdownRef}
-                    buttonRef={buttonRef}
-                  />
-                )}
-              </div>
-            </>
+                </Badge>
+              </button>
+              {isDropdownOpen && (
+                <DropdownMenu
+                  onLogout={handleLogout}
+                  onViewHistory={() => setIsHistoryModalOpen(true)}
+                  toggleDropdown={toggleDropdown}
+                  dropdownRef={dropdownRef}
+                  buttonRef={buttonRef}
+                />
+              )}
+            </div>
           ) : (
             <button
               style={basicStyles.loginButton}

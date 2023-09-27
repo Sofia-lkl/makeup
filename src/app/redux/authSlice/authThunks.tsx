@@ -55,6 +55,8 @@ export const loginUser = createAsyncThunk(
         credentials
       );
       const token = response.data.token;
+      console.log("Token recibido:", token);  // <-- Línea que agregamos para imprimir el token
+
       localStorage.setItem("jwt", token);
 
       const decodedToken = jwt_decode(token) as DecodedToken;
