@@ -75,7 +75,6 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Los artículos del carrito han cambiado:", cartItemsToDisplay);
   }, [cartItemsToDisplay]);
 
   const handleRemove = (id: number) => {
