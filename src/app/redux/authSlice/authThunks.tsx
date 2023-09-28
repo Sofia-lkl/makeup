@@ -1,21 +1,33 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import {
-  setLoginError,
-  setLoginMessage,
-  setLoading,
-} from "../messagesSlice/messagesSlice";
+import { setLoginError, setLoading } from "../messagesSlice/messagesSlice";
 
 interface DecodedToken {
   role: string;
   id: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
+
 interface RegisterUserData {
   username: string;
   password: string;
   email: string;
+}
+
+interface LoginResponse {
+  token: string;
+}
+
+interface ErrorResponseData {
+  errors: { msg: string }[];
+  error: string;
+}
+
+interface RegisterErrorResponse {
+  response: {
+    data: ErrorResponseData;
+  };
 }
 
 export const verifyToken = createAsyncThunk("auth/verifyToken", async () => {
@@ -50,12 +62,11 @@ export const loginUser = createAsyncThunk(
     thunkAPI.dispatch(setLoading(true));
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<LoginResponse>(
         "http://localhost:3002/api/login",
         credentials
       );
       const token = response.data.token;
-      console.log("Token recibido:", token);  // <-- Línea que agregamos para imprimir el token
 
       localStorage.setItem("jwt", token);
 
@@ -67,12 +78,12 @@ export const loginUser = createAsyncThunk(
         userRole: decodedToken.role,
         userId: decodedToken.id,
       };
-    } catch (error: any) {
-      console.error("Login failed:", error);
-
+    } catch (error: unknown) {
       thunkAPI.dispatch(setLoading(false));
-
-      thunkAPI.dispatch(setLoginError(error.message || "Login failed"));
+      if (error instanceof Error) {
+        console.error("Login failed:", error.message);
+        thunkAPI.dispatch(setLoginError(error.message || "Login failed"));
+      }
       throw error;
     }
   }
@@ -85,26 +96,28 @@ export const registerUser = createAsyncThunk(
 
     try {
       await axios.post("http://localhost:3002/api/users/register", userData);
-
       thunkAPI.dispatch(setLoading(false));
-
       return "Registro exitoso";
-    } catch (error: any) {
-      console.error("Registration failed:", error);
-
+    } catch (error: unknown) {
       thunkAPI.dispatch(setLoading(false));
 
       let errorMessage = "";
 
-      if (error.response?.data?.errors) {
-        const validationErrors = error.response.data.errors.map(
-          (err: { msg: any }) => err.msg
-        );
-
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        (error as RegisterErrorResponse).response.data.errors
+      ) {
+        const validationErrors = (error as RegisterErrorResponse).response.data.errors.map((err) => err.msg);
         errorMessage = validationErrors.join(". ");
-      } else if (error.response?.data?.error) {
-        const serverErrorMessage = error.response.data.error;
-
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        (error as RegisterErrorResponse).response.data.error
+      ) {
+        const serverErrorMessage = (error as RegisterErrorResponse).response.data.error;
         if (
           serverErrorMessage.includes("nombre de usuario ya está registrado")
         ) {

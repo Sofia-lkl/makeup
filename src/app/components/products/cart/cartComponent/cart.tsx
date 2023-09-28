@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import {
-  addItem,
   incrementItem,
   decrementItem,
   removeItem,
-  CartState,
   syncCartWithUpdatedStock,
 } from "../../../../redux/cartSlice/cartSlice";
 import {
@@ -26,12 +24,17 @@ import {
   CartEmptyMessage,
   CartFooter,
   CartHeader,
-  CloseButton,
   CheckoutButton,
 } from "../stylesCartComponent/stylesCart";
 import { io } from "socket.io-client";
-import { UpdatedProduct, fetchUpdatedProducts } from "../../../../redux/productSlice/productUpdateSlice/productUpdateSlice";
-import { useAppDispatch, useAppSelector } from "../../../../redux/store/appHooks";
+import {
+  UpdatedProduct,
+  fetchUpdatedProducts,
+} from "../../../../redux/productSlice/productUpdateSlice/productUpdateSlice";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../../../../redux/store/appHooks";
 
 interface CartProps {
   onClose: () => void;
@@ -41,10 +44,12 @@ interface CartProps {
 export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart);
-  const cartItemsToDisplay = cartItems.filter((item) => item.stock > 0 && item.cantidad <= item.stock);
+  const cartItemsToDisplay = cartItems.filter(
+    (item) => item.stock > 0 && item.cantidad <= item.stock
+  );
   const canCheckout = cartItems.every((item) => item.stock > 0);
   const cartRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     const socket = io("http://localhost:3002");
 
@@ -122,11 +127,20 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
             {cartItemsToDisplay.map((item) => (
               <React.Fragment key={item.id}>
                 <ListItem>
-                  <img
-                    src={item.imagen_url}
-                    alt={item.nombre}
-                    style={{ width: "50px", marginRight: "10px" }}
-                  />
+                  <div
+                    style={{
+                      display: "inline-block",
+                      width: "50px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    <img
+                      src={item.imagen_url}
+                      alt={item.nombre}
+                      style={{ width: "50px", marginRight: "10px" }}
+                    />
+                  </div>
+
                   <ListItemText
                     primary={item.nombre}
                     secondary={`$${item.precio.toFixed(2)} x ${item.cantidad} ${

@@ -10,7 +10,7 @@ export const colors = {
 
 export const styles = {
   navbar: {
-    position: "fixed" as "fixed",
+    position: "fixed" as const,
     width: "100%",
     top: 0,
     zIndex: 1000,
@@ -62,7 +62,7 @@ export const styles = {
 };
 export const basicStyles = {
   navbar: {
-    position: "fixed" as "fixed", 
+    position: "fixed" as const, 
 
     width: "100%",
     top: 0,

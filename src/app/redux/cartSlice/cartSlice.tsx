@@ -89,7 +89,7 @@ const cartSlice = createSlice({
       }
       setCartToLocalStorage(state);
     },
-    clearCart: (state) => {
+    clearCart: () => {
       setCartToLocalStorage([]);
       return [];
     },

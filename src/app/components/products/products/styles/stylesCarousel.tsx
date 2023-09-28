@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
 
 export const CarouselContainer = styled.div`
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Sombra sutil */

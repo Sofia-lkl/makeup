@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 
 const colors = {
@@ -10,7 +9,14 @@ const colors = {
   gold: "#FFD700",
 };
 
-const styles: any = {
+interface Style {
+  header: React.CSSProperties;
+  title: React.CSSProperties;
+  subtitle: React.CSSProperties;
+  ctaButton: React.CSSProperties;
+}
+
+const styles: Style = {
   header: {
     height: "80vh",
     display: "flex",

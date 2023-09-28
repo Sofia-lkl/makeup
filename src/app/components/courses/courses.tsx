@@ -1,25 +1,15 @@
-"use client";
 import React, { useRef, useEffect } from "react";
-import styled from "styled-components";
 import "./style.css";
+
 interface StyledCardProps {
   $imageUrl: string;
   bgUrl: string;
   cutUrl: string;
   title: string;
   description: string;
-  price: string; 
+  price: string;
   borderStyle?: "lb" | "rb" | "bb";
 }
-const colors = {
-  neutralLight: "#FAF3E0",
-  darkerGray: "#808080",
-  pinkLight: "#FFD1DC",
-  pinkDark: "#FF69B4",
-  purpleLight: "#D8BFD8",
-  gold: "#FFD700",
-  cardShadow: "rgba(0, 0, 0, 0.1)",
-};
 
 const StyledCard: React.FC<StyledCardProps> = ({
   price,
@@ -34,46 +24,34 @@ const StyledCard: React.FC<StyledCardProps> = ({
   const angle = 15;
 
   useEffect(() => {
+    const currentCardRef = cardRef.current;
+
+    if (!currentCardRef) return;
+
     const handleMouseMove = (event: MouseEvent) => {
-      if (cardRef.current) {
-        const rect = cardRef.current.getBoundingClientRect();
-        const centerX = (rect.left + rect.right) / 2;
-        const centerY = window.scrollY + (rect.top + rect.bottom) / 2;
+      const rect = currentCardRef.getBoundingClientRect();
+      const centerX = (rect.left + rect.right) / 2;
+      const centerY = window.scrollY + (rect.top + rect.bottom) / 2;
+      const offsetX = (event.pageX - centerX) / (rect.width / 2);
+      const offsetY = (event.pageY - centerY) / (rect.height * 1);
+      const rotateX = -angle * offsetY;
+      const rotateY = angle * offsetX;
 
-        // Calculate the relative position of the cursor within the card
-        const offsetX = (event.pageX - centerX) / (rect.width / 2);
-        const offsetY = (event.pageY - centerY) / (rect.height * 1);
-
-        // Convert the offset values to rotation values
-        const rotateX = -angle * offsetY ; // Multiplicado por 0.5 para reducir su impacto
-        const rotateY = angle * offsetX;
-
-        cardRef.current.style.setProperty("--rotateX", `${rotateX}deg`);
-        cardRef.current.style.setProperty("--rotateY", `${rotateY}deg`);
-        
-        /* console.log("event.pageY:", event.pageY);
-        console.log("centerY:", centerY);
-        console.log("offsetY:", offsetY); */
-      }
+      currentCardRef.style.setProperty("--rotateX", `${rotateX}deg`);
+      currentCardRef.style.setProperty("--rotateY", `${rotateY}deg`);
     };
 
     const handleMouseOut = () => {
-      if (cardRef.current) {
-        cardRef.current.style.setProperty("--rotateX", "0deg");
-        cardRef.current.style.setProperty("--rotateY", "0deg");
-      }
+      currentCardRef.style.setProperty("--rotateX", "0deg");
+      currentCardRef.style.setProperty("--rotateY", "0deg");
     };
 
-    if (cardRef.current) {
-      cardRef.current.addEventListener("mousemove", handleMouseMove);
-      cardRef.current.addEventListener("mouseout", handleMouseOut);
-    }
+    currentCardRef.addEventListener("mousemove", handleMouseMove);
+    currentCardRef.addEventListener("mouseout", handleMouseOut);
 
     return () => {
-      if (cardRef.current) {
-        cardRef.current.removeEventListener("mousemove", handleMouseMove);
-        cardRef.current.removeEventListener("mouseout", handleMouseOut);
-      }
+      currentCardRef.removeEventListener("mousemove", handleMouseMove);
+      currentCardRef.removeEventListener("mouseout", handleMouseOut);
     };
   }, []);
 

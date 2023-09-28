@@ -1,20 +1,16 @@
 import React from "react";
 import Slider from "react-slick";
-import Link from "next/link"; // Importa el componente Link
+import Link from "next/link"; 
 
 import {
   PreviewContainer,
   ProductSlide,
   ViewAllButton,
-  ProductDetailsContainer,
 } from "../preview-flow-productStyles/previewProductsStyle";
 import ProductFlow from "../productFlow/productFlow";
 import { Product } from "../../../admin/productAction-reducer-types/types/types";
 
-const slideVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 },
-};
+
 
 type ProductPreviewProps = {
   onProductClick: () => void;
@@ -23,7 +19,6 @@ type ProductPreviewProps = {
 };
 
 const ProductPreview: React.FC<ProductPreviewProps> = ({
-  onProductClick,
   productList,
 }) => {
   const settings = {

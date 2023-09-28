@@ -1,3 +1,9 @@
+import {
+  MiddlewareAPI,
+  Dispatch,
+  AnyAction,
+  ThunkDispatch,
+} from "@reduxjs/toolkit";
 import io from "socket.io-client";
 import { fetchUpdatedProducts } from "../productUpdateSlice/productUpdateSlice";
 import { syncCartWithUpdatedStock } from "../../cartSlice/cartSlice";
@@ -7,8 +13,9 @@ import axios from "axios";
 import { DecodedToken } from "../../../components/admin/productAction-reducer-types/types/types";
 import { Product } from "../../productManagementSlice/productManagementSlice";
 import { updateOrderState } from "../../orderSlice/orderSlice";
+type ErrorType = { message?: string };
 
-const websocketMiddleware = (storeAPI: any) => {
+const websocketMiddleware = (storeAPI: MiddlewareAPI) => {
   // Verificamos si estamos en el entorno del cliente
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("jwt");
@@ -47,29 +54,33 @@ const websocketMiddleware = (storeAPI: any) => {
     }
   });
 
-  socket.on("stock-updated", async () => {
-    try {
-      console.log("Evento stock-updated recibido.");
+  socket.on("stock-updated", () => {
+    console.log("Evento stock-updated recibido.");
 
-      const updatedProducts = await storeAPI
-        .dispatch(fetchUpdatedProducts())
-        .unwrap();
+    (storeAPI.dispatch as ThunkDispatch<ReturnType<typeof fetchUpdatedProducts>, undefined, AnyAction>)(
+      fetchUpdatedProducts()
+    )
+      .then((action: AnyAction) => {
+        if (fetchUpdatedProducts.fulfilled.match(action)) {
+          const updatedProducts = action.payload;
 
-      console.log(
-        "Productos actualizados después de fetchUpdatedProducts:",
-        updatedProducts
-      );
+          console.log(
+            "Productos actualizados después de fetchUpdatedProducts:",
+            updatedProducts
+          );
 
-      // Itera sobre la lista de productos actualizados y sincroniza cada uno con el carrito.
-      updatedProducts.forEach((product: Product) => {
-        storeAPI.dispatch(syncCartWithUpdatedStock(product));
+          // Itera sobre la lista de productos actualizados y sincroniza cada uno con el carrito.
+          updatedProducts.forEach((product: Product) => {
+            storeAPI.dispatch(syncCartWithUpdatedStock(product));
+          });
+        }
+      })
+      .catch((error: ErrorType) => {
+        console.error("Error obteniendo productos actualizados:", error);
       });
-    } catch (error) {
-      console.error("Error obteniendo productos actualizados:", error);
-    }
   });
 
-  return (next: any) => (action: any) => {
+  return (next: Dispatch<AnyAction>) => (action: AnyAction) => {
     return next(action);
   };
 };

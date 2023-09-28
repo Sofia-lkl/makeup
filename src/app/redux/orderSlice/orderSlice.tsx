@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { updateStockFromOrder } from "../cartSlice/cartSlice";
 
 export interface OrderDetail {
-  nombre: any;
+  nombre: string;
   producto_id: number;
   cantidad: number;
   precio: number;
   imagen_url?: string;
 }
+
 
 export interface ShippingInfo {
   direccion: string;

@@ -15,8 +15,6 @@ import {
   FilterSection,
   SidebarTitle,
   StickyFilterContainer,
-  StyledInputRange,
-  StyledFilterBar,
 } from "../sideBarStyles/sideBarStyle";
 import {
   PriceRangeInputs,
@@ -25,10 +23,6 @@ import {
 import { FilterInput, PriceRangeInput } from "../sideBarStyles/inputStyles";
 import { FilterButtons } from "../sideBarStyles/buttonStyles";
 import Slider from "@mui/material/Slider";
-interface MyRange {
-  min: number;
-  max: number;
-}
 
 const CombinedFilterComponent: React.FC = () => {
   const dispatch = useDispatch();
@@ -57,10 +51,10 @@ const CombinedFilterComponent: React.FC = () => {
 
   const handleSliderChange = (value: number | number[]) => {
     if (Array.isArray(value) && value.length === 2) {
-      dispatch(setPriceRange([value[0], value[1]]));
+      const newRange: MyRange = { min: value[0], max: value[1] };
+      dispatch(setPriceRange([newRange.min, newRange.max]));
     }
-};
-
+  };
 
   const handleFilterClick = (category: string) => {
     dispatch(setSelectedCategory(category));

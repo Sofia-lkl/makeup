@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./stylesLogin.css";
 import { BeatLoader } from "react-spinners";
 import {
@@ -9,19 +9,15 @@ import { RootState } from "../../../../redux/store/rootReducer";
 import {
   loginUser,
   registerUser,
-  verifyToken,
 } from "../../../../redux/authSlice/authThunks";
-import {
-  openLoginModal,
-  closeLoginModal,
-} from "../../../../redux/loginModalSlice/loginModalSlice";
+import { closeLoginModal } from "../../../../redux/loginModalSlice/loginModalSlice";
 import {
   setLoginMessage,
   setLoginError,
   clearMessages,
   setLoading,
 } from "../../../../redux/messagesSlice/messagesSlice";
-import { logout } from "../../../../redux/authSlice/authSlice";
+
 interface AdminLoginProps {
   onSuccess?: () => void;
 }
@@ -53,43 +49,49 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
     setEmail("");
     dispatch(clearMessages());
   }, [dispatch]);
-  const handleModalClose = () => {
+
+  const handleModalClose = useCallback(() => {
     dispatch(closeLoginModal());
     setUsername("");
     setPassword("");
     setEmail("");
     dispatch(clearMessages());
-  };
+  }, [dispatch]);
+
   const handleSignInClick = () => setIsSignUp(false);
   const handleSignUpClick = () => setIsSignUp(true);
+  useEffect(() => {
+    if (isDropdownOpen) {
+/*       console.log("Dropdown está abierto"); 
+ */    }
+  }, [isDropdownOpen]);
   useEffect(() => {
     if (loginMessage) {
       if (loginMessage === "Registro exitoso") {
         setIsSignUp(false);
       } else if (loginMessage === "Inicio de sesión exitoso") {
         setTimeout(() => {
-          handleModalClose(); 
-          dispatch(setLoading(false)); 
+          handleModalClose();
+          dispatch(setLoading(false));
         }, 2000);
       }
     }
-  }, [loginMessage, dispatch]);
+  }, [loginMessage, dispatch, handleModalClose]);
 
   const handleSubmitSignIn = (username: string, password: string) => {
     dispatch(loginUser({ username, password }))
-    .then((action) => {
-      if (loginUser.fulfilled.match(action)) {
-        dispatch(setLoginMessage("Inicio de sesión exitoso"));
-        setIsDropdownOpen(false);
-        if (typeof onSuccess === "function") {
-          onSuccess();
+      .then((action) => {
+        if (loginUser.fulfilled.match(action)) {
+          dispatch(setLoginMessage("Inicio de sesión exitoso"));
+          setIsDropdownOpen(false);
+          if (typeof onSuccess === "function") {
+            onSuccess();
+          }
         }
-      }
-    })
-    .catch(() => {
-      dispatch(setLoginError("Error al iniciar sesión"));
-    });
-
+      })
+      .catch(() => {
+        dispatch(setLoginError("Error al iniciar sesión"));
+      });
   };
 
   const handleSubmitSignUp = (

@@ -12,10 +12,7 @@ import {
   ProductPrice,
   ProductQuantity,
 } from "../modalConfirmacionStyles/modalConfirmacionCompraStyles";
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "../../../../redux/store/appHooks";
+import { useAppSelector } from "../../../../redux/store/appHooks";
 import {
   incrementItem,
   decrementItem,
@@ -25,11 +22,26 @@ import { Stepper } from "../../stepper/stepper";
 import DatosUsuario from "../../datosUsuario/datosUsuario/datosUsuario";
 import SeleccionEnvio from "../../seccionEnvio/seccionEnvio/seleccionEnvio";
 import PasarelaPago from "../../pasarelaPago/pasarelaPago/pasarelaPago";
-
+import { useDispatch } from 'react-redux';
 interface ModalConfirmacionCompraProps {
   isOpen: boolean;
   onClose: () => void;
   onContinuar: () => void;
+}
+
+interface DatosUsuarioType {
+  nombre: string;
+  email: string;
+  telefono: string;
+}
+
+interface DatosEnvioType {
+  metodo_envio: string;
+  direccion: string;
+  ciudad: string;
+  estado: string;
+  codigo_postal: string;
+  pais: string;
 }
 
 const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
@@ -37,13 +49,14 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
   onClose,
   onContinuar,
 }) => {
-  const dispatch = useAppDispatch();
   const productos = useAppSelector((state) => state.cart);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [ordenId, setOrdenId] = useState<string | null>(null);
-  const [datosUsuario, setDatosUsuario] = useState<any | null>(null);
-  const [datosEnvio, setDatosEnvio] = useState<any | null>(null);
+  const [datosUsuario, setDatosUsuario] = useState<DatosUsuarioType | null>(
+    null
+  );
+  const [datosEnvio, setDatosEnvio] = useState<DatosEnvioType | null>(null);
 
   const total = productos.reduce(
     (acc, item) => acc + item.precio * item.cantidad,
@@ -56,6 +69,7 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
       setDatosUsuario(null);
     }
   }, [isOpen]);
+  const dispatch = useDispatch();
 
   const incrementar = (id: number) => dispatch(incrementItem(id));
   const decrementar = (id: number) => dispatch(decrementItem(id));
@@ -166,18 +180,21 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
           />
         );
       case 4:
-        return (
-          <PasarelaPago
-            onPaymentSuccess={() => onContinuar()}
-            onPaymentFailure={() => {}}
-            total={total}
-            datosUsuario={datosUsuario}
-            datosEnvio={datosEnvio}
-            ordenId={ordenId}
-          />
-        );
-      default:
-        return null;
+        if (datosUsuario && datosEnvio && ordenId) {
+          return (
+            <PasarelaPago
+              onPaymentSuccess={() => onContinuar()}
+              onPaymentFailure={() => {}}
+              total={total}
+              datosUsuario={datosUsuario}
+              datosEnvio={datosEnvio}
+              ordenId={ordenId}
+            />
+          );
+        } else {
+          // Puedes renderizar algo diferente aquí o simplemente devolver null
+          return null;
+        }
     }
   };
 

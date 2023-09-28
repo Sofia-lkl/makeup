@@ -16,9 +16,7 @@ export const colors = {
   darkerGray: "#808080",
 };
 
-const activeColor = "#FF69B4";
-const inactiveColor = "#E0E0E0";
-const hoverColor = "#FFB6C1";
+
 
 export const SidebarTitle = styled.h2`
   font-size: 0.84em; // Antes era 1.2em
@@ -93,12 +91,7 @@ export const FilterSelect = styled.select`
 `;
 
 
-// Colores de tema para el rango de precio
-const primaryColor = "#FF69B4"; // Hot Pink
-const secondaryColor = "#FFE4E1"; // Misty Rose
-const thumbColor = "#FFB6C1"; // Light Pink
-const thumbColorHover = "#FF1493"; // Deep Pink
-const thumbBorder = "#FF1493"; // Deep Pink
+
 
 
 

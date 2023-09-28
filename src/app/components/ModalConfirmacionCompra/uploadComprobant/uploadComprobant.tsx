@@ -1,14 +1,18 @@
 import React, { ChangeEvent, useState } from "react";
 import axios, { AxiosError } from "axios";
 
+interface UploadSuccessResponse {
+  message: string;
+  estado: string;
+  comprobante: File;
+}
 interface CargarComprobanteProps {
   orderId: string | null;
   total?: number;
-  onUploadSuccess: (data: any) => void;
-  onUploadError: (error: any) => void;
+  onUploadSuccess: (data: UploadSuccessResponse) => void;
+  onUploadError: (error: AxiosError<ErrorResponse>) => void;
   loadedComprobante?: File | null;
 }
-
 interface ErrorResponse {
   message?: string;
 }
@@ -32,15 +36,15 @@ const CargarComprobante: React.FC<CargarComprobanteProps> = ({
       formData.append("comprobante", file);
 
       try {
-        const response = await axios.post(
+        const response = await axios.post<UploadSuccessResponse>(
           `http://localhost:3002/api/orders/upload-comprobante/${orderId}`,
           formData
         );
         onUploadSuccess(response.data);
         setErrorMessage(null);
       } catch (error) {
-        onUploadError(error);
         const axiosError = error as AxiosError<ErrorResponse>;
+        onUploadError(axiosError);
         if (axiosError.response?.data?.message) {
           setErrorMessage(axiosError.response.data.message);
         } else {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { registerUser, loginUser, verifyToken } from "./authThunks";
+import {  loginUser, verifyToken } from "./authThunks";
 
 interface AuthState {
   isAuthenticated: boolean;

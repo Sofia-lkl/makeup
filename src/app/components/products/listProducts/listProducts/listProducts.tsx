@@ -24,7 +24,9 @@ const ListProduct: React.FC = () => {
   const [highlightedProductList, setHighlightedProductList] = useState<
     ProductType[]
   >([]);
-
+  if (process.env.NODE_ENV === "development" && highlightedProductList) {
+    console.log("Lista de productos destacados:", highlightedProductList);
+  }
   useEffect(() => {
     const socket = io("http://localhost:3002");
     socket.on("product-updated", () => {

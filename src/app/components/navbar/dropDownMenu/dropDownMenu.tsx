@@ -16,7 +16,6 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   onLogout,
   onViewHistory,
   dropdownRef,
-  buttonRef,
 }) => {
   const dispatch = useAppDispatch();
   const newOrdersCount = useAppSelector((state) => state.order.newOrdersCount); // Asumiendo que has agregado un campo 'newOrdersCount' en tu orderSlice

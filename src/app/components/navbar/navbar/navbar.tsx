@@ -15,7 +15,6 @@ import { verifyToken } from "../../../redux/authSlice/authThunks";
 import {
   MobileMenuButton,
   NavLinksContainerDesktop,
-  MobileMenuContainer,
 } from "../navbarStyles/navBarResponsiveStyles";
 import styled from "@emotion/styled";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -93,12 +92,12 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => dispatch(logout());
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
+    const handleClickOutside = (event: MouseEvent) => {
       // Si el dropdown está abierto y el clic fue fuera del dropdown y del botón
       if (
         isDropdownOpen &&
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
+        !dropdownRef.current.contains(event.target as Node) &&
         buttonRef.current !== event.target
       ) {
         setTimeout(() => {
@@ -116,7 +115,7 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     dispatch(verifyToken())
       .unwrap()
-      .then((action) => {
+      .then(() => {
         setTimeout(() => {
           setIsDropdownOpen(false);
         }, 50);
@@ -152,11 +151,12 @@ const Navbar: React.FC = () => {
         }}
       >
         <div style={styles.logoContainer}>
-          <img
+        <img
             src="/img/logo.png"
             alt="Makeup Magic Logo"
             style={styles.logo}
           />
+
           <div style={styles.logoText}>Makeup Magic</div>
         </div>
 

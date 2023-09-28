@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import { motion } from "framer-motion";
 import { Button } from "@mui/material";
 
 export const colors = {

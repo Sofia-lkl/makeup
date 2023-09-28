@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { TextField, Button, Typography } from "@mui/material";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { Button, Typography } from "@mui/material";
+import axios, { AxiosError } from "axios";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store/rootReducer";
 import {
   StyledFormContainer,
@@ -9,8 +9,15 @@ import {
   StyledTextField,
 } from "../styleDatosUsuario/styleDatosUsuario";
 
+interface Datos {
+  nombre: string;
+  email: string;
+  telefono: string;
+  orderId: string;
+}
+
 interface DatosProps {
-  onContinue: (datos: any) => void;
+  onContinue: (datos: Datos) => void;
   onBack: () => void;
 }
 
@@ -22,8 +29,6 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
   const cart = useSelector((state: RootState) => state.cart);
   const userId = useSelector((state: RootState) => state.auth.userId);
   const userToken = localStorage.getItem("jwt");
-
-  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,17 +70,18 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
           "Error al crear la orden o no se recibió un orderId válido"
         );
       }
-    } catch (error: any) {
-      if (error.response) {
-        console.error("Data:", error.response.data);
-        console.error("Status:", error.response.status);
-        console.error("Headers:", error.response.headers);
-      } else if (error.request) {
-        console.error("No response received:", error.request);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        console.error("Data:", axiosError.response.data);
+        console.error("Status:", axiosError.response.status);
+        console.error("Headers:", axiosError.response.headers);
+      } else if (axiosError.request) {
+        console.error("No response received:", axiosError.request);
       } else {
-        console.error("Error setting up the request:", error.message);
+        console.error("Error setting up the request:", axiosError.message);
       }
-      console.error("Config:", error.config);
+      console.error("Config:", axiosError.config);
     }
   };
 

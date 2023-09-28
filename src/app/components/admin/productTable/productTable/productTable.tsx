@@ -17,12 +17,14 @@ import {
   Product,
   apiGetAllProducts,
 } from "../../../../redux/productManagementSlice/productManagementSlice";
-interface ProductTableProps {
-  products: any[];
+
+export interface ProductTableProps {
+  products: Product[];
 }
+
 const CATEGORIAS = ["Ojos", "Rostro", "Labios", "Uñas"];
 
-const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
+const ProductTable: React.FC<ProductTableProps> = ({}) => {
   const allProducts = useAppSelector(
     (state) => state.productManagement.allProducts
   );
@@ -41,10 +43,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
     setEditingId(product.id);
     setUpdatedProduct(product);
   };
+
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "categoria" && updatedProduct) {
-      console.log("Categoría seleccionada:", value);
       setUpdatedProduct({
         ...updatedProduct,
         categoria: value,

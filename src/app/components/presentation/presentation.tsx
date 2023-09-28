@@ -2,15 +2,8 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "@/app/globals.css"
-import {
-  Box,
-  Typography,
-  Grid,
-  Button,
-  ImageList,
-  ImageListItem,
-} from "@mui/material";
+import "@/app/globals.css";
+import { Typography, Grid, Button } from "@mui/material";
 import styled from "styled-components";
 
 const colors = {

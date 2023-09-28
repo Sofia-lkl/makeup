@@ -1,7 +1,6 @@
 import {
   configureStore,
   AnyAction,
-  getDefaultMiddleware,
 } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { persistStore, persistReducer } from "redux-persist";

@@ -6,13 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addItem,
   CartItem,
-  syncCartWithUpdatedStock,
 } from "../../../../redux/cartSlice/cartSlice";
-import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { toast } from "react-toastify";
 import {
-  HighlightedContainer,
   SectionTitle,
   SectionDescription,
 } from "../styles/highlightedProductsStyles";
@@ -141,7 +138,6 @@ const HighlightedCarousel: React.FC<{ products: ProductType[] }> = ({
 const Products: React.FC<{
   displayMode: "highlighted" | "fullList" | "both";
 }> = ({ displayMode = "highlighted" }) => {
-  const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
   const priceRange = useSelector((state: RootState) => state.filter.priceRange);
   const selectedColor = useSelector(

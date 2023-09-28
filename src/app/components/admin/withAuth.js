@@ -13,8 +13,8 @@ export default function withAuth(Component, role) {
       if (!isAuthenticated || (role && role !== userRole)) {
         router.push("/");
       }
-    }, [isAuthenticated, userRole]);
-
+    }, [isAuthenticated, userRole, router]); 
+    
     return <Component {...props} />;
   };
 }

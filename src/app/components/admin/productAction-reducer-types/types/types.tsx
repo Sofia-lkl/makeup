@@ -4,12 +4,13 @@ export interface Product {
   nombre: string;
   precio: number;
   stock?: number;
-  marca?: string; // Aquí haces la propiedad "marca" opcional
+  marca?: string;
   color?: string;
   descripcion?: string;
 }
-  export interface DecodedToken {
-    role: string;
-    id: string;
-    [key: string]: any;
-  }
+
+export interface DecodedToken {
+  role: string;
+  id: string;
+  [key: string]: unknown;
+}

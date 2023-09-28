@@ -3,8 +3,11 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import { StyledPasarelaPago } from "../styledPasarelaPago/styledPasarelaPago";
 import CargarComprobante from "../../uploadComprobant/uploadComprobant";
-import { useAppDispatch, useAppSelector } from "../../../../redux/store/appHooks";
-import { clearCart } from "../../../../redux/cartSlice/cartSlice"; 
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../../../../redux/store/appHooks";
+import { clearCart } from "../../../../redux/cartSlice/cartSlice";
 import { incrementNewOrdersCount } from "@/app/redux/orderSlice/orderSlice";
 
 interface PasarelaPagoProps {
@@ -28,7 +31,6 @@ interface PasarelaPagoProps {
 }
 
 const PasarelaPago: React.FC<PasarelaPagoProps> = ({
-  onPaymentSuccess,
   onPaymentFailure,
   total,
   datosUsuario,
@@ -37,9 +39,8 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 }) => {
   const cartItems = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch(); // Obtén el dispatch de Redux
-
-  const [preferenceId, setPreferenceId] = useState(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [showUploadOption, setShowUploadOption] = useState(false);
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState<
     string | null
@@ -54,12 +55,12 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
     setShowUploadOption(true);
   };
 
-  const handleUploadSuccess = async (data: any) => {
+  const handleUploadSuccess = (data: { estado: string; comprobante: File }) => {
+    // Especifica el tipo aquí
     console.log("Comprobante cargado con éxito:", data);
     setUploadSuccessMessage("Comprobante cargado con éxito");
     setLoadedComprobante(data.comprobante);
 
-    // Verifica si el estado de la orden es "Aprobado" después de cargar el comprobante
     if (data.estado === "Aprobado") {
       console.log("Incrementando contador de órdenes debido a estado Aprobado");
       dispatch(incrementNewOrdersCount());
@@ -69,10 +70,11 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       setUploadSuccessMessage(null);
       closePaymentMethod();
     }, 3000);
-    dispatch(clearCart()); // Limpia el carrito después de cargar el comprobante con éxito
-};
+    dispatch(clearCart());
+  };
 
-  const handleUploadError = (error: any) => {
+  const handleUploadError = (error: Error) => {
+    // Especifica el tipo aquí
     console.error("Error al cargar el comprobante:", error);
   };
 
@@ -100,23 +102,32 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
       );
 
       if (response.data && response.data.init_point) {
-        window.location.href = response.data.init_point; // Redirige al usuario a MercadoPago
+        window.location.href = response.data.init_point;
       } else {
         console.error("No se recibió la URL de MercadoPago.");
         onPaymentFailure();
       }
-      dispatch(clearCart()); // Limpia el carrito después de procesar el pago
-
-    } catch (error: any) {
+      dispatch(clearCart());
+    } catch (error) {
       console.error("Error procesando el pago:", error);
-      if (error.response && error.response.status === 400) {
-        alert(error.response.data.error);
+      setErrorMessage(
+        "Hubo un problema procesando tu pago. Por favor, inténtalo de nuevo."
+      );
+
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const typedError = error as {
+          response?: { status: number; data: { error: string } };
+        };
+        if (typedError.response && typedError.response.status === 400) {
+          alert(typedError.response.data.error);
+        } else {
+          onPaymentFailure();
+        }
       } else {
         onPaymentFailure();
       }
     }
   };
-
   return (
     <StyledPasarelaPago>
       <h5 className="main-title">Pasarela de Pago</h5>

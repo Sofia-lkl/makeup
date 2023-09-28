@@ -2,7 +2,6 @@
 import React from "react";
 import StyledCard from "../courses/courses";
 import styled from "styled-components";
-// @ts-ignore
 import { motion } from "framer-motion";
 const colors = {
   neutralLight: "#F5EAE0",

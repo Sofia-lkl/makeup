@@ -8,20 +8,12 @@ import {
   fetchUserOrders,
   Order as OrderType,
   OrderDetail,
-  ShippingInfo as ShippingInfoType,
   fetchOrdersByStatus,
   deleteOrderById,
-  updateOrderState,
   changeOrderStatus,
 } from "../../../../redux/orderSlice/orderSlice";
 
-import {
-  Button,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
+import { Button, MenuItem, Select, TextField } from "@mui/material";
 import CargarComprobante from "../../uploadComprobant/uploadComprobant";
 import { updateStockFromOrder } from "../../../../redux/cartSlice/cartSlice";
 import {
@@ -41,17 +33,13 @@ const Historial: React.FC = () => {
   const orders: OrderType[] = useSelector(
     (state: RootState) => state.order.orders
   );
-  console.log("Órdenes obtenidas:", orders);
   const orderError: string | null = useSelector(
     (state: RootState) => state.order.error
   );
-
-  if (orderError) {
-    return <div>Error al obtener las órdenes: {orderError}</div>;
-  }
   const userRole: string | null = useSelector(
     (state: RootState) => state.auth.userRole
   );
+
   const [orderSorting, setOrderSorting] = useState<"asc" | "desc">("desc");
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
@@ -63,17 +51,17 @@ const Historial: React.FC = () => {
     [orderId: number]: string;
   }>({});
   const [selectedStatus, setSelectedStatus] = useState<string>("activo");
+
   const isAdmin = userRole === "admin";
-  const getExtensionFromUrl = (url: string) => {
+
+  const getExtensionFromUrl = (url: string): string | undefined => {
     const match = url.match(/\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gm);
-    return match && match[0];
+    return (match && match[0]) || undefined;
   };
+
   const handleDownload = async (url: string) => {
     try {
-      const response = await axios.get(url, {
-        responseType: "blob",
-      });
-
+      const response = await axios.get(url, { responseType: "blob" });
       const extension = getExtensionFromUrl(url);
       const fileName = extension ? `comprobante${extension}` : "comprobante";
 
@@ -86,18 +74,21 @@ const Historial: React.FC = () => {
       console.error("Error descargando el archivo:", error);
     }
   };
+
   useEffect(() => {
+    const fetchParams: {
+      status: string;
+      sortByDate: "asc" | "desc";
+      startDate?: string | undefined;
+      endDate?: string | undefined;
+    } = {
+      status: selectedStatus,
+      sortByDate: orderSorting,
+      startDate: startDate || undefined, // Convertir null a undefined
+      endDate: endDate || undefined, // Convertir null a undefined
+    };
+
     if (isAdmin) {
-      const fetchParams: any = {
-        status: selectedStatus,
-        sortByDate: orderSorting,
-      };
-
-      if (startDate && endDate) {
-        fetchParams.startDate = startDate;
-        fetchParams.endDate = endDate;
-      }
-
       dispatch(fetchOrdersByStatus(fetchParams));
     } else {
       dispatch(fetchUserOrders());
@@ -109,26 +100,23 @@ const Historial: React.FC = () => {
       prevOrderId === orderId ? null : orderId
     );
   };
+
   const getOrderDetails = (order: OrderType): OrderDetail[] | undefined => {
     return order.details || order.detalles;
   };
+
   const handleOrderClick = (orderId: number) => {
     setExpandedOrderId((prevOrderId) =>
       prevOrderId === orderId ? null : orderId
     );
   };
-  console.log("Estado seleccionado:", selectedStatus);
-  console.log("Ordenamiento seleccionado:", orderSorting);
-  console.log("Fecha de inicio:", startDate);
-  console.log("Fecha de fin:", endDate);
+
   const handleCompleteOrder = (orderId: number) => {
-    // Actualizar el estado en Redux y en el backend
     dispatch(changeOrderStatus({ orderId, newState: "Completado" }))
       .unwrap()
       .then((updatedOrder) => {
         console.log("Orden actualizada:", updatedOrder);
 
-        // Vuelve a obtener la lista de órdenes
         if (isAdmin) {
           dispatch(
             fetchOrdersByStatus({
@@ -147,6 +135,9 @@ const Historial: React.FC = () => {
       });
   };
 
+  if (orderError) {
+    return <div>Error al obtener las órdenes: {orderError}</div>;
+  }
   return (
     <div>
       {/*       <h2>Historial de Órdenes</h2>
@@ -262,11 +253,15 @@ const Historial: React.FC = () => {
                 <ul>
                   {getOrderDetails(order)?.map((detail: OrderDetail) => (
                     <ListItem key={detail.producto_id}>
-                      <img
-                        src={detail?.imagen_url}
-                        alt={`Producto ${detail.nombre}`}
-                        width="50"
-                      />
+                      {detail?.imagen_url ? (
+                        <img
+                          src={detail.imagen_url}
+                          alt={`Producto ${detail.nombre}`}
+                          width="50"
+                        />
+                      ) : (
+                        <div>Imagen no disponible</div>
+                      )}
                       <div>Producto: {detail.nombre}</div>
                       <div>Cantidad: {detail.cantidad}</div>
                       <div>Precio: {detail.precio}</div>
@@ -321,7 +316,7 @@ const Historial: React.FC = () => {
                   {showUploadForOrder === order.id && (
                     <CargarComprobante
                       orderId={order.id.toString()}
-                      onUploadSuccess={(data) => {
+                      onUploadSuccess={() => {
                         // Mostrar el mensaje de éxito
                         setUploadMessage((prevMessages) => ({
                           ...prevMessages,
@@ -339,7 +334,7 @@ const Historial: React.FC = () => {
                         // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
                         dispatch(fetchUserOrders());
                       }}
-                      onUploadError={(error) => {
+                      onUploadError={() => {
                         setUploadMessage((prevMessages) => ({
                           ...prevMessages,
                           [order.id]:

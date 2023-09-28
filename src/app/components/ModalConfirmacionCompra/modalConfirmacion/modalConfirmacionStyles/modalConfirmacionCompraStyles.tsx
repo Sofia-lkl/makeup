@@ -1,6 +1,6 @@
 
 import styled from "styled-components";
-import { Button as MuiButton, IconButton } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
 
 const primaryColor = "#FF6B6B"; 
 const secondaryColor = "#4ECDC4";
