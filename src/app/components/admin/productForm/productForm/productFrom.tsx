@@ -27,7 +27,7 @@ interface FormData {
   imagen_url: string;
   marca: string;
   color: string;
-  categoria: string; // <-- Añade este campo
+  categoria: string; 
 }
 
 const ProductForm: React.FC = () => {
@@ -76,7 +76,6 @@ const ProductForm: React.FC = () => {
   return (
     <StyledFormContainer>
       {" "}
-      {/* contenedor estilizado */}
       <StyledForm onSubmit={handleSubmit}>
         <StyledDiv>
           <StyledLabel>Nombre:</StyledLabel>

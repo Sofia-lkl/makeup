@@ -16,7 +16,6 @@ import { updateOrderState } from "../../orderSlice/orderSlice";
 type ErrorType = { message?: string };
 
 const websocketMiddleware = (storeAPI: MiddlewareAPI) => {
-  // Verificamos si estamos en el entorno del cliente
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("jwt");
 
@@ -69,7 +68,6 @@ const websocketMiddleware = (storeAPI: MiddlewareAPI) => {
             updatedProducts
           );
 
-          // Itera sobre la lista de productos actualizados y sincroniza cada uno con el carrito.
           updatedProducts.forEach((product: Product) => {
             storeAPI.dispatch(syncCartWithUpdatedStock(product));
           });

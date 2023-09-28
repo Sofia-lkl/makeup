@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "../../../redux/store/appHooks";
-import { resetNewOrdersCount } from "../../../redux/orderSlice/orderSlice"; // Asegúrate de exportar esta action desde orderSlice
+import { resetNewOrdersCount } from "../../../redux/orderSlice/orderSlice"; 
 import { styless } from "../navbarStyles/navbarStyles";
 import Badge from "@mui/material/Badge";
 
@@ -18,11 +18,11 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   dropdownRef,
 }) => {
   const dispatch = useAppDispatch();
-  const newOrdersCount = useAppSelector((state) => state.order.newOrdersCount); // Asumiendo que has agregado un campo 'newOrdersCount' en tu orderSlice
+  const newOrdersCount = useAppSelector((state) => state.order.newOrdersCount); 
 
   const handleViewHistoryClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    dispatch(resetNewOrdersCount()); // Resetea el contador de nuevas órdenes cuando el usuario hace clic en "Ver Órdenes"
+    dispatch(resetNewOrdersCount()); 
     onViewHistory();
   };
 
@@ -38,7 +38,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     >
       <button style={buttonStyle} onClick={handleViewHistoryClick}>
         Ver Órdenes 
-        {newOrdersCount > 0 && ( // Muestra el badge solo si hay nuevas órdenes
+        {newOrdersCount > 0 && ( 
           <Badge badgeContent={newOrdersCount} color="error" />
         )}
       </button>

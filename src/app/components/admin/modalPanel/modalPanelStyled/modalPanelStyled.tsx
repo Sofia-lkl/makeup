@@ -18,18 +18,18 @@ export const ModalContent = styled(motion.div)`
   padding: 2em;
   width: 80%;
   height: 80%;
-  overflow: auto; // Cambia 'scroll' por 'auto'
+  overflow: auto; 
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  // Agrega estas líneas para ocultar las barras de desplazamiento
-  scrollbar-width: none; // Para Firefox
-  -ms-overflow-style: none; // Para Internet Explorer y Edge
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
   &::-webkit-scrollbar {
-    display: none; // Para Chrome, Safari y Opera
+    display: none; 
   }
 
   &:hover {

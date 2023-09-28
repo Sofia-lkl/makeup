@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const MobileMenuButton = styled.button`
-  display: none; // Por defecto, el botón estará oculto
+  display: none; 
   
   @media (max-width: 768px) {
     display: block;
@@ -23,7 +23,6 @@ export const MobileMenuContainer = styled.div<{ isOpen: boolean }>`
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #FAF3E0; // color de fondo neutral
+  background-color: #FAF3E0; 
 `;
 
-// Aquí puedes agregar más estilos según lo necesites

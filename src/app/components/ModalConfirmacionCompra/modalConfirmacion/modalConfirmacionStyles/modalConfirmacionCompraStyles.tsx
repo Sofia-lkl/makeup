@@ -50,7 +50,7 @@ export const ProductRow = styled.div`
 `;
 
 export const ProductImage = styled.div`
-  flex: 1; // Esto garantiza que tenga el mismo tamaño en todos los productos
+  flex: 1; 
   img {
     width: 50px;
     height: 50px;
@@ -60,7 +60,7 @@ export const ProductImage = styled.div`
 `;
 
 export const ProductName = styled.div`
-  flex: 3; // Esto le da más espacio al nombre
+  flex: 3; 
   text-align: left;
   overflow: hidden;
   white-space: nowrap;

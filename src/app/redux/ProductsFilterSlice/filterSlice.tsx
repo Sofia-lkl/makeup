@@ -7,7 +7,7 @@ export interface ProductType {
   nombre: string;
   precio: number;
   stock?: number;
-  marca?: string; // Aquí haces la propiedad "marca" opcional
+  marca?: string; 
   color?: string;
   descripcion?: string;
   

@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 const colors = {
   neutralLight: "#F5EAE0",
   darkerGray: "#5C5C5C",
-  gradientPink: "linear-gradient(45deg, #FFB6C1, #FF69B4)",  // Gradiente rosa
+  gradientPink: "linear-gradient(45deg, #FFB6C1, #FF69B4)",  
   gold: "#FFD700",
   backgroundColor: "#FFF0F5",
 };
@@ -24,7 +24,6 @@ interface CoursesSectionProps {
   children?: React.ReactNode;
 }
 
-// 2. Modificar la definición del componente
 const CoursesSection: React.FC<CoursesSectionProps> = ({ style, children }) => {
   return <div style={{ ...containerStyles, ...style }}>{children}</div>;
 };
@@ -38,15 +37,15 @@ const CoursesIntroContainer = styled.div`
 
 const AnimatedIntroTitle = styled(motion.h1)`
   font-size: 3em;
-  background: ${colors.gradientPink};  // Aplicamos el gradiente al título
-  color: white;  // Cambiamos el color del texto a blanco para contrastar con el gradiente
-  padding: 0.2em 0;  // Añadimos un poco de padding para que el gradiente se note más
+  background: ${colors.gradientPink};  
+  color: white;  
+  padding: 0.2em 0;  
   margin-bottom: 1rem;
   font-weight: bold;
   display: flex;
   justify-content: center;
   text-align: center;
-  -webkit-background-clip: text;  // Esta propiedad y la siguiente hacen que el gradiente se aplique solo al texto
+  -webkit-background-clip: text;  
   color: transparent;
 `;
 
@@ -58,10 +57,7 @@ const AnimatedIntroDescription = styled(motion.p)`
   margin: 0 auto 2rem;
 `;
 
-/* const StyledCard = styled.div`
-  background: linear-gradient(to bottom, transparent 60%, ${colors.pinkLight});
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); // Añade una sombra sutil
-`; */
+
 const CoursesContainer: React.FC = () => {
   return (
     <>

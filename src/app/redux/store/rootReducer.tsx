@@ -7,7 +7,6 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { ThunkDispatch } from "redux-thunk";
 
-// Importando reducers y middlewares
 import productUpdateReducer from "../productSlice/productUpdateSlice/productUpdateSlice";
 import cartReducer from "../cartSlice/cartSlice";
 import websocketMiddleware from "../productSlice/features/webSocketMiddleware";
@@ -20,7 +19,6 @@ import modalReducer from "../sliceModal/modalSlice";
 import filterReducer from "../ProductsFilterSlice/filterSlice";
 import orderReducer from "../orderSlice/orderSlice";
 
-// Combinando todos los reducers
 const rootReducer = combineReducers({
   order: orderReducer,
   userDetails: userDetailsReducer,
@@ -34,7 +32,6 @@ const rootReducer = combineReducers({
   filter: filterReducer,
 });
 
-// Configuración para la persistencia
 const persistConfig = {
   key: "root",
   storage,
@@ -43,7 +40,6 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Configurando y creando la tienda
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -54,9 +50,7 @@ export const store = configureStore({
     }).concat(websocketMiddleware),
 });
 
-// Configurando el persistor
 export const persistor = persistStore(store);
 
-// Definiendo los tipos para RootState y AppDispatch
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;

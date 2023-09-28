@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { StyledFilterBar } from './sideBarStyle';
 export const FilterButtons = styled(StyledFilterBar)`
   display: flex;
-  flex-direction: row; /* Añadir esta línea */
+  flex-direction: row; 
   gap: 10px;
   width: 80%;
   justify-content: center;
@@ -11,11 +11,11 @@ export const FilterButtons = styled(StyledFilterBar)`
   button {
     display: flex;
     align-items: center;
-    gap: 5px; // Reducido de 7px a 5px
-    padding: 8px 12px; // Reducido el padding para hacer los botones más pequeños
+    gap: 5px; 
+    padding: 8px 12px; 
     border: none;
     border-radius: 20px;
-    font-size: 0.9em; // Reducido el tamaño de fuente
+    font-size: 0.9em; 
     cursor: pointer;
     background-color: ${colors.neutralLight};
     color: ${colors.text};

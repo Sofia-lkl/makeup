@@ -38,7 +38,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   ordenId,
 }) => {
   const cartItems = useAppSelector((state) => state.cart);
-  const dispatch = useAppDispatch(); // Obtén el dispatch de Redux
+  const dispatch = useAppDispatch(); 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [showUploadOption, setShowUploadOption] = useState(false);
@@ -57,12 +57,10 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 
   const handleUploadSuccess = (data: { estado: string; comprobante: File }) => {
     // Especifica el tipo aquí
-    console.log("Comprobante cargado con éxito:", data);
     setUploadSuccessMessage("Comprobante cargado con éxito");
     setLoadedComprobante(data.comprobante);
 
     if (data.estado === "Aprobado") {
-      console.log("Incrementando contador de órdenes debido a estado Aprobado");
       dispatch(incrementNewOrdersCount());
     }
 
@@ -74,7 +72,6 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   };
 
   const handleUploadError = (error: Error) => {
-    // Especifica el tipo aquí
     console.error("Error al cargar el comprobante:", error);
   };
 
@@ -88,7 +85,6 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
     };
 
     const userToken = localStorage.getItem("jwt");
-    console.log("Datos enviados al backend:", paymentData);
 
     try {
       const response = await axios.post(

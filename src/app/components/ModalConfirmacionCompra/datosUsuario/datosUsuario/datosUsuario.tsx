@@ -33,12 +33,6 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Valores del estado antes de enviar:", {
-      nombre,
-      telefono,
-      email,
-    });
-
     try {
       const response = await axios.post(
         "http://localhost:3002/api/orders/create",
@@ -58,7 +52,6 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
       );
 
       if (response.status === 201 && response.data && response.data.orderId) {
-        console.log("Orden creada con éxito", response.data);
         onContinue({
           nombre,
           email,

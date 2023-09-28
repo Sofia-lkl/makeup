@@ -1,6 +1,5 @@
 import { Product } from "../types/types";
 
-// Tipos de acciones
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const EDIT_PRODUCT = 'EDIT_PRODUCT';
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
@@ -32,7 +31,6 @@ export type ProductActionTypes =
   | DeleteProductAction
   | SetAllProductsAction;
 
-// Creadores de acciones
 export const addProduct = (product: Product): AddProductAction => ({
   type: ADD_PRODUCT,
   payload: product,

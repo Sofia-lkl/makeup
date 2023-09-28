@@ -19,19 +19,19 @@ export const colors = {
 
 
 export const SidebarTitle = styled.h2`
-  font-size: 0.84em; // Antes era 1.2em
+  font-size: 0.84em; 
   color: ${colors.pinkDark};
-  margin-bottom: 10.5px; // Antes era 15px
+  margin-bottom: 10.5px; 
   text-align: center;
   font-weight: 600;
 `;
 
 export const StyledFilterBar = styled.div`
   display: flex;
-  flex-direction: column; /* Cambiar de flex-direction: row (por defecto) a column */
+  flex-direction: column; 
   gap: 12px;
   padding: 12px;
-  align-items: center; /* Esto centrará los elementos horizontalmente */
+  align-items: center; 
   width: 100%;
   border-radius: 15px;
   box-shadow: 0px 5px 15px ${colors.cardShadow};
@@ -97,7 +97,7 @@ export const FilterSelect = styled.select`
 
 export const StickyFilterContainer = styled(StyledFilterBar)`
   position: sticky;
-  top: 10px; /* El espacio que quieres que sea visible cuando esté contraído */
+  top: 10px; 
   z-index: 2;
   background-color: #fff5ee;
   padding: 12px;
@@ -106,17 +106,17 @@ export const StickyFilterContainer = styled(StyledFilterBar)`
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-y: hidden; /* Ocultamos el scroll vertical */
-  transition: transform 0.5s; /* Animación para la transformación */
-  transform: translateY(0); /* Por defecto, no hay transformación */
+  overflow-y: hidden; 
+  transition: transform 0.5s; 
+  transform: translateY(0);
 
   &:hover,
   &.expanded {
-      transform: translateY(0); /* Se muestra completamente */
+      transform: translateY(0);
   }
 
   &.collapsed {
-      transform: translateY(-60%); /* Se contraerá y esconderá el 80% de su contenido hacia arriba */
+      transform: translateY(-60%); 
   }
 `;
 

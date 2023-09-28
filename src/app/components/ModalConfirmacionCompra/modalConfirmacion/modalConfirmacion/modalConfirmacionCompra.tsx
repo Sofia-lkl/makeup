@@ -192,7 +192,6 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
             />
           );
         } else {
-          // Puedes renderizar algo diferente aquí o simplemente devolver null
           return null;
         }
     }

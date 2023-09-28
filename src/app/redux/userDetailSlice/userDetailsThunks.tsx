@@ -6,7 +6,6 @@ import {
   fetchUserDetailsError,
 } from "./userDetailsSlice";
 
-// Thunk para obtener detalles del usuario
 export const fetchUserDetails = createAsyncThunk(
   "userDetails/fetchUserDetails",
   async (userId: string, thunkAPI) => {

@@ -61,7 +61,7 @@ const StyledImage = styled.img`
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
-  padding: 0 8px; // Agrega un padding horizontal
+  padding: 0 8px; 
 
   &:hover {
     transform: scale(1.05);

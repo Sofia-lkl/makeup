@@ -54,7 +54,6 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
     highlighted ? HighlightedProductCardContainer : ProductCardContainer
   ) as React.ElementType;
 
-  // Usar useSelector fuera del manejador de eventos
   const existingItem = useSelector((state: RootState) =>
     state.cart.find((item) => item.id === id)
   );

@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
     top: 100%;
     left: 0;
     right: 0;
-    background-color: #faf3e0; // Puedes cambiar el color de fondo si lo deseas
+    background-color: #faf3e0; 
   `;
   const [isMounted, setIsMounted] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
@@ -93,7 +93,6 @@ const Navbar: React.FC = () => {
   const handleLogout = () => dispatch(logout());
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Si el dropdown está abierto y el clic fue fuera del dropdown y del botón
       if (
         isDropdownOpen &&
         dropdownRef.current &&

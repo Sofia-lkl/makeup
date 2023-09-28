@@ -51,7 +51,7 @@ const initialState: {
 } = {
   orders: [],
   error: null,
-  newOrdersCount: 0, // Nuevo estado para rastrear las órdenes nuevas
+  newOrdersCount: 0, 
 };
 
 interface UserOrdersResponse {
@@ -275,17 +275,14 @@ const orderSlice = createSlice({
       );
     },
     incrementNewOrdersCount: (state) => {
-      // Incrementa en 1 el contador de órdenes nuevas
       console.log("Incrementando contador de órdenes nuevas.");
 
       state.newOrdersCount += 1;
     },
     resetNewOrdersCount: (state) => {
-      // Restablece el contador de órdenes nuevas a 0
       state.newOrdersCount = 0;
     },
     setNewOrdersCount: (state, action: PayloadAction<number>) => {
-      // Establece el contador a un valor específico
       state.newOrdersCount = action.payload;
     },
   },

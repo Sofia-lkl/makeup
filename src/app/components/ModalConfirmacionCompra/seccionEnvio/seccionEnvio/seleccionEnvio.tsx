@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { FormControlLabel, Radio, Button } from "@mui/material";
 import {
@@ -39,15 +39,13 @@ const SeleccionEnvio: React.FC<SeleccionEnvioProps> = ({
 }) => {
   useEffect(() => {
     const socket = io("http://localhost:3002");
-    socket.on("stock-updated", (data) => {
-      console.log("Stock actualizado:", data);
+    socket.on("stock-updated", () => {
     });
     return () => {
       socket.disconnect();
     };
   }, []);
 
-  console.log("orden_id en SeleccionEnvio:", orden_id);
 
   const [metodo_envio, setMetodoEnvio] = useState<string>(
     datosEnvio?.metodo_envio || ""
@@ -77,19 +75,7 @@ const SeleccionEnvio: React.FC<SeleccionEnvioProps> = ({
     pais: "",
   });
   const handleSubmit = async () => {
-    // Log para verificar los valores antes de enviar
-    console.log("Datos de envío antes de enviar:", {
-      orden_id,
-      metodo_envio,
-      direccion,
-      ciudad,
-      estado,
-      codigo_postal,
-      pais,
-    });
-
     const userToken = localStorage.getItem("jwt");
-    console.log("Token del usuario:", userToken);
 
     try {
       const response = await axios.post(
@@ -109,7 +95,6 @@ const SeleccionEnvio: React.FC<SeleccionEnvioProps> = ({
           },
         }
       );
-      console.log("Respuesta completa del servidor:", response);
       if (response.data.success) {
         onContinue({
           metodo_envio,

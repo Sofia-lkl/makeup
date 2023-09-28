@@ -9,8 +9,8 @@ export const StyledSeleccionEnvio = styled.div`
   margin: 24px auto;
   padding: 30px;
   border-radius: 15px;
-  background: linear-gradient(145deg, #f5f5f5, #ffffff); // Fondo con gradiente
-  box-shadow: 10px 10px 20px #e0e0e0, -10px -10px 20px #ffffff; // Sombra neumórfica
+  background: linear-gradient(145deg, #f5f5f5, #ffffff); 
+  box-shadow: 10px 10px 20px #e0e0e0, -10px -10px 20px #ffffff; 
 
   h6 {
     font-size: 1.6em;
@@ -32,7 +32,7 @@ export const StyledSeleccionEnvio = styled.div`
     .MuiTypography-root {
       font-size: 1em;
       color: #555;
-      font-weight: 500; // Semi-negrita
+      font-weight: 500; 
     }
   }
 
@@ -42,13 +42,13 @@ export const StyledSeleccionEnvio = styled.div`
       45deg,
       #fe6b8b 30%,
       #ff8e53 90%
-    ); // Gradiente moderno
+    ); 
     color: white;
-    transition: transform 0.3s ease; // Transición suave
+    transition: transform 0.3s ease; 
 
     &:hover {
       background-color: #3db9a8;
-      transform: scale(1.05); // Efecto de "zoom" al pasar el mouse
+      transform: scale(1.05); 
     }
   }
 `;
@@ -62,7 +62,7 @@ export const ButtonContainer = styled.div`
 export const StyledTextField = styled(TextField)`
   background-color: #f7f7f7;
   border-radius: 10px;
-  box-shadow: 4px 4px 10px #e0e0e0, -4px -4px 10px #ffffff; // Sombra neumórfica
+  box-shadow: 4px 4px 10px #e0e0e0, -4px -4px 10px #ffffff; 
 
   label.Mui-focused {
     color: #4ecdc4;

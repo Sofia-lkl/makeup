@@ -16,7 +16,6 @@ export interface UpdatedProduct {
 
 const initialState: UpdatedProduct[] = [];
 
-// Acción asíncrona para obtener los productos actualizados
 export const fetchUpdatedProducts = createAsyncThunk(
   "productUpdate/fetchUpdatedProducts",
   async () => {

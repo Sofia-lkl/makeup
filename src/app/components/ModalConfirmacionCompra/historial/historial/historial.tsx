@@ -84,8 +84,8 @@ const Historial: React.FC = () => {
     } = {
       status: selectedStatus,
       sortByDate: orderSorting,
-      startDate: startDate || undefined, // Convertir null a undefined
-      endDate: endDate || undefined, // Convertir null a undefined
+      startDate: startDate || undefined, 
+      endDate: endDate || undefined, 
     };
 
     if (isAdmin) {
@@ -115,15 +115,14 @@ const Historial: React.FC = () => {
     dispatch(changeOrderStatus({ orderId, newState: "Completado" }))
       .unwrap()
       .then((updatedOrder) => {
-        console.log("Orden actualizada:", updatedOrder);
 
         if (isAdmin) {
           dispatch(
             fetchOrdersByStatus({
               status: selectedStatus,
               sortByDate: orderSorting,
-              startDate: startDate || undefined, // Convertir null a undefined
-              endDate: endDate || undefined, // Convertir null a undefined
+              startDate: startDate || undefined, 
+              endDate: endDate || undefined, 
             })
           );
         } else {
@@ -237,7 +236,6 @@ const Historial: React.FC = () => {
 
           {expandedOrderId === order.id && (
             <OrderDetailsContainer>
-              {/* Sección de Datos del Usuario */}
               <OrderSection>
                 <SectionTitle>
                   <FaUser /> Datos del Usuario
@@ -317,13 +315,11 @@ const Historial: React.FC = () => {
                     <CargarComprobante
                       orderId={order.id.toString()}
                       onUploadSuccess={() => {
-                        // Mostrar el mensaje de éxito
                         setUploadMessage((prevMessages) => ({
                           ...prevMessages,
                           [order.id]: "Comprobante cargado con éxito!",
                         }));
 
-                        // Esconder el mensaje después de 3 segundos
                         setTimeout(() => {
                           setUploadMessage((prevMessages) => ({
                             ...prevMessages,
@@ -331,7 +327,6 @@ const Historial: React.FC = () => {
                           }));
                         }, 3000);
 
-                        // Luego, vuelve a obtener la información de las órdenes para actualizar el estado
                         dispatch(fetchUserOrders());
                       }}
                       onUploadError={() => {
