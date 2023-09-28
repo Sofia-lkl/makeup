@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { updateStockFromOrder } from "../cartSlice/cartSlice";
 
 export interface OrderDetail {
+  nombre: any;
   producto_id: number;
   cantidad: number;
   precio: number;
@@ -67,41 +68,48 @@ type RejectWithValue<T> = {
     };
   };
 };
-export const addNewOrder = createAsyncThunk(
-  "order/addNewOrder",
-  async (orderData, { dispatch }) => {
-    console.log("Ejecutando addNewOrder con datos:", orderData);
-
+export const changeOrderStatus = createAsyncThunk<
+  Order | RejectWithValue<string>,
+  { orderId: number; newState: string },
+  {
+    rejectValue: string;
+  }
+>(
+  "order/changeOrderStatus",
+  async ({ orderId, newState }, { rejectWithValue }) => {
     const isClient = typeof window !== "undefined";
     const userToken = isClient ? localStorage.getItem("jwt") : null;
+
     if (!userToken) {
-      throw new Error("Token no encontrado. Asegúrate de estar autenticado.");
-    }
-
-    const response = await fetch("http://localhost:3002/api/orders/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": userToken,
-      },
-      body: JSON.stringify(orderData),
-    });
-
-    if (!response.ok) {
-      throw new Error("Error al agregar la orden");
-    }
-
-    const data = await response.json();
-
-    if (data.estado === "Activo" || data.estado === "Aprobado") {
-      console.log(
-        "Actualizando stock y incrementando contador de órdenes nuevas."
+      return rejectWithValue(
+        "Token no encontrado. Asegúrate de estar autenticado."
       );
-      dispatch(updateStockFromOrder(data.detalles));
-      dispatch(incrementNewOrdersCount());
     }
 
-    return data;
+    try {
+      const response = await fetch(
+        `http://localhost:3002/api/orders/update-status/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "x-auth-token": userToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ estado: newState }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error changing order status: ${response.statusText}`);
+      }
+
+      const data: Order = await response.json();
+      console.log("Order status changed successfully. Updated order:", data);
+      return data;
+    } catch (error) {
+      const err = error as Error;
+      return rejectWithValue(err.message || "Error desconocido.");
+    }
   }
 );
 
@@ -243,6 +251,18 @@ const orderSlice = createSlice({
   name: "order",
   initialState,
   reducers: {
+    updateOrderState: (
+      state,
+      action: PayloadAction<{ orderId: number; newState: string }>
+    ) => {
+      console.log("Trying to update order with ID:", action.payload.orderId);
+      const orderIndex = state.orders.findIndex(
+        (order) => order.id === action.payload.orderId
+      );
+      if (orderIndex !== -1) {
+        state.orders[orderIndex].estado = action.payload.newState;
+      }
+    },
     setOrders: (state, action: PayloadAction<Order[]>) => {
       state.orders = action.payload;
     },
@@ -271,6 +291,26 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(
+        changeOrderStatus.fulfilled,
+        (state, action: PayloadAction<Order | RejectWithValue<string>>) => {
+          if ("id" in action.payload) {
+            const updatedOrder = action.payload;
+            const index = state.orders.findIndex(
+              (order) => order.id === updatedOrder.id
+            );
+            if (index > -1) {
+              state.orders[index] = updatedOrder;
+            }
+          }
+        }
+      )
+      .addCase(
+        changeOrderStatus.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.error = action.payload || "Error desconocido.";
+        }
+      )
       .addCase(
         fetchUserOrders.fulfilled,
         (state, action: PayloadAction<Order[] | RejectWithValue<string>>) => {
@@ -346,6 +386,7 @@ export const {
   incrementNewOrdersCount,
   resetNewOrdersCount,
   setNewOrdersCount,
+  updateOrderState,
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

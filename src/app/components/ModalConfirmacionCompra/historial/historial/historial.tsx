@@ -11,6 +11,8 @@ import {
   ShippingInfo as ShippingInfoType,
   fetchOrdersByStatus,
   deleteOrderById,
+  updateOrderState,
+  changeOrderStatus,
 } from "../../../../redux/orderSlice/orderSlice";
 
 import {
@@ -32,7 +34,7 @@ import {
   successMessageStyle,
 } from "../styledHistorial/styledHistorial";
 import axios from "axios";
-console.log("Componente Historial se está renderizando");
+import { FaUser, FaBox, FaShippingFast, FaCreditCard } from "react-icons/fa";
 
 const Historial: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -119,6 +121,31 @@ const Historial: React.FC = () => {
   console.log("Ordenamiento seleccionado:", orderSorting);
   console.log("Fecha de inicio:", startDate);
   console.log("Fecha de fin:", endDate);
+  const handleCompleteOrder = (orderId: number) => {
+    // Actualizar el estado en Redux y en el backend
+    dispatch(changeOrderStatus({ orderId, newState: "Completado" }))
+      .unwrap()
+      .then((updatedOrder) => {
+        console.log("Orden actualizada:", updatedOrder);
+
+        // Vuelve a obtener la lista de órdenes
+        if (isAdmin) {
+          dispatch(
+            fetchOrdersByStatus({
+              status: selectedStatus,
+              sortByDate: orderSorting,
+              startDate: startDate || undefined, // Convertir null a undefined
+              endDate: endDate || undefined, // Convertir null a undefined
+            })
+          );
+        } else {
+          dispatch(fetchUserOrders());
+        }
+      })
+      .catch((error) => {
+        console.error("Error al actualizar la orden:", error);
+      });
+  };
 
   return (
     <div>
@@ -131,8 +158,9 @@ const Historial: React.FC = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <MenuItem value="activo">Activo</MenuItem>
               <MenuItem value="aprobado">Aprobado</MenuItem>
+              <MenuItem value="completado">Completado</MenuItem>
+              <MenuItem value="activo">Activo</MenuItem>
               <MenuItem value="pendiente">Pendiente</MenuItem>
             </Select>
             <Select
@@ -172,7 +200,7 @@ const Historial: React.FC = () => {
         <StyledOrderContainer key={order.id}>
           <OrderHeader onClick={() => handleOrderClick(order.id)}>
             Orden #{index + 1} - {new Date(order.fecha).toLocaleDateString()} -
-            Haga clic para ver detalles
+            <span> Haga clic para ver detalles</span>
           </OrderHeader>
 
           {isAdmin && (
@@ -206,35 +234,51 @@ const Historial: React.FC = () => {
               Eliminar Orden
             </Button>
           )}
+          {order.estado === "Aprobado" && isAdmin && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleCompleteOrder(order.id)}
+            >
+              Marcar como Completado
+            </Button>
+          )}
+
           {expandedOrderId === order.id && (
             <OrderDetailsContainer>
+              {/* Sección de Datos del Usuario */}
               <OrderSection>
-                <SectionTitle>Datos del Usuario</SectionTitle>
+                <SectionTitle>
+                  <FaUser /> Datos del Usuario
+                </SectionTitle>
                 <div>Nombre: {order.nombre}</div>
                 <div>Email: {order.email}</div>
                 <div>Teléfono: {order.telefono}</div>
               </OrderSection>
-
               <OrderSection>
-                <SectionTitle>Productos</SectionTitle>
+                <SectionTitle>
+                  <FaBox /> Productos
+                </SectionTitle>
                 <ul>
                   {getOrderDetails(order)?.map((detail: OrderDetail) => (
                     <ListItem key={detail.producto_id}>
                       <img
                         src={detail?.imagen_url}
-                        alt={`Producto ${detail.producto_id}`}
+                        alt={`Producto ${detail.nombre}`}
                         width="50"
                       />
-                      Producto ID: {detail.producto_id}, Cantidad:{" "}
-                      {detail.cantidad}, Precio: {detail.precio}
+                      <div>Producto: {detail.nombre}</div>
+                      <div>Cantidad: {detail.cantidad}</div>
+                      <div>Precio: {detail.precio}</div>
                     </ListItem>
                   ))}
                 </ul>
               </OrderSection>
-
               {order.direccion ? (
                 <OrderSection>
-                  <SectionTitle>Información de Envío</SectionTitle>
+                  <SectionTitle>
+                    <FaShippingFast /> Información de Envío
+                  </SectionTitle>
                   <div>Dirección: {order.direccion}</div>
                   <div>Ciudad: {order.ciudad}</div>
                   <div>Estado: {order.estado}</div>
@@ -243,14 +287,18 @@ const Historial: React.FC = () => {
                 </OrderSection>
               ) : (
                 <OrderSection>
-                  <SectionTitle>Información de Envío</SectionTitle>
+                  <SectionTitle>
+                    <FaShippingFast /> Información de Envío
+                  </SectionTitle>
                   <div>No hay información de envío para esta orden.</div>
                 </OrderSection>
               )}
 
               {order.comprobante_pago ? (
                 <OrderSection>
-                  <SectionTitle>Comprobante de Pago</SectionTitle>
+                  <SectionTitle>
+                    <FaCreditCard /> Comprobante de Pago
+                  </SectionTitle>
 
                   <Button
                     variant="contained"
@@ -308,7 +356,9 @@ const Historial: React.FC = () => {
                 </OrderSection>
               ) : order.estado === "Aprobado" ? (
                 <OrderSection>
-                  <SectionTitle>Pago con MercadoPago</SectionTitle>
+                  <SectionTitle>
+                    <FaCreditCard /> Pago con MercadoPago
+                  </SectionTitle>
                   <div>Pago realizado exitosamente con MercadoPago</div>
                 </OrderSection>
               ) : null}

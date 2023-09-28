@@ -5,6 +5,7 @@ import { StyledPasarelaPago } from "../styledPasarelaPago/styledPasarelaPago";
 import CargarComprobante from "../../uploadComprobant/uploadComprobant";
 import { useAppDispatch, useAppSelector } from "../../../../redux/store/appHooks";
 import { clearCart } from "../../../../redux/cartSlice/cartSlice"; 
+import { incrementNewOrdersCount } from "@/app/redux/orderSlice/orderSlice";
 
 interface PasarelaPagoProps {
   onPaymentSuccess: () => void;
@@ -53,17 +54,23 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
     setShowUploadOption(true);
   };
 
-  const handleUploadSuccess = (data: any) => {
+  const handleUploadSuccess = async (data: any) => {
     console.log("Comprobante cargado con éxito:", data);
     setUploadSuccessMessage("Comprobante cargado con éxito");
     setLoadedComprobante(data.comprobante);
+
+    // Verifica si el estado de la orden es "Aprobado" después de cargar el comprobante
+    if (data.estado === "Aprobado") {
+      console.log("Incrementando contador de órdenes debido a estado Aprobado");
+      dispatch(incrementNewOrdersCount());
+    }
+
     setTimeout(() => {
       setUploadSuccessMessage(null);
       closePaymentMethod();
     }, 3000);
     dispatch(clearCart()); // Limpia el carrito después de cargar el comprobante con éxito
-
-  };
+};
 
   const handleUploadError = (error: any) => {
     console.error("Error al cargar el comprobante:", error);
