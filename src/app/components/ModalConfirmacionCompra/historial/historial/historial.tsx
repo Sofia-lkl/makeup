@@ -12,7 +12,7 @@ import {
   deleteOrderById,
   changeOrderStatus,
 } from "../../../../redux/orderSlice/orderSlice";
-
+import Image from "next/image"; 
 import { Button, MenuItem, Select, TextField } from "@mui/material";
 import CargarComprobante from "../../uploadComprobant/uploadComprobant";
 import { updateStockFromOrder } from "../../../../redux/cartSlice/cartSlice";
@@ -250,14 +250,16 @@ const Historial: React.FC = () => {
                 </SectionTitle>
                 <ul>
                   {getOrderDetails(order)?.map((detail: OrderDetail) => (
-                    <ListItem key={detail.producto_id}>
-                      {detail?.imagen_url ? (
-                        <img
-                          src={detail.imagen_url}
-                          alt={`Producto ${detail.nombre}`}
-                          width="50"
-                        />
-                      ) : (
+                   <ListItem key={detail.producto_id}>
+                   {detail?.imagen_url ? (
+                       <Image
+                           src={detail.imagen_url}
+                           alt={`Producto ${detail.nombre}`}
+                           width={50}
+                           height={50} 
+                           
+                       />
+                   ) : (
                         <div>Imagen no disponible</div>
                       )}
                       <div>Producto: {detail.nombre}</div>

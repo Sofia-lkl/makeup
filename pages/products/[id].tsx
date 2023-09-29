@@ -13,6 +13,7 @@ import {
 import { FaTag, FaPalette, FaBox, FaTrademark } from "react-icons/fa";
 import { Button } from "@mui/material";
 import { useHandleAddToCart } from "@/app/components/products/products/products/cartActions";
+import Image from "next/image"; 
 
 interface ProductProps {
   product: {
@@ -62,7 +63,15 @@ const ProductDetail: React.FC<ProductProps> = ({ product }) => {
       <CenteredContainer>
         <ProductDetailContainer>
           <ImageContainer>
-            <img src={currentProduct.imagen_url} alt={currentProduct.nombre} />
+            <ImageContainer>
+              <Image
+                src={currentProduct.imagen_url}
+                alt={currentProduct.nombre}
+                width={500} 
+                height={500} 
+                priority
+              />
+            </ImageContainer>
           </ImageContainer>
           <DetailContainer>
             <h2>{currentProduct.nombre}</h2>

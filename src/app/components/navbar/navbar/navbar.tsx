@@ -19,6 +19,7 @@ import {
 import styled from "@emotion/styled";
 import MenuIcon from "@mui/icons-material/Menu";
 import Badge from "@mui/material/Badge";
+import Image from "next/image";
 
 interface NavLinkProps {
   href: string;
@@ -149,14 +150,15 @@ const Navbar: React.FC = () => {
           height: "4rem",
         }}
       >
-        <div style={styles.logoContainer}>
-          <img
+        <div style={styles.logo}>
+          <Image
             src="/img/logo.png"
             alt="Makeup Magic Logo"
-            style={styles.logo}
+            width={200}
+            height={205}
           />
 
-          <div style={styles.logoText}>Makeup Magic</div>
+          <div style={styles.logoText}>Fabiana Gimenez</div>
         </div>
 
         {/* Botón de menú para dispositivos móviles */}

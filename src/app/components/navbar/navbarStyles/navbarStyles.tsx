@@ -1,4 +1,3 @@
-
 export const colors = {
   neutralLight: "#FAF3E0",
   darkerGray: "#808080",
@@ -34,20 +33,22 @@ export const styles = {
     alignItems: "center",
     justifyContent: "center",
   },
-  logoContainer: {
+  logoContainer: {},
+  logo: {
     display: "flex",
     alignItems: "center",
-  },
-  logo: {
-    width: "40px",
-    height: "40px",
-    marginRight: "10px",
+    width: "90px",
+    height: "200px",
+    marginRight: "100px",
   },
   logoText: {
+    marginLeft: "1rem",
     fontSize: "1.5rem",
     fontWeight: "bold",
     color: colors.pinkDark,
+    whiteSpace: "nowrap" as "nowrap",
   },
+
   navLink: (isHovered: boolean) => ({
     marginLeft: "1rem",
     padding: "0.5rem 1rem",
@@ -62,7 +63,7 @@ export const styles = {
 };
 export const basicStyles = {
   navbar: {
-    position: "fixed" as const, 
+    position: "fixed" as const,
 
     width: "100%",
     top: 0,
@@ -91,18 +92,17 @@ export const basicStyles = {
     alignItems: "center",
     justifyContent: "center",
   },
-
 };
 export const styless = {
   dropdownMenu: {
     position: "absolute" as const,
-    top: "100%", 
-    right: 0, 
+    top: "100%",
+    right: 0,
     backgroundColor: colors.neutralLight,
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
     borderRadius: "4px",
     padding: "0.5rem 0",
-    zIndex: 1001, 
+    zIndex: 1001,
   },
 
   dropdownMenuItem: {
@@ -112,7 +112,7 @@ export const styless = {
     backgroundColor: "transparent",
     border: "none",
     width: "100%",
-    textAlign: "left" as const, 
+    textAlign: "left" as const,
     cursor: "pointer",
     transition: "background-color 0.3s, color 0.3s",
 

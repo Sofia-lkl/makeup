@@ -35,6 +35,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "../../../../redux/store/appHooks";
+import Image from "next/image";
 
 interface CartProps {
   onClose: () => void;
@@ -74,8 +75,7 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-  }, [cartItemsToDisplay]);
+  useEffect(() => {}, [cartItemsToDisplay]);
 
   const handleRemove = (id: number) => {
     dispatch(removeItem(id));
@@ -133,10 +133,11 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
                       marginRight: "10px",
                     }}
                   >
-                    <img
-                      src={item.imagen_url}
+                    <Image
+                      src={item.imagen_url || "/path/to/default/image.png"}
                       alt={item.nombre}
-                      style={{ width: "50px", marginRight: "10px" }}
+                      width={50}
+                      height={50}
                     />
                   </div>
 

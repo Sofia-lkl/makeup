@@ -9,6 +9,7 @@ import {
 } from "../../../../redux/store/appHooks";
 import { clearCart } from "../../../../redux/cartSlice/cartSlice";
 import { incrementNewOrdersCount } from "@/app/redux/orderSlice/orderSlice";
+import Image from 'next/image';
 
 interface PasarelaPagoProps {
   onPaymentSuccess: () => void;
@@ -38,7 +39,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
   ordenId,
 }) => {
   const cartItems = useAppSelector((state) => state.cart);
-  const dispatch = useAppDispatch(); 
+  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [showUploadOption, setShowUploadOption] = useState(false);
@@ -148,9 +149,11 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
         <ul className="products-list">
           {cartItems.map((producto) => (
             <li key={producto.id}>
-              <img
-                src={producto.imagen_url}
+              <Image
+                src={producto?.imagen_url || "/path/to/default/image.jpg"}
                 alt={producto.nombre}
+                width={100}
+                height={100}
                 className="product-image"
               />
               <span>

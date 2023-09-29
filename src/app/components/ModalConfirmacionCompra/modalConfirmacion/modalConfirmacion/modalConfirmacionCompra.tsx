@@ -22,7 +22,8 @@ import { Stepper } from "../../stepper/stepper";
 import DatosUsuario from "../../datosUsuario/datosUsuario/datosUsuario";
 import SeleccionEnvio from "../../seccionEnvio/seccionEnvio/seleccionEnvio";
 import PasarelaPago from "../../pasarelaPago/pasarelaPago/pasarelaPago";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
+import Image from "next/image";
 interface ModalConfirmacionCompraProps {
   isOpen: boolean;
   onClose: () => void;
@@ -91,7 +92,12 @@ const ModalConfirmacionCompra: React.FC<ModalConfirmacionCompraProps> = ({
             {productos.map((producto) => (
               <ProductRow key={producto.id}>
                 <ProductName>
-                  <img src={producto.imagen_url} alt={producto.nombre} />
+                  <Image
+                    src={producto?.imagen_url || "/path/to/default/image.jpg"}
+                    alt={producto.nombre}
+                    width={100}
+                    height={100}
+                  />
                   <span>{producto.nombre}</span>
                 </ProductName>
                 <ProductPrice>

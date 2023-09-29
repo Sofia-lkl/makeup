@@ -1,8 +1,5 @@
 import styled from "styled-components";
 
-
-
-
 export const CenteredContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -18,14 +15,14 @@ export const ProductDetailContainer = styled.div`
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 900px;  // Reduzco el tamaño para que sea más pequeño
-  width: 90%;        // Reduzco un poco el ancho para darle margen a los lados
+  max-width: 900px; // Reduzco el tamaño para que sea más pequeño
+  width: 90%; // Reduzco un poco el ancho para darle margen a los lados
   margin: auto;
 `;
 
-
 export const ImageContainer = styled.div`
   flex: 0.5;
+  position: relative; 
   img {
     width: 90%;
     margin-right: 20px;
