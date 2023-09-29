@@ -88,7 +88,7 @@ const PasarelaPago: React.FC<PasarelaPagoProps> = ({
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/api/mercadopago/create_preference",
+        "http://localhost:3003/api/mercadopago/create_preference",
         paymentData,
         {
           headers: {

@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
     top: 100%;
     left: 0;
     right: 0;
-    background-color: #faf3e0; 
+    background-color: #faf3e0;
   `;
   const [isMounted, setIsMounted] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
@@ -150,7 +150,7 @@ const Navbar: React.FC = () => {
         }}
       >
         <div style={styles.logoContainer}>
-        <img
+          <img
             src="/img/logo.png"
             alt="Makeup Magic Logo"
             style={styles.logo}

@@ -114,7 +114,7 @@ const Historial: React.FC = () => {
   const handleCompleteOrder = (orderId: number) => {
     dispatch(changeOrderStatus({ orderId, newState: "Completado" }))
       .unwrap()
-      .then((updatedOrder) => {
+      .then(() => {
 
         if (isAdmin) {
           dispatch(

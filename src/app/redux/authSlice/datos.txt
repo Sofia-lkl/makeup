@@ -1,14 +1,12 @@
 admin;
 // 1)crear notificaciones que se vayan cargando con un mini numerito cuando haya ordenes nuevas  con determinado estado (aprobado o activa)
-// 2) que el admin pueda cargar las imagenes de los productos 
 
-comprobante;
-// 1)(i dont know) pensar en implementar algun chatbot con ai que responda algunas cosas
+
 detalles;
 // 1) cambiar el gradiente de los botones de onCheckout
 
 productos;
-// 1) crear un id para cada producto para que tenga una vista de detalles del producto;
+// 1) crear un id para cada producto para que tenga una vista de detalles del producto; &&&& mejorar el sidebar
 // 2) poner la opcion en los productos para la vista previa como para cuando se vea en su detalle los colores que hay dispobile aparecido para seleccionar
 // 3) crear una opcion para poner productos en favoritos y guardarlos en una seccion del perfil del usuario
 
@@ -18,10 +16,6 @@ perfil;
 login;
 // 1) implmentar verificacion de email para registrar una cuenta y para recuperar Contraseña
 
-
-
-notificaciones;
-// 1) hacer llegar el email al ususario si carga un comprobante de pago o apreta el boton de mercado pago
 
 
  

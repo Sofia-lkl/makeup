@@ -47,7 +47,7 @@ const ProductPreview: React.FC<ProductPreviewProps> = ({
 
       <ProductFlow products={productList} />
 
-      <Link href="/todosLosProductos">
+      <Link href="/products">
         <ViewAllButton variant="contained" size="large">
           Ver todos los productos
         </ViewAllButton>

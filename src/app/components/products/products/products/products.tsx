@@ -2,13 +2,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import io from "socket.io-client";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addItem,
-  CartItem,
-} from "../../../../redux/cartSlice/cartSlice";
+import { useSelector } from "react-redux";
 import Slider from "react-slick";
-import { toast } from "react-toastify";
 import {
   SectionTitle,
   SectionDescription,
@@ -35,8 +30,9 @@ import {
 } from "../styles/stylesContainer";
 import { RootState } from "../../../../redux/store/rootReducer";
 import CombinedFilterComponent from "../../bar/sideBar/sideBar";
+import { useHandleAddToCart } from "./cartActions";
 
-const getProductLink = (productName: string) => `/products/${productName}`;
+const getProductLink = (productId: number) => `/products/${productId}`;
 
 const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
   id,
@@ -49,59 +45,36 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
   descripcion,
   highlighted = false,
 }) => {
-  const dispatch = useDispatch();
+  const handleAddToCart = useHandleAddToCart({
+    id,
+    nombre,
+    precio,
+    imagen_url,
+    stock,
+  });
   const CardContainer = (
     highlighted ? HighlightedProductCardContainer : ProductCardContainer
   ) as React.ElementType;
 
-  const existingItem = useSelector((state: RootState) =>
-    state.cart.find((item) => item.id === id)
-  );
-
-  const handleAddToCart = () => {
-    if (typeof stock === "undefined" || stock <= 0) {
-      toast.error("Producto sin stock!");
-      return;
-    }
-
-    if (existingItem && existingItem.cantidad >= stock) {
-      toast.error("No se pueden agregar más unidades, producto sin stock!");
-      return;
-    }
-
-    const itemToAdd: CartItem = {
-      id,
-      nombre,
-      precio,
-      cantidad: 1,
-      imagen_url: imagen_url || "ruta_por_defecto.jpg",
-      stock: stock || 0,
-    };
-
-    dispatch(addItem(itemToAdd));
-
-    const uniqueToastId = `${id}-${Date.now()}`;
-    toast.success("Producto agregado al carrito!", { toastId: uniqueToastId });
-  };
   return (
-    <CardContainer>
-      <Link href={getProductLink(nombre)}>
+    <Link href={getProductLink(id)} passHref>
+      <CardContainer>
         <ProductImage
           src={imagen_url || "path_to_default_image.jpg"}
           alt={nombre}
         />
-      </Link>
-      <ProductName>{nombre}</ProductName>
-      <ProductPrice>${precio.toFixed(2)}</ProductPrice>
-      <ProductBrand>{marca}</ProductBrand>
-      <ProductDescription>{descripcion}</ProductDescription>
-      <ProductColor>{color}</ProductColor>
-      <ProductOptions className="productOptions">
-        <AddToCartButton onClick={handleAddToCart}>
-          Agregar al Carrito
-        </AddToCartButton>
-      </ProductOptions>
-    </CardContainer>
+        <ProductName>{nombre}</ProductName>
+        <ProductPrice>${precio.toFixed(2)}</ProductPrice>
+        <ProductBrand>{marca}</ProductBrand>
+        <ProductDescription>{descripcion}</ProductDescription>
+        <ProductColor>{color}</ProductColor>
+        <ProductOptions className="productOptions">
+          <AddToCartButton onClick={handleAddToCart}>
+            Agregar al Carrito
+          </AddToCartButton>
+        </ProductOptions>
+      </CardContainer>
+    </Link>
   );
 };
 
@@ -155,7 +128,7 @@ const Products: React.FC<{
   >([]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3002");
+    const socket = io("http://localhost:3003");
     socket.on("stock-updated", fetchProducts);
     socket.on("product-updated", fetchProducts);
     socket.on("product-added", fetchProducts);
@@ -169,7 +142,7 @@ const Products: React.FC<{
   const fetchProducts = () => {
     console.log("Fetching products...");
     axios
-      .get("http://localhost:3002/api/products")
+      .get("http://localhost:3003/api/products")
       .then((response) => {
         console.log("Fetched products:", response.data);
         setProductList(response.data);
