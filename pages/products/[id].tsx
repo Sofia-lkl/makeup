@@ -44,7 +44,7 @@ const ProductDetail: React.FC<ProductProps> = ({ product }) => {
   );
 
   useEffect(() => {
-    const socket = io("http://localhost:3003");
+    const socket = io("http://localhost:3002");
     socket.on("product-updated", handleProductUpdated);
     socket.on("product-added", handleProductUpdated);
     socket.on("product-edited", handleProductUpdated);
@@ -119,7 +119,7 @@ export const getServerSideProps = async (
 
   try {
     const response = await axios.get(
-      `http://localhost:3003/api/products/${id}`
+      `http://localhost:3002/api/products/${id}`
     );
     product = response.data;
   } catch (error) {

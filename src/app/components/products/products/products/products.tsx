@@ -128,7 +128,7 @@ const Products: React.FC<{
   >([]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3003");
+    const socket = io("http://localhost:3002");
     socket.on("stock-updated", fetchProducts);
     socket.on("product-updated", fetchProducts);
     socket.on("product-added", fetchProducts);
@@ -142,7 +142,7 @@ const Products: React.FC<{
   const fetchProducts = () => {
     console.log("Fetching products...");
     axios
-      .get("http://localhost:3003/api/products")
+      .get("http://localhost:3002/api/products")
       .then((response) => {
         console.log("Fetched products:", response.data);
         setProductList(response.data);

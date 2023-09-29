@@ -38,7 +38,7 @@ const SeleccionEnvio: React.FC<SeleccionEnvioProps> = ({
   datosEnvio,
 }) => {
   useEffect(() => {
-    const socket = io("http://localhost:3003");
+    const socket = io("http://localhost:3002");
     socket.on("stock-updated", () => {
     });
     return () => {
@@ -79,7 +79,7 @@ const SeleccionEnvio: React.FC<SeleccionEnvioProps> = ({
 
     try {
       const response = await axios.post(
-        "http://localhost:3003/api/orders/create/shipping-info",
+        "http://localhost:3002/api/orders/create/shipping-info",
         {
           orden_id,
           metodo_envio,

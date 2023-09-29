@@ -37,7 +37,7 @@ const CargarComprobante: React.FC<CargarComprobanteProps> = ({
 
       try {
         const response = await axios.post<UploadSuccessResponse>(
-          `http://localhost:3003/api/orders/upload-comprobante/${orderId}`,
+          `http://localhost:3002/api/orders/upload-comprobante/${orderId}`,
           formData
         );
         onUploadSuccess(response.data);
