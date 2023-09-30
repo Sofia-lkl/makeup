@@ -28,10 +28,10 @@ const ProductPreview: React.FC<ProductPreviewProps> = ({ productList }) => {
     autoplaySpeed: 3000,
   };
   const imageBackgrounds = [
-    "/img/44.jpg",
-    "/img/3.jpg",
-    "/img/6.jpg",
-    "/img/2.jpg",
+    "/img/44.webp",
+    "/img/3.webp",
+    "/img/6.webp",
+    "/img/2.webp",
   ];
 
   return (

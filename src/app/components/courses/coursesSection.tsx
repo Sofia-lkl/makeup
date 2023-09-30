@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 const colors = {
   neutralLight: "#F5EAE0",
   darkerGray: "#5C5C5C",
-  gradientPink: "linear-gradient(45deg, #FFB6C1, #FF69B4)",  
+  gradientPink: "linear-gradient(45deg, #FFB6C1, #FF69B4)",
   gold: "#FFD700",
   backgroundColor: "#FFF0F5",
 };
@@ -15,9 +15,9 @@ const containerStyles: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
   flexWrap: "wrap",
-  gap: "2rem",  
+  gap: "2rem",
   justifyContent: "center",
-  backgroundColor: colors.backgroundColor,  
+  backgroundColor: colors.backgroundColor,
 };
 interface CoursesSectionProps {
   style?: React.CSSProperties;
@@ -32,20 +32,20 @@ const CoursesIntroContainer = styled.div`
   padding: 4rem 2rem;
   position: relative;
   z-index: 1;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
 `;
 
 const AnimatedIntroTitle = styled(motion.h1)`
   font-size: 3em;
-  background: ${colors.gradientPink};  
-  color: white;  
-  padding: 0.2em 0;  
+  background: ${colors.gradientPink};
+  color: white;
+  padding: 0.2em 0;
   margin-bottom: 1rem;
   font-weight: bold;
   display: flex;
   justify-content: center;
   text-align: center;
-  -webkit-background-clip: text;  
+  -webkit-background-clip: text;
   color: transparent;
 `;
 
@@ -56,7 +56,6 @@ const AnimatedIntroDescription = styled(motion.p)`
   max-width: 800px;
   margin: 0 auto 2rem;
 `;
-
 
 const CoursesContainer: React.FC = () => {
   return (
@@ -80,31 +79,29 @@ const CoursesContainer: React.FC = () => {
           experto.
         </AnimatedIntroDescription>
 
-        
-
         <CoursesSection style={containerStyles}>
           <StyledCard
-            $imageUrl="https://i.ibb.co/C7kg327/cursos-de-maquillaje-aprende-2.jpg"
-            bgUrl="https://i.ibb.co/SRXK0Q3/abstract-pink-background-pink-modern-shapes-background-vector.jpg"
-            cutUrl="https://i.ibb.co/N9szNs3/cursos-de-maquillaje-aprende-2-removebg.png"
+            $imageUrl="/img/curso/cursos-de-maquillaje-aprende-2ImagenUrl.webp"
+            bgUrl="/img/curso/abstract-pink-background-pink-modern-shapes-background-vectorBgUrl.webp"
+            cutUrl="/img/curso/cursos-de-maquillaje-aprende-2-removebg.png"
             title="Hover me!"
             description="Lorem, ipsum dolor sit amet consectetur adipisicing elit."
             price="15000"
             borderStyle="lb"
           />
           <StyledCard
-            $imageUrl="https://i.ibb.co/C7kg327/cursos-de-maquillaje-aprende-2.jpg"
-            bgUrl="https://i.ibb.co/SRXK0Q3/abstract-pink-background-pink-modern-shapes-background-vector.jpg"
-            cutUrl="https://i.ibb.co/N9szNs3/cursos-de-maquillaje-aprende-2-removebg.png"
+            $imageUrl="/img/curso/cursos-de-maquillaje-aprende-2ImagenUrl.webp"
+            bgUrl="/img/curso/abstract-pink-background-pink-modern-shapes-background-vectorBgUrl.webp"
+            cutUrl="/img/curso/cursos-de-maquillaje-aprende-2-removebg.png"
             title="Hover me!"
             description="Lorem, ipsum dolor sit amet consectetur adipisicing elit."
             price="15000"
             borderStyle="lb"
           />
           <StyledCard
-            $imageUrl="https://i.ibb.co/C7kg327/cursos-de-maquillaje-aprende-2.jpg"
-            bgUrl="https://i.ibb.co/SRXK0Q3/abstract-pink-background-pink-modern-shapes-background-vector.jpg"
-            cutUrl="https://i.ibb.co/N9szNs3/cursos-de-maquillaje-aprende-2-removebg.png"
+            $imageUrl="/img/curso/cursos-de-maquillaje-aprende-2ImagenUrl.webp"
+            bgUrl="/img/curso/abstract-pink-background-pink-modern-shapes-background-vectorBgUrl.webp"
+            cutUrl="/img/curso/cursos-de-maquillaje-aprende-2-removebg.png"
             title="Hover me!"
             description="Lorem, ipsum dolor sit amet consectetur adipisicing elit."
             price="15000"

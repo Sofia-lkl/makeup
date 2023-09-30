@@ -23,7 +23,7 @@ const styles: Style = {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundImage: 'url("/img/1.jpg")',
+    backgroundImage: 'url("/img/1.webp")',
     backgroundSize: "cover",
     backgroundPosition: "center",
     color: colors.neutralLight,

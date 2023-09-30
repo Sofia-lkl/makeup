@@ -47,12 +47,12 @@ const SLIDER_SETTINGS = {
 };
 
 const ITEM_DATA = [
-  { img: "/img/trabajosMaquillaje/1.jpg", title: "Título 1" },
-  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 2" },
-  { img: "/img/trabajosMaquillaje/3.jpg", title: "Título 3" },
-  { img: "/img/trabajosMaquillaje/4.jpg", title: "Título 4" },
-  { img: "/img/trabajosMaquillaje/5.jpg", title: "Título 5" },
-  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 6" },
+  { img: "/img/trabajosMaquillaje/1.webp", title: "Título 1" },
+  { img: "/img/trabajosMaquillaje/2.webp", title: "Título 2" },
+  { img: "/img/trabajosMaquillaje/3.webp", title: "Título 3" },
+  { img: "/img/trabajosMaquillaje/4.webp", title: "Título 4" },
+  { img: "/img/trabajosMaquillaje/5.webp", title: "Título 5" },
+  { img: "/img/trabajosMaquillaje/2.webp", title: "Título 6" },
 ];
 
 // Styled Components
