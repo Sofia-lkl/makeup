@@ -38,7 +38,7 @@ export const styles = {
     display: "flex",
     alignItems: "center",
     width: "90px",
-    height: "200px",
+    height: "100px",
     marginRight: "100px",
   },
   logoText: {
@@ -46,7 +46,7 @@ export const styles = {
     fontSize: "1.5rem",
     fontWeight: "bold",
     color: colors.pinkDark,
-    whiteSpace: "nowrap" as "nowrap",
+    whiteSpace: "nowrap" as const,
   },
 
   navLink: (isHovered: boolean) => ({

@@ -1,21 +1,22 @@
-import { colors } from './colors';
-import styled from 'styled-components';
-import { StyledFilterBar } from './sideBarStyle';
+import { colors } from "./colors";
+import styled from "styled-components";
+import { StyledFilterBar } from "./sideBarStyle";
 export const FilterButtons = styled(StyledFilterBar)`
   display: flex;
-  flex-direction: row; 
-  gap: 10px;
+  flex-direction: row;
+  gap: 15px; // Aumentar el espacio entre botones
   width: 80%;
   justify-content: center;
 
   button {
     display: flex;
     align-items: center;
-    gap: 5px; 
-    padding: 8px 12px; 
-    border: none;
+    gap: 5px;
+    padding: 10px 15px; // Aumentar el padding para un mejor aspecto
+    border: 2px solid ${colors.pinkDark}; // Borde cohesivo
     border-radius: 20px;
-    font-size: 0.9em; 
+    font-size: 0.9em;
+    font-weight: 600; // Peso de fuente cohesivo
     cursor: pointer;
     background-color: ${colors.neutralLight};
     color: ${colors.text};
@@ -33,16 +34,18 @@ export const FilterButtons = styled(StyledFilterBar)`
     }
   }
 `;
+
 export const FilterOption = styled.button`
   background: none;
-  border: 1px solid ${colors.pinkLight};
-  padding: 7px 12px;
-  border-radius: 15px;
+  border: 2px solid ${colors.pinkDark}; // Borde cohesivo
+  padding: 8px 14px; // Aumentar el padding para un mejor aspecto
+  border-radius: 20px; // Radio cohesivo
   margin-right: 12px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s, color 0.3s;
   color: ${colors.pinkDark};
+  font-weight: 600; // Peso de fuente cohesivo
 
   &:hover {
     background-color: ${colors.pinkDark};

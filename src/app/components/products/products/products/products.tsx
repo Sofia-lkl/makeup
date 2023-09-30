@@ -58,18 +58,26 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
 
   return (
     <Link href={getProductLink(id)} passHref>
-      <CardContainer>
-        <ProductImage
-          src={imagen_url || "path_to_default_image.jpg"}
-          alt={nombre}
-        />
-        <ProductName>{nombre}</ProductName>
+      <CardContainer as="a" style={{ textDecoration: "none" }}>
+        <div style={{ cursor: "pointer" }}>
+          <ProductImage
+            src={imagen_url || "path_to_default_image.jpg"}
+            alt={nombre}
+          />
+          <ProductName>{nombre}</ProductName>
+        </div>
         <ProductPrice>${precio.toFixed(2)}</ProductPrice>
         <ProductBrand>{marca}</ProductBrand>
         <ProductDescription>{descripcion}</ProductDescription>
         <ProductColor>{color}</ProductColor>
         <ProductOptions className="productOptions">
-          <AddToCartButton onClick={handleAddToCart}>
+          <AddToCartButton
+            onClick={(e) => {
+              e.stopPropagation(); 
+              e.preventDefault();
+              handleAddToCart();
+            }}
+          >
             Agregar al Carrito
           </AddToCartButton>
         </ProductOptions>
@@ -128,7 +136,7 @@ const Products: React.FC<{
   >([]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3002");
+    const socket = io("http://localhost:3003");
     socket.on("stock-updated", fetchProducts);
     socket.on("product-updated", fetchProducts);
     socket.on("product-added", fetchProducts);
@@ -142,7 +150,7 @@ const Products: React.FC<{
   const fetchProducts = () => {
     console.log("Fetching products...");
     axios
-      .get("http://localhost:3002/api/products")
+      .get("http://localhost:3003/api/products")
       .then((response) => {
         console.log("Fetched products:", response.data);
         setProductList(response.data);

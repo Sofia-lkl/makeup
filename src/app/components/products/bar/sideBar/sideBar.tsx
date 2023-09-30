@@ -11,10 +11,10 @@ import {
   setSelectedCategory,
 } from "../../../../redux/ProductsFilterSlice/filterSlice";
 import {
-  FilterSelect,
   FilterSection,
   SidebarTitle,
   StickyFilterContainer,
+  FilterSectionItem,
 } from "../sideBarStyles/sideBarStyle";
 import {
   PriceRangeInputs,
@@ -23,6 +23,7 @@ import {
 import { FilterInput, PriceRangeInput } from "../sideBarStyles/inputStyles";
 import { FilterButtons } from "../sideBarStyles/buttonStyles";
 import Slider from "@mui/material/Slider";
+import Select, { StylesConfig } from "react-select";
 
 const CombinedFilterComponent: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,9 @@ const CombinedFilterComponent: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
+    null
+  );
 
   const selectedColor = useSelector(
     (state: RootState) => state.filter.selectedColor
@@ -41,9 +45,46 @@ const CombinedFilterComponent: React.FC = () => {
   const selectedMarca = useSelector(
     (state: RootState) => state.filter.selectedMarca
   );
-
+  const customStyles: StylesConfig = {
+    control: (provided) => ({
+      ...provided,
+      minWidth: "200px",
+      borderRadius: '30px', // Más redondeado
+    }),
+    menu: (provided) => ({
+      ...provided,
+      minWidth: "200px",
+      zIndex: 1000,
+      borderRadius: '20px', // Más redondeado
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    option: (provided) => ({
+      ...provided,
+      borderRadius: '20px', // Más redondeado
+    }),
+};
+  useEffect(() => {
+    setMenuPortalTarget(document.getElementById("menu-portal"));
+  }, []);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
+  const colorOptions = [
+    { value: "", label: "Selecciona un color" },
+    { value: "Rojo", label: "Rojo" },
+    { value: "Azul", label: "Azul" },
+    { value: "Verde", label: "Verde" },
+  ];
+
+  const marcaOptions = [
+    { value: "", label: "Selecciona una marca" },
+    { value: "Marca1", label: "Marca1" },
+    { value: "Marca2", label: "Marca2" },
+    { value: "Marca3", label: "Marca3" },
+  ];
+  interface OptionType {
+    value: string;
+    label: string;
+  }
   interface MyRange {
     min: number;
     max: number;
@@ -190,31 +231,39 @@ const CombinedFilterComponent: React.FC = () => {
           </PriceRangeContainer>
         </div>
 
-        <div className="color-section">
+        <FilterSectionItem className="color-section">
           <label>Color</label>
-          <FilterSelect
-            value={selectedColor || ""}
-            onChange={(e) => dispatch(setSelectedColor(e.target.value))}
-          >
-            <option value="">Selecciona un color</option>
-            <option value="Rojo">Rojo</option>
-            <option value="Azul">Azul</option>
-            <option value="Verde">Verde</option>
-          </FilterSelect>
-        </div>
+          <Select
+            styles={customStyles}
+            options={colorOptions}
+            value={colorOptions.find(
+              (option) => option.value === selectedColor
+            )}
+            onChange={(newValue) => {
+              const option = newValue as OptionType | null;
+              dispatch(setSelectedColor(option?.value || ""));
+            }}
+            menuPortalTarget={menuPortalTarget}
+            placeholder="Selecciona un color" // Añade esta línea
+          />
+        </FilterSectionItem>
 
-        <div className="brand-section">
+        <FilterSectionItem className="brand-section">
           <label>Marca</label>
-          <FilterSelect
-            value={selectedMarca || ""}
-            onChange={(e) => dispatch(setSelectedMarca(e.target.value))}
-          >
-            <option value="">Selecciona una marca</option>
-            <option value="Marca1">Marca1</option>
-            <option value="Marca2">Marca2</option>
-            <option value="Marca3">Marca3</option>
-          </FilterSelect>
-        </div>
+          <Select
+            styles={customStyles}
+            options={marcaOptions}
+            value={marcaOptions.find(
+              (option) => option.value === selectedMarca
+            )}
+            onChange={(newValue) => {
+              const option = newValue as OptionType | null;
+              dispatch(setSelectedMarca(option?.value || ""));
+            }}
+            menuPortalTarget={menuPortalTarget}
+            placeholder="Selecciona una marca" // Añade esta línea
+          />
+        </FilterSectionItem>
       </FilterSection>
     </StickyFilterContainer>
   );

@@ -154,8 +154,8 @@ const Navbar: React.FC = () => {
           <Image
             src="/img/logo.png"
             alt="Makeup Magic Logo"
-            width={200}
-            height={205}
+            width={100}
+            height={50}
           />
 
           <div style={styles.logoText}>Fabiana Gimenez</div>

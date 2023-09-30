@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { colors } from "../../bar/sideBarStyles/sideBarStyle";
 
 export const ProductName = styled.h3`
+  text-decoration: none !important;
   color: #222;
   margin-top: 0;
   margin-bottom: 1rem;
@@ -16,9 +17,10 @@ export const ProductName = styled.h3`
 
 export const ProductImage = styled.img`
   border-radius: 15px;
-  width: 100%;
-  max-height: 180px; // Reducimos la altura máxima
-  object-fit: cover;
+  width: 150px; /* Ancho fijo */
+  height: 150px; /* Alto fijo */
+  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
+  object-position: center; /* Centra la imagen en el contenedor */
   margin-top: 1rem;
   transition: transform 0.3s;
   &:hover {
@@ -75,6 +77,7 @@ export const ProductOptions = styled.div`
   transition: all 0.5s ease-in-out;
 `;
 export const ProductCardContainer = styled(motion.div)`
+
   position: relative;
   background: #f9f9f9;
   padding: 2rem;
@@ -91,6 +94,7 @@ export const ProductCardContainer = styled(motion.div)`
   justify-content: space-between;
   cursor: pointer;
 
+
   &:hover {
     ${ProductPrice} {
       transform: translateY(-5px);
@@ -105,9 +109,9 @@ export const ProductCardContainer = styled(motion.div)`
   &:hover ${ProductOptions} {
     opacity: 1;
     visibility: visible;
+    
   }
 `;
-
 
 export const AddToCartButton = styled.button`
   padding: 8px 15px;

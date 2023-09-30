@@ -1,20 +1,25 @@
-import { colors, primaryColor, secondaryColor, thumbColorHover } from './colors';
-import styled from 'styled-components';
-
+import {
+  colors,
+  primaryColor,
+  secondaryColor,
+  thumbColorHover,
+} from "./colors";
+import styled from "styled-components";
 
 export const FilterInput = styled.input`
   width: 100%;
-  padding: 10px 12px;
-  border: 2px solid ${colors.pinkLight};
-  border-radius: 20px;
-  font-size: 0.95em;
+  padding: 12px 40px 12px 15px; // Aumentar el padding izquierdo para el ícono
+  border: 2px solid ${colors.pinkDark};
+  border-radius: 25px; // Hacerlo más redondeado
+  font-size: 1em; // Aumentar el tamaño de fuente
   outline: none;
   color: ${colors.text};
+  background-color: white; // Fondo blanco para destacar
   transition: border-color 0.3s, box-shadow 0.3s;
 
   &:focus {
     border-color: ${colors.pinkDark};
-    box-shadow: 0px 4px 10px ${colors.cardShadow};
+    box-shadow: 0px 4px 12px rgba(255, 105, 180, 0.2);
   }
 
   &:hover {
@@ -26,9 +31,10 @@ export const FilterInput = styled.input`
     font-style: italic;
   }
 `;
+
 export const PriceRangeInput = styled.input`
   width: 45%;
-  padding: 6px 12px;
+  padding: 8px 14px; // Aumentar el padding para un mejor aspecto
   border: 2px solid ${primaryColor};
   border-radius: 20px;
   font-size: 0.95em;

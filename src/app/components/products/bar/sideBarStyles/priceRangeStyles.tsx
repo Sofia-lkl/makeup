@@ -6,11 +6,11 @@ export const PriceRangeContainer = styled(StyledFilterBar)`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 5px;
-  background-color: ${secondaryColor};
+  padding: 10px; // Reducir el padding
+  background-color: white;
   border: 2px solid ${primaryColor};
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(255, 105, 180, 0.2);
+  border-radius: 30px; // Más redondeado
+  box-shadow: 0px 4px 12px rgba(255, 105, 180, 0.2);
 `;
 
 export const PriceRangeBar = styled.div`
@@ -26,7 +26,6 @@ export const PriceRangeInputs = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 10px;
 `;
 
 

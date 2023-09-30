@@ -1,74 +1,26 @@
+// External Libraries
 import React from "react";
 import Slider from "react-slick";
+import styled from "styled-components";
+import { Typography, Grid, Button } from "@mui/material";
+import Link from "next/link";
+
+// Styles & Assets
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@/app/globals.css";
-import { Typography, Grid, Button } from "@mui/material";
-import styled from "styled-components";
 
-const colors = {
-  neutralLight: "#FAF3E0",
-  darkerGray: "#808080",
-  pinkLight: "#FFD1DC",
-  pinkDark: "#FF69B4",
-  purpleLight: "#D8BFD8",
-  gold: "#FFD700",
+// Constants
+const COLORS = {
+  NEUTRAL_LIGHT: "#FAF3E0",
+  DARKER_GRAY: "#808080",
+  PINK_LIGHT: "#FFD1DC",
+  PINK_DARK: "#FF69B4",
+  PURPLE_LIGHT: "#D8BFD8",
+  GOLD: "#FFD700",
 };
 
-const StyledSection = styled.section`
-  background-color: ${colors.neutralLight};
-  padding: 6rem 0;
-`;
-
-const ContentBackground = styled.div`
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05);
-`;
-
-const HighlightText = styled.span`
-  color: ${colors.pinkDark};
-  font-weight: bold;
-`;
-
-const CustomButton = styled(Button)`
-  background-color: ${colors.pinkDark};
-  color: white;
-  padding: 10px 20px;
-  border-radius: 50px;
-  font-size: 1rem;
-  margin-top: 2rem;
-  transition: all 0.3s;
-  &:hover {
-    background-color: ${colors.purpleLight};
-    transform: translateY(-3px);
-  }
-  &:active {
-    transform: translateY(1px);
-  }
-`;
-const itemData = [
-  { img: "/img/trabajosMaquillaje/1.jpg", title: "Título 1" },
-  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 2" },
-  { img: "/img/trabajosMaquillaje/3.jpg", title: "Título 3" },
-  { img: "/img/trabajosMaquillaje/4.jpg", title: "Título 4" },
-  { img: "/img/trabajosMaquillaje/5.jpg", title: "Título 5" },
-  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 6" },
-];
-const StyledImage = styled.img`
-  max-width: 100%;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-  padding: 0 8px; 
-
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const sliderSettings = {
+const SLIDER_SETTINGS = {
   dots: true,
   infinite: true,
   speed: 500,
@@ -76,51 +28,126 @@ const sliderSettings = {
   slidesToScroll: 1,
   autoplay: true,
   autoplaySpeed: 2000,
+  responsive: [
+    {
+      breakpoint: 1024, // Punto de interrupción para tablets y laptops pequeñas
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 1,
+      },
+    },
+    {
+      breakpoint: 768, // Punto de interrupción para tablets en modo retrato y móviles en modo paisaje
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
 };
 
-const AcercaDe: React.FC = () => {
-  return (
-    <StyledSection>
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={6}>
-          <ContentBackground>
-            <Typography variant="h2" color="textPrimary" gutterBottom>
-              Acerca de <HighlightText>Makeup Magic</HighlightText>
-            </Typography>
-            <Typography variant="h6" color="textSecondary" gutterBottom>
-              Transformando la belleza, un rostro a la vez.
-            </Typography>
-            <Typography
-              variant="body1"
-              color="textPrimary"
-              paragraph
-              style={{ lineHeight: "1.7" }}
-            >
-              Makeup Magic ha sido líder en la industria del maquillaje desde
-              2020. Nuestro equipo de artistas talentosos trabaja
-              incansablemente para proporcionar a nuestros clientes los
-              servicios y productos de la más alta calidad.
-            </Typography>
-            <CustomButton variant="contained">Más sobre nosotros</CustomButton>
-          </ContentBackground>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Slider {...sliderSettings}>
-            {itemData.map((item) => (
-              <div key={item.img}>
-                <StyledImage
-                  src={`${item.img}?w=161&fit=crop&auto=format`}
-                  srcSet={`${item.img}?w=161&fit=crop&auto=format&dpr=2 2x`}
-                  alt={item.title}
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </Slider>
-        </Grid>
+const ITEM_DATA = [
+  { img: "/img/trabajosMaquillaje/1.jpg", title: "Título 1" },
+  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 2" },
+  { img: "/img/trabajosMaquillaje/3.jpg", title: "Título 3" },
+  { img: "/img/trabajosMaquillaje/4.jpg", title: "Título 4" },
+  { img: "/img/trabajosMaquillaje/5.jpg", title: "Título 5" },
+  { img: "/img/trabajosMaquillaje/2.jpg", title: "Título 6" },
+];
+
+// Styled Components
+const Section = styled.section`
+  background-color: ${COLORS.NEUTRAL_LIGHT};
+  padding: 8rem 0;
+`;
+
+const ContentWrapper = styled.div`
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.08);
+`;
+
+const HighlightedText = styled.span`
+  color: ${COLORS.PINK_DARK};
+  font-weight: 600;
+`;
+
+const PinkButton = styled(Button)`
+  background-color: ${COLORS.PINK_DARK};
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  margin-top: 2.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s;
+  &:hover {
+    background-color: ${COLORS.PURPLE_LIGHT};
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  }
+  &:active {
+    transform: translateY(2px);
+  }
+`;
+
+const CarouselImage = styled.img`
+  max-width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s, box-shadow 0.4s;
+  padding: 0 10px;
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.15);
+  }
+`;
+const AcercaDe: React.FC = () => (
+  <Section>
+    <Grid container spacing={6}>
+      <Grid item xs={12} md={6}>
+        <ContentWrapper>
+          <Typography variant="h2" color="textPrimary" gutterBottom>
+            Acerca de <HighlightedText>Fabiana Gimenez</HighlightedText>
+          </Typography>
+          <Typography variant="h6" color="textSecondary" gutterBottom>
+            Transformando la belleza, un rostro a la vez.
+          </Typography>
+          <Typography
+            variant="body1"
+            color="textPrimary"
+            paragraph
+            style={{ lineHeight: "1.7" }}
+          >
+            Makeup Magic ha sido líder en la industria del maquillaje desde
+            2020. Nuestro equipo de artistas talentosos trabaja incansablemente
+            para proporcionar a nuestros clientes los servicios y productos de
+            la más alta calidad.
+          </Typography>
+          <Link href="/acercaDe" passHref>
+            <PinkButton variant="contained" >
+              Más sobre nosotros
+            </PinkButton>
+          </Link>
+        </ContentWrapper>
       </Grid>
-    </StyledSection>
-  );
-};
+      <Grid item xs={12} md={6}>
+        <Slider {...SLIDER_SETTINGS}>
+          {ITEM_DATA.map((item) => (
+            <div key={item.img}>
+              <CarouselImage
+                src={`${item.img}?w=161&fit=crop&auto=format`}
+                srcSet={`${item.img}?w=161&fit=crop&auto=format&dpr=2 2x`}
+                alt={item.title}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </Slider>
+      </Grid>
+    </Grid>
+  </Section>
+);
 
 export default AcercaDe;
