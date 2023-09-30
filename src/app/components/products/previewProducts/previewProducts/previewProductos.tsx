@@ -1,6 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
-import Link from "next/link"; 
+import Link from "next/link";
+import Image from "next/image";
 
 import {
   PreviewContainer,
@@ -10,17 +11,13 @@ import {
 import ProductFlow from "../productFlow/productFlow";
 import { Product } from "../../../admin/productAction-reducer-types/types/types";
 
-
-
 type ProductPreviewProps = {
   onProductClick: () => void;
   productList: Product[];
   isModalOpen: boolean;
 };
 
-const ProductPreview: React.FC<ProductPreviewProps> = ({
-  productList,
-}) => {
+const ProductPreview: React.FC<ProductPreviewProps> = ({ productList }) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -41,7 +38,14 @@ const ProductPreview: React.FC<ProductPreviewProps> = ({
     <PreviewContainer>
       <Slider {...settings}>
         {imageBackgrounds.map((imageUrl, index) => (
-          <ProductSlide key={index} $imageUrl={imageUrl} />
+          <ProductSlide key={index}>
+            <Image
+              src={imageUrl}
+              alt="Product Image"
+              width={500}
+              height={400}
+            />{" "}
+          </ProductSlide>
         ))}
       </Slider>
 

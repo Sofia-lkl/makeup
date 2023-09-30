@@ -7,6 +7,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* Puedes agregar otros elementos en el Head si lo necesitas */}
         </Head>
         <body>
           <Main />

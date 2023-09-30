@@ -35,6 +35,7 @@ const CombinedFilterComponent: React.FC = () => {
   const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(
     null
   );
+  const [isMounted, setIsMounted] = useState(false);
 
   const selectedColor = useSelector(
     (state: RootState) => state.filter.selectedColor
@@ -49,25 +50,27 @@ const CombinedFilterComponent: React.FC = () => {
     control: (provided) => ({
       ...provided,
       minWidth: "200px",
-      borderRadius: '30px', // Más redondeado
+      borderRadius: "30px", // Más redondeado
     }),
     menu: (provided) => ({
       ...provided,
       minWidth: "200px",
       zIndex: 1000,
-      borderRadius: '20px', // Más redondeado
+      borderRadius: "20px", // Más redondeado
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
     option: (provided) => ({
       ...provided,
-      borderRadius: '20px', // Más redondeado
+      borderRadius: "20px", 
     }),
-};
+  };
   useEffect(() => {
     setMenuPortalTarget(document.getElementById("menu-portal"));
   }, []);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
-
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const colorOptions = [
     { value: "", label: "Selecciona un color" },
     { value: "Rojo", label: "Rojo" },
@@ -233,36 +236,40 @@ const CombinedFilterComponent: React.FC = () => {
 
         <FilterSectionItem className="color-section">
           <label>Color</label>
-          <Select
-            styles={customStyles}
-            options={colorOptions}
-            value={colorOptions.find(
-              (option) => option.value === selectedColor
-            )}
-            onChange={(newValue) => {
-              const option = newValue as OptionType | null;
-              dispatch(setSelectedColor(option?.value || ""));
-            }}
-            menuPortalTarget={menuPortalTarget}
-            placeholder="Selecciona un color" // Añade esta línea
-          />
+          {isMounted && (
+            <Select
+              styles={customStyles}
+              options={colorOptions}
+              value={colorOptions.find(
+                (option) => option.value === selectedColor
+              )}
+              onChange={(newValue) => {
+                const option = newValue as OptionType | null;
+                dispatch(setSelectedColor(option?.value || ""));
+              }}
+              menuPortalTarget={menuPortalTarget}
+              placeholder="Selecciona un color" // Añade esta línea
+            />
+          )}
         </FilterSectionItem>
 
         <FilterSectionItem className="brand-section">
           <label>Marca</label>
-          <Select
-            styles={customStyles}
-            options={marcaOptions}
-            value={marcaOptions.find(
-              (option) => option.value === selectedMarca
-            )}
-            onChange={(newValue) => {
-              const option = newValue as OptionType | null;
-              dispatch(setSelectedMarca(option?.value || ""));
-            }}
-            menuPortalTarget={menuPortalTarget}
-            placeholder="Selecciona una marca" // Añade esta línea
-          />
+          {isMounted && (
+            <Select
+              styles={customStyles}
+              options={marcaOptions}
+              value={marcaOptions.find(
+                (option) => option.value === selectedMarca
+              )}
+              onChange={(newValue) => {
+                const option = newValue as OptionType | null;
+                dispatch(setSelectedMarca(option?.value || ""));
+              }}
+              menuPortalTarget={menuPortalTarget}
+              placeholder="Selecciona una marca" // Añade esta línea
+            />
+          )}
         </FilterSectionItem>
       </FilterSection>
     </StickyFilterContainer>

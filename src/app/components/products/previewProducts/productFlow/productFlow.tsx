@@ -27,7 +27,7 @@ const ProductFlow: React.FC<ProductFlowProps> = ({ products }) => {
           <Image
             src={product.imagen_url || "/path/to/default/image.png"}
             alt={product.nombre}
-            width={100}
+            width={140}
             height={100}
           />{" "}
           <h4>{product.nombre}</h4>

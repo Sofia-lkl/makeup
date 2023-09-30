@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import Navbar from "@/app/components/navbar/navbar/navbar";
 import axios from "axios";
 import io from "socket.io-client";
 import { GetServerSidePropsContext } from "next";
@@ -58,6 +59,7 @@ const ProductDetail: React.FC<ProductProps> = ({ product }) => {
 
   return (
     <ProductPageContainer>
+      <Navbar />
       <CenteredContainer>
         <ProductDetailContainer>
           <ImageContainer>

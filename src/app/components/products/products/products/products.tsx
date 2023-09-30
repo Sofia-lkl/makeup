@@ -58,7 +58,7 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
 
   return (
     <Link href={getProductLink(id)} passHref>
-      <CardContainer as="a" style={{ textDecoration: "none" }}>
+      <CardContainer style={{ textDecoration: "none" }}>
         <div style={{ cursor: "pointer" }}>
           <ProductImage
             src={imagen_url || "path_to_default_image.jpg"}

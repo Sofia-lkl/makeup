@@ -14,16 +14,23 @@ export const PreviewContainer = styled.div`
   font-family: "Arial", sans-serif;
 `;
 
-export const ProductSlide = styled.div<{ $imageUrl: string }>`
+export const ProductSlide = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 400px;
   position: relative;
-  background-image: url(${(props) => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
   transition: transform 0.3s;
+  
+  & img {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
 
   &:hover {
     transform: scale(1.05);
@@ -36,10 +43,12 @@ export const ProductSlide = styled.div<{ $imageUrl: string }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     z-index: 1;
   }
 `;
+
+
 
 export const ViewAllButton = styled(Button)`
   position: absolute;
