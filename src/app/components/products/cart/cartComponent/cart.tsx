@@ -52,7 +52,7 @@ export const Cart: React.FC<CartProps> = ({ onClose, onCheckout }) => {
   const cartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:3003");
+    const socket = io("http://localhost:3002");
 
     socket.on("stock-updated", async () => {
       try {

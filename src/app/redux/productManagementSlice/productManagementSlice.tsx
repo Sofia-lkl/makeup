@@ -32,7 +32,7 @@ export const apiAddProduct = createAsyncThunk(
   async (newProduct: Omit<Product, "id">, { dispatch }) => {
     try {
       const response = await axios.post(
-        `http://localhost:3003/api/products`,
+        `http://localhost:3002/api/products`,
         newProduct
       );
       dispatch(setMessage(`Producto creado con éxito.`));
@@ -51,7 +51,7 @@ export const apiAddProduct = createAsyncThunk(
 export const apiDeleteProduct = createAsyncThunk(
   "productManagement/deleteProduct",
   async (id: number) => {
-    await axios.delete(`http://localhost:3003/api/products/${id}`);
+    await axios.delete(`http://localhost:3002/api/products/${id}`);
     return id;
   }
 );
@@ -60,7 +60,7 @@ export const apiEditProduct = createAsyncThunk(
   "productManagement/editProduct",
   async (updatedProduct: Product, { dispatch }) => {
     const response = await axios.put(
-      `http://localhost:3003/api/products/${updatedProduct.id}`,
+      `http://localhost:3002/api/products/${updatedProduct.id}`,
       updatedProduct
     );
     console.log("Respuesta del servidor después de editar:", response.data);
@@ -74,7 +74,7 @@ export const apiEditProduct = createAsyncThunk(
 export const apiGetAllProducts = createAsyncThunk(
   "productManagement/getAllProducts",
   async () => {
-    const response = await axios.get(`http://localhost:3003/api/products`);
+    const response = await axios.get(`http://localhost:3002/api/products`);
     return response.data;
   }
 );

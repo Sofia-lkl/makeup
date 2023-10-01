@@ -35,7 +35,7 @@ const DatosUsuario: React.FC<DatosProps> = ({ onContinue, onBack }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3003/api/orders/create",
+        "http://localhost:3002/api/orders/create",
         {
           total: 100,
           userId,
