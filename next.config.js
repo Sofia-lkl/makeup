@@ -10,7 +10,8 @@ const nextConfig = {
       'tse1.mm.bing.net',
       'tse4.mm.bing.net',
       'tse2.mm.bing.net',
-      'example.com'
+      'example.com',
+      '65180f852cde840008661f9c--curious-buttercream-52ba76.netlify.app'
     ],
   },
   webpack: (config, options) => {

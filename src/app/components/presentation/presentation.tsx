@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import styled from "styled-components";
 import { Typography, Grid, Button } from "@mui/material";
 import Link from "next/link";
+import Image from "next/image";
 
 // Styles & Assets
 import "slick-carousel/slick/slick.css";
@@ -92,15 +93,41 @@ const PinkButton = styled(Button)`
   }
 `;
 
-const CarouselImage = styled.img`
+const CarouselContainer = styled.div`
+  .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+const CarouselImageWrapper = styled.div`
+  display: inline-flex; // Cambio a inline-flex para centrar la imagen
+  justify-content: center;
+  align-items: center;
   max-width: 100%;
+  width: 100%;
+  height: 361px; // Establecer una altura base
+  overflow: hidden; // Esconder cualquier exceso de la imagen
   border-radius: 20px;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.12);
   transition: transform 0.4s, box-shadow 0.4s;
   padding: 0 10px;
+
   &:hover {
     transform: scale(1.08);
     box-shadow: 0 8px 14px rgba(0, 0, 0, 0.15);
+  }
+
+  // Ajustes para tablets y laptops pequeñas
+  @media (max-width: 1024px) {
+    height: 280px;
+  }
+
+  // Ajustes para tablets en modo retrato y móviles en modo paisaje
+  @media (max-width: 768px) {
+    padding: 0;
+    height: 200px;
   }
 `;
 const AcercaDe: React.FC = () => (
@@ -126,25 +153,27 @@ const AcercaDe: React.FC = () => (
             la más alta calidad.
           </Typography>
           <Link href="/acercaDe" passHref>
-            <PinkButton variant="contained" >
-              Más sobre nosotros
-            </PinkButton>
+            <PinkButton variant="contained">Más sobre nosotros</PinkButton>
           </Link>
         </ContentWrapper>
       </Grid>
       <Grid item xs={12} md={6}>
-        <Slider {...SLIDER_SETTINGS}>
-          {ITEM_DATA.map((item) => (
-            <div key={item.img}>
-              <CarouselImage
-                src={`${item.img}?w=161&fit=crop&auto=format`}
-                srcSet={`${item.img}?w=161&fit=crop&auto=format&dpr=2 2x`}
-                alt={item.title}
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </Slider>
+        <CarouselContainer>
+          <Slider {...SLIDER_SETTINGS}>
+            {ITEM_DATA.map((item) => (
+              <div key={item.img}>
+                <CarouselImageWrapper>
+                  <Image
+                    src={item.img}
+                    width={361}
+                    height={361}
+                    alt={item.title}
+                  />
+                </CarouselImageWrapper>
+              </div>
+            ))}
+          </Slider>
+        </CarouselContainer>
       </Grid>
     </Grid>
   </Section>
