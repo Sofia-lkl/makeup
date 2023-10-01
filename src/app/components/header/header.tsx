@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./shinyButton.css";
 
 const colors = {
   neutralLight: "#FAF3E0",
@@ -71,11 +72,14 @@ const HeaderPresentation: React.FC = () => {
         Descubre la magia del maquillaje con nosotros.
       </div>
       <button
+        className="btn-shiny"
         onMouseEnter={() => setIsButtonHovered(true)}
         onMouseLeave={() => setIsButtonHovered(false)}
         style={{
           ...styles.ctaButton,
-          transform: isButtonHovered ? "scale(1.05)" : "scale(1)",
+          transform: isButtonHovered
+            ? "scale(1.05) translateY(-30px)"
+            : "translateY(-30px)",
         }}
       >
         Explora nuestros productos

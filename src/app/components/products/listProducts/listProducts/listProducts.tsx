@@ -27,7 +27,7 @@ const ListProduct: React.FC = () => {
   if (process.env.NODE_ENV === "development" && highlightedProductList) {
   }
   useEffect(() => {
-    const socket = io("http://localhost:3002");
+    const socket = io("http://localhost:3003");
     socket.on("product-updated", () => {
       fetchProducts();
     });
@@ -41,7 +41,7 @@ const ListProduct: React.FC = () => {
 
   const fetchProducts = () => {
     axios
-      .get("http://localhost:3002/api/products")
+      .get("http://localhost:3003/api/products")
       .then((response) => {
         setProductList(response.data);
         setHighlightedProductList(response.data.slice(0, 6));

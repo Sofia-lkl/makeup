@@ -153,7 +153,7 @@ const AcercaDe: React.FC = () => (
             la más alta calidad.
           </Typography>
           <Link href="/acercaDe" passHref>
-            <PinkButton variant="contained">Más sobre nosotros</PinkButton>
+            <PinkButton variant="contained" className="btn-12">Más sobre nosotros</PinkButton>
           </Link>
         </ContentWrapper>
       </Grid>
