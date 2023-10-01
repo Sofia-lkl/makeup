@@ -61,6 +61,7 @@ export const styles = {
     transition: "background-color 0.3s, color 0.3s",
   }),
 };
+
 export const basicStyles = {
   navbar: {
     position: "fixed" as const,

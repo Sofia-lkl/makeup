@@ -62,8 +62,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
   const handleSignUpClick = () => setIsSignUp(true);
   useEffect(() => {
     if (isDropdownOpen) {
-/*       console.log("Dropdown está abierto"); 
- */    }
+      /*       console.log("Dropdown está abierto");
+       */
+    }
   }, [isDropdownOpen]);
   useEffect(() => {
     if (loginMessage) {
@@ -155,7 +156,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
         </div>
 
         <div className="sing-up-form form-container">
-          <h1>Sign up</h1>
+          <h1>Regístrate</h1>
 
           <form
             onSubmit={(e) => {
@@ -171,7 +172,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
             />
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Correo"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -199,19 +200,23 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
         <div className={`sliding-board ${isSignUp ? "" : "sliding"}`}>
           <div className="wide-board">
             <div className={`board sing-in ${isSignUp ? "" : "sliding"}`}>
-              <h1>Welcome Back!</h1>
+              <h1>¡Bienvenide de nuevo!</h1>
               <p>
-                To keep connected with us please login with your personal info
+                Para seguir conectade con nosotros, por favor inicia sesión con
+                tus datos.
               </p>
               <button onClick={handleSignInClick} className="board-button">
-                Sign in
+                Iniciar sesión
               </button>
             </div>
             <div className={`board sing-up ${isSignUp ? "sliding" : ""}`}>
-              <h1>Helloo, Friend!</h1>
-              <p>Enter your personal details and start journey with us</p>
+              <h1>¡Hola!</h1>
+              <p>
+                Ingresa tus datos personales y comienza tu experiencia con
+                nosotros.
+              </p>
               <button onClick={handleSignUpClick} className="board-button">
-                Sign up
+                Regístrate
               </button>
             </div>
           </div>
@@ -226,4 +231,5 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
     </div>
   );
 };
+
 export default AdminLogin;
