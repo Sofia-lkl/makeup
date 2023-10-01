@@ -23,7 +23,7 @@ const websocketMiddleware = (storeAPI: MiddlewareAPI) => {
       const decodedToken = jwt_decode(token) as DecodedToken;
 
       axios
-        .post("http://localhost:3003/api/validateToken", { token })
+        .post("http://localhost:3002/api/validateToken", { token })
         .then((response) => {
           if (response.data.isValid) {
             storeAPI.dispatch(
@@ -43,7 +43,7 @@ const websocketMiddleware = (storeAPI: MiddlewareAPI) => {
     }
   }
 
-  const socket = io("http://localhost:3003");
+  const socket = io("http://localhost:3002");
   socket.on("order-status-updated", (data) => {
     console.log("Received order-status-updated event with data:", data);
 
