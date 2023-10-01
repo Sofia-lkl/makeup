@@ -66,7 +66,7 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
           />
           <ProductName>{nombre}</ProductName>
         </div>
-        <ProductPrice>${precio.toFixed(2)}</ProductPrice>
+        <ProductPrice>${precio ? precio.toFixed(2) : '0.00'}</ProductPrice>
         <ProductBrand>{marca}</ProductBrand>
         <ProductDescription>{descripcion}</ProductDescription>
         <ProductColor>{color}</ProductColor>

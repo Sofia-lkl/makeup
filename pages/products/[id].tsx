@@ -81,7 +81,7 @@ const ProductDetail: React.FC<ProductProps> = ({ product }) => {
             </p>
             <p>
               <FaTag />
-              Precio: ${currentProduct.precio.toFixed(2)}
+              Precio: ${currentProduct.precio ? currentProduct.precio.toFixed(2) : '0.00'}
             </p>
             <p>
               <FaPalette />
