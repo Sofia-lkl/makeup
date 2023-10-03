@@ -2,6 +2,11 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import { colors } from "../../bar/sideBarStyles/sideBarStyle";
 
+const breakpoints = {
+  tablet: "768px",
+  mobile: "480px",
+};
+
 export const ProductName = styled.h3`
   text-decoration: none !important;
   color: #222;
@@ -10,8 +15,17 @@ export const ProductName = styled.h3`
   font-size: 1.5em;
   font-weight: 700;
   transition: color 0.3s;
+
   &:hover {
     color: ${colors.secondary};
+  }
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    font-size: 1.3em;
+  }
+
+  @media only screen and (max-width: ${breakpoints.mobile}) {
+    font-size: 1.1em;
   }
 `;
 
@@ -19,13 +33,24 @@ export const ProductImage = styled.img`
   border-radius: 15px;
   width: 150px; /* Ancho fijo */
   height: 150px; /* Alto fijo */
-  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin deformarse */
-  object-position: center; /* Centra la imagen en el contenedor */
+  object-fit: cover;
+  object-position: center;
   margin-top: 1rem;
   transition: transform 0.3s;
+
   &:hover {
     transform: scale(1.1);
     box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    width: 130px;
+    height: 130px;
+  }
+
+  @media only screen and (max-width: ${breakpoints.mobile}) {
+    width: 100px;
+    height: 100px;
   }
 `;
 
@@ -36,6 +61,14 @@ export const ProductPrice = styled.p`
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   transition: transform 0.3s ease-in-out;
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    font-size: 1.2em;
+  }
+
+  @media only screen and (max-width: ${breakpoints.mobile}) {
+    font-size: 1em;
+  }
 `;
 
 export const ProductDescription = styled.p`
@@ -45,6 +78,14 @@ export const ProductDescription = styled.p`
   font-size: 0.9em;
   line-height: 1.4;
   transition: transform 0.3s ease-in-out;
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    font-size: 0.85em;
+  }
+
+  @media only screen and (max-width: ${breakpoints.mobile}) {
+    font-size: 0.8em;
+  }
 `;
 
 export const ProductColor = styled.p`
@@ -53,8 +94,13 @@ export const ProductColor = styled.p`
   font-weight: bold;
   font-size: 0.95em;
   transition: transform 0.3s ease-in-out;
+
   &:hover {
     color: ${colors.primary};
+  }
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    font-size: 0.9em;
   }
 `;
 
@@ -65,6 +111,10 @@ export const ProductBrand = styled.p`
   font-size: 0.85em;
   letter-spacing: 1.2px;
   transition: transform 0.3s ease-in-out;
+
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    font-size: 0.8em;
+  }
 `;
 
 export const ProductOptions = styled.div`
@@ -76,8 +126,8 @@ export const ProductOptions = styled.div`
   visibility: hidden;
   transition: all 0.5s ease-in-out;
 `;
-export const ProductCardContainer = styled(motion.div)`
 
+export const ProductCardContainer = styled(motion.div)`
   position: relative;
   background: #f9f9f9;
   padding: 2rem;
@@ -94,6 +144,15 @@ export const ProductCardContainer = styled(motion.div)`
   justify-content: space-between;
   cursor: pointer;
 
+  @media only screen and (max-width: ${breakpoints.tablet}) {
+    width: 240px;
+    min-height: 380px;
+  }
+
+  @media only screen and (max-width: ${breakpoints.mobile}) {
+    width: 220px;
+    min-height: 360px;
+  }
 
   &:hover {
     ${ProductPrice} {
@@ -109,7 +168,6 @@ export const ProductCardContainer = styled(motion.div)`
   &:hover ${ProductOptions} {
     opacity: 1;
     visibility: visible;
-    
   }
 `;
 

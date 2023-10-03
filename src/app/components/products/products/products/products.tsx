@@ -51,6 +51,7 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
     precio,
     imagen_url,
     stock,
+    color: "",
   });
   const CardContainer = (
     highlighted ? HighlightedProductCardContainer : ProductCardContainer
@@ -66,14 +67,14 @@ const ProductCard: React.FC<ProductType & { highlighted?: boolean }> = ({
           />
           <ProductName>{nombre}</ProductName>
         </div>
-        <ProductPrice>${precio ? precio.toFixed(2) : '0.00'}</ProductPrice>
+        <ProductPrice>${precio ? precio.toFixed(2) : "0.00"}</ProductPrice>
         <ProductBrand>{marca}</ProductBrand>
         <ProductDescription>{descripcion}</ProductDescription>
-        <ProductColor>{color}</ProductColor>
-        <ProductOptions className="productOptions">
+{/*         <ProductColor>{color}</ProductColor>
+ */}        <ProductOptions className="productOptions">
           <AddToCartButton
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
               e.preventDefault();
               handleAddToCart();
             }}
@@ -101,6 +102,22 @@ const HighlightedCarousel: React.FC<{ products: ProductType[] }> = ({
     autoplaySpeed: 3000,
     focusOnSelect: true,
     adaptiveHeight: true,
+    responsive: [
+      {
+        breakpoint: 768, // tablet
+        settings: {
+          slidesToShow: 2,
+          centerPadding: "40px",
+        },
+      },
+      {
+        breakpoint: 480, // mobile
+        settings: {
+          slidesToShow: 1,
+          centerPadding: "30px",
+        },
+      },
+    ],
   };
 
   return (
@@ -160,28 +177,47 @@ const Products: React.FC<{
         console.error("Error fetching products:", error);
       });
   };
+
   useEffect(fetchProducts, []);
 
   const filterProducts = (products: ProductType[]): ProductType[] => {
-    return products
-      .filter(
-        (product) =>
-          product.precio >= priceRange[0] && product.precio <= priceRange[1]
-      )
-      .filter((product) =>
-        selectedColor ? product.color === selectedColor : true
-      )
-      .filter((product) =>
-        selectedMarca ? product.marca === selectedMarca : true
-      )
-      .filter((product) =>
-        product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .filter((product) =>
-        selectedCategory && selectedCategory !== "Todos"
-          ? product.categoria === selectedCategory
-          : true
-      );
+    return (
+      products
+        // Filtrar por rango de precio si se ha establecido un rango
+        .filter(
+          (product) =>
+            !priceRange ||
+            (product.precio >= priceRange[0] && product.precio <= priceRange[1])
+        )
+        // Filtrar por color seleccionado solo si se ha seleccionado un color
+        .filter((product) => {
+          if (selectedColor) {
+            if (Array.isArray(product.color)) {
+              return product.color.includes(selectedColor);
+            } else {
+              return product.color === selectedColor;
+            }
+          } else {
+            return true; // No hay color seleccionado, así que no filtrar por color.
+          }
+        })
+        // Filtrar por marca seleccionada solo si se ha seleccionado una marca
+        .filter((product) =>
+          selectedMarca ? product.marca === selectedMarca : true
+        )
+        // Filtrar por término de búsqueda solo si se ha ingresado un término
+        .filter((product) =>
+          searchTerm
+            ? product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+            : true
+        )
+        // Filtrar por categoría seleccionada solo si se ha seleccionado una categoría
+        .filter((product) =>
+          selectedCategory && selectedCategory !== "Todos"
+            ? product.categoria === selectedCategory
+            : true
+        )
+    );
   };
 
   const displayedProducts = filterProducts(productList);

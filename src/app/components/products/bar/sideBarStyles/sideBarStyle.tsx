@@ -1,4 +1,5 @@
 import Slider from "@mui/material/Slider";
+import { FaBars } from "react-icons/fa";
 import styled from "styled-components";
 
 export const colors = {
@@ -37,6 +38,7 @@ export const StyledFilterBar = styled.div`
   &:hover {
     box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
   }
+  
 `;
 
 export const FilterSection = styled.div`
@@ -62,6 +64,11 @@ export const FilterSection = styled.div`
       font-weight: 600;
     }
   }
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: row;
+    flex-direction: column; // En móviles, los elementos se apilan verticalmente
+  }
 `;
 
 export const FilterSectionItem = styled.div`
@@ -77,6 +84,9 @@ export const FilterSectionItem = styled.div`
     color: ${colors.pinkDark};
     font-weight: 600;
     text-align: center; // Centrar el texto
+  }
+  @media (max-width: 768px) {
+    width: 100%; // Ocupa todo el ancho disponible
   }
 `;
 
@@ -145,6 +155,50 @@ export const StickyFilterContainer = styled(StyledFilterBar)`
   &.collapsed {
     transform: translateY(-60%);
   }
+
+  @media (max-width: 768px) {
+    transform: translateY(-145%); // Ajuste al valor
+    transition: transform 0.3s;
+    &.collapsed {
+      transform: translateY(-100%);
+    }
+    &.open {
+      transform: translateY(2%);
+    }
+  }
+`;
+
+export const HamburgerButton = styled.button`
+  display: none; // Por defecto está oculto
+  background-color: #333; // Color principal
+  color: white;
+  border: none;
+  cursor: pointer;
+  z-index: 3;
+  position: sticky;
+  top: 60px; // Ajusta este valor según la altura de tu navbar
+  width: 100%; // Ocupar todo el ancho
+  padding: 10px 0; // Espaciado vertical
+  text-align: center; // Centrar el texto
+  border-radius: 8px; // Bordes redondeados
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2); // Sombra robusta
+  transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.2s; // Transiciones suaves
+
+  &:hover {
+    background-color: #555; // Color al pasar el ratón por encima
+    color: #f5f5f5;
+    box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.25); // Sombra más prominente al pasar el ratón por encima
+  }
+
+  &:active {
+    background-color: #444; // Color al hacer clic
+    transform: scale(0.98); // Ligeramente más pequeño al hacer clic
+    box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.2); // Reducir la sombra al hacer clic
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 export const StyledInputRange = styled(Slider)`
@@ -170,7 +224,16 @@ export const StyledInputRange = styled(Slider)`
 
 import { createGlobalStyle } from "styled-components";
 export const GlobalRangeStyles = createGlobalStyle`
-
+.hamburger-icon {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: ${colors.background};
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  } 
   .input-range {
     .input-range__track {
       background-color: #000 !important;
@@ -194,6 +257,9 @@ export const GlobalRangeStyles = createGlobalStyle`
   }
 
   body.menu-open {
-    overflow: hidden;
+    overflow: hidden; // Ya lo tienes
+    position: fixed;
+    width: 100%;
+    height: 100vh;
   }
 `;

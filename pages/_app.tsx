@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <GlobalRangeStyles />
         <ToastContainer />
         <div id="menu-portal"></div>
-        <Navbar />  {/* Aquí mueves el Navbar */}
+        <Navbar />  
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>

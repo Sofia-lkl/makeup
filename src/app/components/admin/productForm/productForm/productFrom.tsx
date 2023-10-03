@@ -17,6 +17,7 @@ import {
   ProductManagementState,
 } from "../../../../redux/productManagementSlice/productManagementSlice";
 import { useAppDispatch } from "../../../../redux/store/appHooks";
+import GradientColorPicker from "../../productTable/productTable/gradientColorPicker";
 const CATEGORIAS = ["Ojos", "Rostro", "Labios", "Uñas"];
 
 interface FormData {
@@ -26,9 +27,25 @@ interface FormData {
   stock: number;
   imagen_url: string;
   marca: string;
-  color: string;
-  categoria: string; 
+  color: string[];
+  categoria: string;
 }
+const ColorPickerOverlay: React.CSSProperties = {
+  position: "fixed", // Cambiado a 'fixed' para asegurarnos de que siempre esté encima
+  zIndex: 1000,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  background: "white",
+  padding: "20px",
+  boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+  borderRadius: "8px",
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap", // Permite que los elementos se ajusten automáticamente en filas
+  justifyContent: "center",
+  alignItems: "center",
+};
 
 const ProductForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -38,9 +55,10 @@ const ProductForm: React.FC = () => {
     stock: 0,
     imagen_url: "",
     marca: "",
-    color: "",
+    color: [],
     categoria: "",
   });
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   const dispatch = useAppDispatch();
   const isLoading = useSelector(
@@ -57,6 +75,7 @@ const ProductForm: React.FC = () => {
       [e.target.name]: value,
     });
   };
+
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFormData({
@@ -65,12 +84,26 @@ const ProductForm: React.FC = () => {
     });
   };
 
+  const handleColorsChange = (colors: string[]) => {
+    setFormData({
+      ...formData,
+      color: colors,
+    });
+  };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(setLoading(true));
     dispatch(setMessage(null));
     dispatch(setError(null));
-    dispatch(apiAddProduct(formData));
+
+    // Convertir el array color a una cadena JSON
+    const productToSend = {
+      ...formData,
+      color: JSON.stringify(formData.color),
+    };
+
+    // Enviar la copia modificada a la API
+    dispatch(apiAddProduct(productToSend));
   };
 
   return (
@@ -136,9 +169,18 @@ const ProductForm: React.FC = () => {
           <StyledInput
             type="text"
             name="color"
-            onChange={handleChange}
-            required
+            value={formData.color.join(", ")}
+            onClick={() => setShowColorPicker(true)}
+            readOnly
           />
+          {showColorPicker && (
+            <div style={ColorPickerOverlay}>
+              <GradientColorPicker
+                onColorsChange={handleColorsChange}
+                onClose={() => setShowColorPicker(false)}
+              />
+            </div>
+          )}
         </StyledDiv>
         <StyledDiv>
           <StyledLabel>Categoría:</StyledLabel>
@@ -156,7 +198,6 @@ const ProductForm: React.FC = () => {
             ))}
           </StyledSelect>
         </StyledDiv>
-
         <StyledButton type="submit">
           {isLoading ? "Cargando..." : "Agregar Producto"}
         </StyledButton>

@@ -17,6 +17,7 @@ import {
   clearMessages,
   setLoading,
 } from "../../../../redux/messagesSlice/messagesSlice";
+import jwt from "jsonwebtoken";
 
 interface AdminLoginProps {
   onSuccess?: () => void;
@@ -87,6 +88,21 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
           setIsDropdownOpen(false);
           if (typeof onSuccess === "function") {
             onSuccess();
+          }
+
+          // Decodificar el token JWT
+          const token = localStorage.getItem("jwt");
+          console.log("Token obtenido del localStorage:", token); // Asegúrate de que este log muestra el token.
+          if (token) {
+            const decodedToken = jwt.decode(token);
+            console.log("Token decodificado:", decodedToken); // Verifica la estructura del token decodificado aquí.
+            if (
+              decodedToken &&
+              typeof decodedToken === "object" &&
+              "id" in decodedToken
+            ) {
+              console.log("ID del usuario:", decodedToken.id);
+            }
           }
         }
       })

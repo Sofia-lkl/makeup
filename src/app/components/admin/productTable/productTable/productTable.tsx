@@ -17,6 +17,9 @@ import {
   Product,
   apiGetAllProducts,
 } from "../../../../redux/productManagementSlice/productManagementSlice";
+import tinycolor from "tinycolor2";
+import { ChromePicker } from "react-color";
+import GradientColorPicker from "./gradientColorPicker";
 
 export interface ProductTableProps {
   products: Product[];
@@ -31,6 +34,7 @@ const ProductTable: React.FC<ProductTableProps> = ({}) => {
   const message = useAppSelector((state) => state.productManagement.message);
   const error = useAppSelector((state) => state.productManagement.error);
   const dispatch = useAppDispatch();
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [updatedProduct, setUpdatedProduct] = useState<Product | null>(null);
@@ -57,13 +61,52 @@ const ProductTable: React.FC<ProductTableProps> = ({}) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (updatedProduct) {
-      setUpdatedProduct({
-        ...updatedProduct,
-        [name]: value,
-      });
+      if (name === "color") {
+        // Convertir el string a un array
+        const colors = value.split(",").map((color) => color.trim());
+
+        // Usar tinycolor para generar un gradiente (si hay más de un color)
+        if (colors.length > 1) {
+          const gradientColors = generateGradient(colors);
+          setUpdatedProduct({
+            ...updatedProduct,
+            color: gradientColors,
+          });
+        } else {
+          setUpdatedProduct({
+            ...updatedProduct,
+            color: colors,
+          });
+        }
+      } else {
+        setUpdatedProduct({
+          ...updatedProduct,
+          [name]: value,
+        });
+      }
     }
   };
+  const generateGradient = (baseColors: string[]) => {
+    let gradientColors = [];
 
+    for (let i = 0; i < baseColors.length - 1; i++) {
+      const color1 = tinycolor(baseColors[i]);
+      const color2 = tinycolor(baseColors[i + 1]);
+
+      gradientColors.push(color1.toHexString()); // Agrega el primer color
+
+      // Aquí es donde generamos los colores intermedios
+      for (let j = 1; j <= 8; j++) {
+        const mixedColor = tinycolor.mix(color1, color2, j * 10);
+        gradientColors.push(mixedColor.toHexString());
+      }
+    }
+    gradientColors.push(
+      tinycolor(baseColors[baseColors.length - 1]).toHexString()
+    ); // Agrega el último color
+
+    return gradientColors;
+  };
   const handleUpdate = async () => {
     if (updatedProduct) {
       try {
@@ -84,10 +127,51 @@ const ProductTable: React.FC<ProductTableProps> = ({}) => {
   };
 
   return (
-    <ProductContainer>
+    <ProductContainer style={{ position: "relative" }}>
       <StyledH2>Productos existentes</StyledH2>
       {message && <div style={{ color: "green" }}>{message}</div>}
       {error && <div style={{ color: "red" }}>{error}</div>}
+      {showColorPicker && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)", // Fondo opaco
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", // Centrar el modal
+            zIndex: 1000,
+          }}
+          onClick={() => setShowColorPicker(false)} 
+        >
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "white",
+              borderRadius: "10px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+              minWidth: "50%",
+            }}
+            onClick={(e) => e.stopPropagation()} 
+          >
+            <GradientColorPicker
+              onColorsChange={(colors) => {
+                if (updatedProduct) {
+                  setUpdatedProduct({
+                    ...updatedProduct,
+                    color: colors,
+                  });
+                }
+              }}
+              onClose={() => setShowColorPicker(false)}
+            />
+          </div>
+        </div>
+      )}
+
       <StyledTable>
         <thead>
           <tr>
@@ -171,17 +255,38 @@ const ProductTable: React.FC<ProductTableProps> = ({}) => {
                   product.descripcion
                 )}
               </td>
-              <td>
+              <td style={{ textAlign: "center" }}>
                 {editingId === product.id ? (
                   <StyledInput
                     name="color"
-                    value={updatedProduct?.color}
-                    onChange={handleInputChange}
+                    placeholder="Haz clic para seleccionar colores"
+                    value={
+                      updatedProduct?.color &&
+                      Array.isArray(updatedProduct.color)
+                        ? updatedProduct.color.join(", ")
+                        : ""
+                    }
+                    onFocus={() => setShowColorPicker(true)}
+                    readOnly
                   />
+                ) : product.color && Array.isArray(product.color) ? (
+                  <div
+                    style={{
+                      width: "100px",
+                      height: "20px",
+                      background: `linear-gradient(to right, ${product.color.join(
+                        ","
+                      )})`,
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                    }}
+                    title={product.color.join(", ")}
+                  ></div>
                 ) : (
-                  product.color
+                  ""
                 )}
               </td>
+
               <td>
                 {editingId === product.id ? (
                   <StyledInput

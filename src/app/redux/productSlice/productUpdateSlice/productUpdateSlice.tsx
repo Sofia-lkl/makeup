@@ -9,7 +9,7 @@ export interface UpdatedProduct {
   stock: number;
   imagen_url: string;
   marca?: string;
-  color?: string;
+  color?: string | string[];
   categoria?: string;  
 }
 

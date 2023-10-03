@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./shinyButton.css";
+import Link from "next/link";
 
 const colors = {
   neutralLight: "#FAF3E0",
@@ -71,19 +72,21 @@ const HeaderPresentation: React.FC = () => {
       <div style={styles.subtitle}>
         Descubre la magia del maquillaje con nosotros.
       </div>
-      <button
-        className="btn-shiny"
-        onMouseEnter={() => setIsButtonHovered(true)}
-        onMouseLeave={() => setIsButtonHovered(false)}
-        style={{
-          ...styles.ctaButton,
-          transform: isButtonHovered
-            ? "scale(1.05) translateY(-30px)"
-            : "translateY(-30px)",
-        }}
-      >
-        Explora nuestros productos
-      </button>
+      <Link href="/products"> {/* Paso 2: Envuelve el botón con Link y proporciona la ruta */}
+        <button
+          className="btn-shiny"
+          onMouseEnter={() => setIsButtonHovered(true)}
+          onMouseLeave={() => setIsButtonHovered(false)}
+          style={{
+            ...styles.ctaButton,
+            transform: isButtonHovered
+              ? "scale(1.05) translateY(-30px)"
+              : "translateY(-30px)",
+          }}
+        >
+          Explora nuestros productos
+        </button>
+      </Link>
     </header>
   );
 };

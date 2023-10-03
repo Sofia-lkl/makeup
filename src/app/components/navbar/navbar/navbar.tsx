@@ -13,6 +13,8 @@ import Modal from "../../ModalConfirmacionCompra/modalOrders/modalOrders/modalOr
 import { basicStyles, styles } from "../navbarStyles/navbarStyles";
 import { verifyToken } from "../../../redux/authSlice/authThunks";
 import {
+  InnerMenuContainer,
+  MenuWrapper,
   MobileMenuButton,
   NavLinksContainerDesktop,
 } from "../navbarStyles/navBarResponsiveStyles";
@@ -20,11 +22,24 @@ import styled from "@emotion/styled";
 import MenuIcon from "@mui/icons-material/Menu";
 import Badge from "@mui/material/Badge";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface NavLinkProps {
   href: string;
   label: string;
 }
+const menuVariants = {
+  open: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
+  },
+  closed: {
+    y: "-100%",
+    opacity: 0,
+    transition: { duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] },
+  },
+};
 
 const NavLink: React.FC<NavLinkProps> = ({ href, label }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -63,6 +78,18 @@ const Navbar: React.FC = () => {
     right: 0;
     background-color: #faf3e0;
   `;
+  const AnimatedMenuContainer: React.FC<any> = ({ children, ...props }) => (
+    <motion.div
+      as={InnerMenuContainer}
+      initial="closed"
+      animate="open"
+      exit="closed"
+      variants={menuVariants}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
   const [isMounted, setIsMounted] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -162,14 +189,11 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Botón de menú para dispositivos móviles */}
-        <MobileMenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          <MenuIcon fontSize="large" />
-        </MobileMenuButton>
 
         {/* El contenido del menú para pantallas grandes */}
         <NavLinksContainerDesktop>
           <NavLink href="/" label="Inicio" />
-          <NavLink href="/productos" label="Productos" />
+          <NavLink href="/products" label="Productos" />
           {isAuthenticated && userRole === "admin" && (
             <button
               style={styles.loginButton}
@@ -178,7 +202,7 @@ const Navbar: React.FC = () => {
               Panel de Administración
             </button>
           )}
-          <NavLink href="/sobre-nosotros" label="Sobre Nosotros" />
+          <NavLink href="/acercaDe" label="Sobre Nosotros" />
           <NavLink href="/contacto" label="Contacto" />
           <div
             style={{
@@ -228,63 +252,90 @@ const Navbar: React.FC = () => {
         </NavLinksContainerDesktop>
 
         {/* El contenido del menú para dispositivos móviles */}
-        <MobileMenuContainer isOpen={isMenuOpen}>
-          <NavLink href="/" label="Inicio" />
-          <NavLink href="/productos" label="Productos" />
-          {isAuthenticated && userRole === "admin" && (
-            <button
-              style={styles.loginButton}
-              onClick={() => setShowAdminModal(true)}
-            >
-              Panel de Administración
-            </button>
-          )}
-          <NavLink href="/sobre-nosotros" label="Sobre Nosotros" />
-          <NavLink href="/contacto" label="Contacto" />
-          <div
-            style={{
-              marginLeft: "1rem",
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-            }}
-            onClick={() => setShowCartModal(true)}
-          >
-            🛒 <span style={{ marginLeft: "0.5rem" }}>{totalItemsInCart}</span>
-          </div>
-          {isAuthenticated ? (
-            <>
-              <button
-                ref={buttonRef}
-                style={{
-                  ...basicStyles.loginButton,
-                  position: "relative",
-                  marginLeft: "1rem",
-                }}
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <MenuWrapper onClick={() => setIsMenuOpen(false)}>
+              <AnimatedMenuContainer
+                onClick={(e: { stopPropagation: () => any }) =>
+                  e.stopPropagation()
+                }
               >
-                👤
-              </button>
-              {isDropdownOpen && (
-                <DropdownMenu
-                  onLogout={handleLogout}
-                  onViewHistory={() => setIsHistoryModalOpen(true)}
-                  toggleDropdown={toggleDropdown}
-                  dropdownRef={dropdownRef}
-                  buttonRef={buttonRef}
-                />
-              )}
-            </>
-          ) : (
-            <button
-              style={basicStyles.loginButton}
-              onClick={() => dispatch(openLoginModal())}
-            >
-              Iniciar Sesión
-            </button>
+                <MobileMenuContainer isOpen={isMenuOpen}>
+                  <InnerMenuContainer>
+                    <div className="innerMenuContainer">
+                      <NavLink href="/" label="Inicio" />
+                      <NavLink href="/products" label="Productos" />
+                      {isAuthenticated && userRole === "admin" && (
+                        <button
+                          style={styles.loginButton}
+                          onClick={() => setShowAdminModal(true)}
+                        >
+                          Panel de Administración
+                        </button>
+                      )}
+                      <NavLink href="/acercaDe" label="Sobre Nosotros" />
+                      <NavLink href="/contacto" label="Contacto" />
+                      <div
+                        style={{
+                          marginLeft: "1rem",
+                          display: "flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => {
+                          setShowCartModal(true);
+                          setIsMenuOpen(false); // Esta línea cierra el menú hamburguesa
+                        }}
+                      >
+                        🛒{" "}
+                        <span style={{ marginLeft: "0.5rem" }}>
+                          {totalItemsInCart}
+                        </span>
+                      </div>
+                      {isAuthenticated ? (
+                        <>
+                          <button
+                            ref={buttonRef}
+                            style={{
+                              ...basicStyles.loginButton,
+                              position: "relative",
+                              marginLeft: "1rem",
+                            }}
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          >
+                            👤
+                          </button>
+                          {isDropdownOpen && (
+                            <DropdownMenu
+                              onLogout={handleLogout}
+                              onViewHistory={() => setIsHistoryModalOpen(true)}
+                              toggleDropdown={toggleDropdown}
+                              dropdownRef={dropdownRef}
+                              buttonRef={buttonRef}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <button
+                          style={basicStyles.loginButton}
+                          onClick={() => dispatch(openLoginModal())}
+                        >
+                          Iniciar Sesión
+                        </button>
+                      )}
+                    </div>
+                  </InnerMenuContainer>
+                </MobileMenuContainer>
+              </AnimatedMenuContainer>
+            </MenuWrapper>
           )}
-        </MobileMenuContainer>
+        </AnimatePresence>
+
+        <MobileMenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <MenuIcon fontSize="large" />
+        </MobileMenuButton>
       </div>
+
       <Fragment>
         {isLoginModalOpen && <AdminLogin onSuccess={handleSuccessfulLogin} />}
         {showAdminModal && (

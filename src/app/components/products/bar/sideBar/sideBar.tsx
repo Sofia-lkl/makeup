@@ -15,6 +15,7 @@ import {
   SidebarTitle,
   StickyFilterContainer,
   FilterSectionItem,
+  HamburgerButton,
 } from "../sideBarStyles/sideBarStyle";
 import {
   PriceRangeInputs,
@@ -24,8 +25,56 @@ import { FilterInput, PriceRangeInput } from "../sideBarStyles/inputStyles";
 import { FilterButtons } from "../sideBarStyles/buttonStyles";
 import Slider from "@mui/material/Slider";
 import Select, { StylesConfig } from "react-select";
+import { FaBars } from "react-icons/fa";
+import { makeStyles } from "@mui/styles";
+import {
+  thumbColor,
+  thumbColorHover,
+  secondaryColor,
+  primaryColor,
+} from "../sideBarStyles/colors";
 
+const useStyles = makeStyles({
+  sliderVertical: {
+    width: "200px",
+    "& .MuiSlider-thumb": {
+      color: thumbColor, // Color de los pulgares
+      "&:hover": {
+        backgroundColor: thumbColorHover,
+      },
+    },
+    "& .MuiSlider-rail": {
+      color: secondaryColor, // Color de la barra no activa
+    },
+    "& .MuiSlider-track": {
+      color: primaryColor, // Color de la barra activa
+    },
+  },
+  sliderHorizontal: {
+    width: "100%",
+    "& .MuiSlider-thumb": {
+      color: thumbColor,
+      "&:hover": {
+        backgroundColor: thumbColorHover,
+      },
+    },
+    "& .MuiSlider-rail": {
+      color: secondaryColor,
+    },
+    "& .MuiSlider-track": {
+      color: primaryColor,
+    },
+  },
+});
 const CombinedFilterComponent: React.FC = () => {
+  const classes = useStyles();
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const toggleSubMenu = () => {
+    setIsSubMenuOpen(!isSubMenuOpen);
+  };
   const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
   const priceRange = useSelector((state: RootState) => state.filter.priceRange);
@@ -36,6 +85,7 @@ const CombinedFilterComponent: React.FC = () => {
     null
   );
   const [isMounted, setIsMounted] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const selectedColor = useSelector(
     (state: RootState) => state.filter.selectedColor
@@ -61,9 +111,10 @@ const CombinedFilterComponent: React.FC = () => {
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
     option: (provided) => ({
       ...provided,
-      borderRadius: "20px", 
+      borderRadius: "20px",
     }),
   };
+
   useEffect(() => {
     setMenuPortalTarget(document.getElementById("menu-portal"));
   }, []);
@@ -71,6 +122,7 @@ const CombinedFilterComponent: React.FC = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
   const colorOptions = [
     { value: "", label: "Selecciona un color" },
     { value: "Rojo", label: "Rojo" },
@@ -143,23 +195,52 @@ const CombinedFilterComponent: React.FC = () => {
       }
     }, 300);
   };
-  return (
-    <StickyFilterContainer
-      className={isExpanded ? "expanded" : "collapsed"}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <SidebarTitle>Filtros</SidebarTitle>
+  useEffect(() => {
+    // Esta función se ejecuta sólo en el cliente y no en el SSR
+    setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const handleDropdownClick = (category: string) => {
+    if (activeDropdown === category) {
+      setActiveDropdown(null); // Cerrar el botón si ya está abierto
+    } else {
+      setActiveDropdown(category); // Abrir el botón si está cerrado
+    }
+  };
+  useEffect(() => {
+    if (isFilterOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isFilterOpen]);
+  return (
+    <>
+      {isMobile && (
+        <HamburgerButton onClick={() => setIsFilterOpen(!isFilterOpen)}>
+          {isFilterOpen ? "Cerrar Filtros" : "Mostrar Filtros"}
+        </HamburgerButton>
+      )}
+      <StickyFilterContainer
+        className={`${isExpanded ? "expanded" : "collapsed"} ${
+          isFilterOpen ? "open" : "closed"
+        }`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <div style={{ position: "relative", width: "40%" }}>
+        <SidebarTitle>Filtros</SidebarTitle>
+
+        {/* Mueve el buscador al principio */}
+        <div style={{ position: "relative", marginBottom: "20px" }}>
           <AiOutlineSearch
             size={24}
             style={{
@@ -177,102 +258,172 @@ const CombinedFilterComponent: React.FC = () => {
             placeholder="Buscar productos..."
           />
         </div>
+
         <FilterButtons>
-          <button
-            className={selectedCategory === "Todos" ? "active" : ""}
-            onClick={() => handleFilterClick("Todos")}
-          >
-            Todos los productos
-          </button>
-
-          <button
-            className={selectedCategory === "Ojos" ? "active" : ""}
-            onClick={() => handleFilterClick("Ojos")}
-          >
-            <FaRegEye size={24} style={{ marginRight: "0px" }} />
-            Productos para ojos
-          </button>
-
-          <button
-            className={selectedCategory === "Rostro" ? "active" : ""}
-            onClick={() => handleFilterClick("Rostro")}
-          >
-            <FaRegSmile size={24} style={{ marginRight: "0px" }} />
-            Productos para rostro
-          </button>
+          {isMobile ? (
+            <>
+              <button onClick={toggleSubMenu}>Categorías</button>
+              {isSubMenuOpen && (
+                <div className="submenu">
+                  <button
+                    className={selectedCategory === "Todos" ? "active" : ""}
+                    onClick={() => handleFilterClick("Todos")}
+                  >
+                    Todos los productos
+                  </button>
+                  <button
+                    className={selectedCategory === "Ojos" ? "active" : ""}
+                    onClick={() => handleFilterClick("Ojos")}
+                  >
+                    <FaRegEye size={24} style={{ marginRight: "0px" }} />
+                    Productos para ojos
+                  </button>
+                  <button
+                    className={selectedCategory === "Rostro" ? "active" : ""}
+                    onClick={() => handleFilterClick("Rostro")}
+                  >
+                    <FaRegSmile size={24} style={{ marginRight: "0px" }} />
+                    Productos para rostro
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <button
+                className={selectedCategory === "Todos" ? "active" : ""}
+                onClick={() => handleFilterClick("Todos")}
+              >
+                Todos los productos
+              </button>
+              <button
+                className={selectedCategory === "Ojos" ? "active" : ""}
+                onClick={() => handleFilterClick("Ojos")}
+              >
+                <FaRegEye size={24} style={{ marginRight: "0px" }} />
+                Productos para ojos
+              </button>
+              <button
+                className={selectedCategory === "Rostro" ? "active" : ""}
+                onClick={() => handleFilterClick("Rostro")}
+              >
+                <FaRegSmile size={24} style={{ marginRight: "0px" }} />
+                Productos para rostro
+              </button>
+            </>
+          )}
         </FilterButtons>
-      </div>
-      <FilterSection>
-        <div className="price-section">
-          <label>Rango de Precio</label>
-          <PriceRangeContainer>
-            <Slider
-              value={priceRange}
-              onChange={(event, newValue) => handleSliderChange(newValue)}
-              valueLabelDisplay="auto"
-              min={0}
-              max={1000}
-              track="inverted"
-            />
 
-            <PriceRangeInputs>
-              <PriceRangeInput
-                type="number"
-                value={priceRange[0]}
-                onChange={(e) =>
-                  dispatch(setPriceRange([+e.target.value, priceRange[1]]))
-                }
-              />
-              <PriceRangeInput
-                type="number"
-                value={priceRange[1]}
-                onChange={(e) =>
-                  dispatch(setPriceRange([priceRange[0], +e.target.value]))
-                }
-              />
-            </PriceRangeInputs>
-          </PriceRangeContainer>
-        </div>
+        <FilterSection>
+          {/* Condición para mostrar la sección de precio en móviles */}
+          {isMobile && (
+            <div className="price-section">
+              <label>Rango de Precio</label>
+              <PriceRangeContainer>
+                <Slider
+                  orientation="horizontal"
+                  className={classes.sliderHorizontal}
+                  value={priceRange}
+                  onChange={(event, newValue) => handleSliderChange(newValue)}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={1000}
+                />
 
-        <FilterSectionItem className="color-section">
-          <label>Color</label>
-          {isMounted && (
-            <Select
-              styles={customStyles}
-              options={colorOptions}
-              value={colorOptions.find(
-                (option) => option.value === selectedColor
-              )}
-              onChange={(newValue) => {
-                const option = newValue as OptionType | null;
-                dispatch(setSelectedColor(option?.value || ""));
-              }}
-              menuPortalTarget={menuPortalTarget}
-              placeholder="Selecciona un color" // Añade esta línea
-            />
+                <PriceRangeInputs>
+                  <PriceRangeInput
+                    type="number"
+                    value={priceRange[0]}
+                    onChange={(e) =>
+                      dispatch(setPriceRange([+e.target.value, priceRange[1]]))
+                    }
+                  />
+                  <PriceRangeInput
+                    type="number"
+                    value={priceRange[1]}
+                    onChange={(e) =>
+                      dispatch(setPriceRange([priceRange[0], +e.target.value]))
+                    }
+                  />
+                </PriceRangeInputs>
+              </PriceRangeContainer>
+            </div>
           )}
-        </FilterSectionItem>
 
-        <FilterSectionItem className="brand-section">
-          <label>Marca</label>
-          {isMounted && (
-            <Select
-              styles={customStyles}
-              options={marcaOptions}
-              value={marcaOptions.find(
-                (option) => option.value === selectedMarca
-              )}
-              onChange={(newValue) => {
-                const option = newValue as OptionType | null;
-                dispatch(setSelectedMarca(option?.value || ""));
-              }}
-              menuPortalTarget={menuPortalTarget}
-              placeholder="Selecciona una marca" // Añade esta línea
-            />
+          <FilterSectionItem className="color-section">
+            <label>Color</label>
+            {isMounted && (
+              <Select
+                styles={customStyles}
+                options={colorOptions}
+                value={colorOptions.find(
+                  (option) => option.value === selectedColor
+                )}
+                onChange={(newValue) => {
+                  const option = newValue as OptionType | null;
+                  dispatch(setSelectedColor(option?.value || ""));
+                }}
+                menuPortalTarget={menuPortalTarget}
+                placeholder="Selecciona un color"
+              />
+            )}
+          </FilterSectionItem>
+
+          <FilterSectionItem className="brand-section">
+            <label>Marca</label>
+            {isMounted && (
+              <Select
+                styles={customStyles}
+                options={marcaOptions}
+                value={marcaOptions.find(
+                  (option) => option.value === selectedMarca
+                )}
+                onChange={(newValue) => {
+                  const option = newValue as OptionType | null;
+                  dispatch(setSelectedMarca(option?.value || ""));
+                }}
+                menuPortalTarget={menuPortalTarget}
+                placeholder="Selecciona una marca"
+              />
+            )}
+          </FilterSectionItem>
+
+          {/* Sección de precio para vistas de escritorio */}
+          {!isMobile && (
+            <div className="price-section">
+              <label>Rango de Precio</label>
+              <PriceRangeContainer>
+                <Slider
+                  orientation="horizontal"
+                  value={priceRange}
+                  onChange={(event, newValue) => handleSliderChange(newValue)}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={1000}
+                  track="inverted"
+                />
+                <PriceRangeInputs>
+                  <PriceRangeInput
+                    type="number"
+                    value={priceRange[0]}
+                    onChange={(e) =>
+                      dispatch(setPriceRange([+e.target.value, priceRange[1]]))
+                    }
+                  />
+                  <PriceRangeInput
+                    type="number"
+                    value={priceRange[1]}
+                    onChange={(e) =>
+                      dispatch(setPriceRange([priceRange[0], +e.target.value]))
+                    }
+                  />
+                </PriceRangeInputs>
+              </PriceRangeContainer>
+            </div>
           )}
-        </FilterSectionItem>
-      </FilterSection>
-    </StickyFilterContainer>
+        </FilterSection>
+      </StickyFilterContainer>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ export interface Product {
   precio: number;
   stock?: number;
   marca?: string;
-  color?: string;
+  color: string | string[] | undefined;
   descripcion?: string;
 }
 

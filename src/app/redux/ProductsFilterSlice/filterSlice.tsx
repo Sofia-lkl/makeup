@@ -8,7 +8,7 @@ export interface ProductType {
   precio: number;
   stock?: number;
   marca?: string; 
-  color?: string;
+  color: string | string[] | undefined;
   descripcion?: string;
   
 }
@@ -25,7 +25,7 @@ interface FilterState {
 
 const initialState: FilterState = {
   searchTerm: "",
-  priceRange: [0, 1000],
+  priceRange: [0, 100000],
   selectedColor: null,
   selectedMarca: null,
   activeFilter: undefined,

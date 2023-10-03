@@ -10,7 +10,7 @@ export interface Product {
   stock?: number;
   imagen_url?: string;
   marca?: string;
-  color?: string;
+  color: string | string[] | undefined;
   categoria?: string;
 }
 
@@ -55,13 +55,20 @@ export const apiDeleteProduct = createAsyncThunk(
     return id;
   }
 );
-
 export const apiEditProduct = createAsyncThunk(
   "productManagement/editProduct",
   async (updatedProduct: Product, { dispatch }) => {
+    // Convertir el campo 'color' a una cadena JSON
+    const productToSend = {
+      ...updatedProduct,
+      color: Array.isArray(updatedProduct.color)
+        ? JSON.stringify(updatedProduct.color)
+        : updatedProduct.color,
+    };
+
     const response = await axios.put(
       `http://localhost:3002/api/products/${updatedProduct.id}`,
-      updatedProduct
+      productToSend
     );
     console.log("Respuesta del servidor después de editar:", response.data);
 
@@ -168,7 +175,26 @@ const productManagementSlice = createSlice({
         state.message = null;
       })
       .addCase(apiGetAllProducts.fulfilled, (state, action) => {
-        state.allProducts = action.payload;
+        state.allProducts = action.payload.map((product: any) => {
+          // Cambio de tipo aquí a "any" temporalmente para evitar problemas
+          let parsedColor: string[] = [];
+
+          if (product.color) {
+            try {
+              parsedColor = JSON.parse(product.color);
+              if (!Array.isArray(parsedColor)) {
+                parsedColor = [product.color]; // Si no es un array, conviértelo en uno
+              }
+            } catch (e) {
+              parsedColor = [product.color]; // Si hay un error en la deserialización, asumimos que es una string y la convertimos en un array
+            }
+          }
+
+          return {
+            ...product,
+            color: parsedColor,
+          };
+        });
         state.error = null;
       });
   },
